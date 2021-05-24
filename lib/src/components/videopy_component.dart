@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reproductor/src/utils/convertsTime.dart';
@@ -18,7 +20,7 @@ class VideoPlay extends HookWidget {
     final _menurview = useState<bool>(false);
     final _position = useState<double>(0);
     final _duration = useState<double>(0);
-    final _fullScreen = useState<int>(3);
+    final _fullScreen = useState<int>(kIsWeb ? 1 : 3);
 
     handleInit() async {
       SystemChrome.setPreferredOrientations([
@@ -44,12 +46,17 @@ class VideoPlay extends HookWidget {
       };
     }, [_playerController.value]);
 
-    return GestureDetector(
-      onTap: () {
-        _menurview.value = !_menurview.value;
-      },
-      child: Container(
-        height: MediaQuery.of(context).size.height / _fullScreen.value,
+    return Container(
+      height: MediaQuery.of(context).size.height / _fullScreen.value,
+      color: Colors.black,
+      child: GestureDetector(
+        // onTap: () {
+        //   _menurview.value = !_menurview.value;
+        // },
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          _menurview.value = !_menurview.value;
+        },
         child: Stack(
           children: [
             VideoPlayer(_playerController.value),
@@ -63,7 +70,9 @@ class VideoPlay extends HookWidget {
                 _menurview,
               )
             else
-              Container(),
+              GestureDetector(onTap: () {
+                _menurview.value = !_menurview.value;
+              }),
           ],
         ),
       ),
@@ -83,7 +92,7 @@ class VideoPlay extends HookWidget {
       child: Stack(
         children: [
           nextAndBackPanel(_playerController, context, _duration),
-          upMenuVideoPlayer(context, _playerController),
+          upMenuVideoPlayer(context, _playerController, _fullScreen),
           sliderProgVideo(context, _duration, _position, _playerController),
           downMenuVideoPlayer(context, _fullScreen, _playerController),
           buttonsMiddle(_playerController.value, _menurview),
@@ -114,14 +123,6 @@ class VideoPlay extends HookWidget {
                 color: Colors.white,
               ),
             ),
-            AutoSizeText(
-              'Big Bunny',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: _fullScreen.value == 3 ? 9 : 14,
-              ),
-              maxLines: 2,
-            ),
             GestureDetector(
               onTap: () {
                 print('volu => ${_playerController.value.value.volume}');
@@ -138,11 +139,13 @@ class VideoPlay extends HookWidget {
                   _fullScreen.value = 1;
                 }
               },
-              child: Icon(
-                Icons.fullscreen,
-                size: 32,
-                color: Color(0xFF4CAAB1),
-              ),
+              child: !kIsWeb
+                  ? Icon(
+                      Icons.fullscreen,
+                      size: 32,
+                      color: Color(0xFF4CAAB1),
+                    )
+                  : Container(),
             ),
           ],
         ),
@@ -162,18 +165,18 @@ class VideoPlay extends HookWidget {
         width: MediaQuery.of(context).size.width,
         child: Slider(
           min: 0,
+          label: printDuration(Duration(milliseconds: _position.value.toInt())),
+          divisions: _position.value > 0 ? _position.value.toInt() : 1,
           max: _duration.value,
           value: _position.value,
           onChanged: (double data) {
-            _position.value = data;
-          },
-          onChangeEnd: (value) {
             _playerController.value.seekTo(
               Duration(
-                milliseconds: value.toInt(),
+                milliseconds: data.toInt(),
               ),
             );
           },
+          onChangeEnd: (value) {},
           inactiveColor: Color(0xFFBFE3ED),
           activeColor: Color(0xFF4CAAB1),
         ),
@@ -184,6 +187,7 @@ class VideoPlay extends HookWidget {
   Positioned upMenuVideoPlayer(
     BuildContext context,
     ValueNotifier<VideoPlayerController> _playerController,
+    ValueNotifier<int> _fullScreen,
   ) {
     return Positioned(
       top: 0,
@@ -204,16 +208,15 @@ class VideoPlay extends HookWidget {
                   color: Color(0xFF4CAAB1),
                 ),
               ),
-              Slider(
-                min: 0,
-                max: 1,
-                divisions: 10,
-                value: _playerController.value.value.volume,
-                onChanged: (data) {
-                  _playerController.value.setVolume(data);
-                },
-                activeColor: Color(0xFF4CAAB1),
-              )
+              AutoSizeText(
+                'Pautas de normalizacion en nuestro pais parte 2'.toUpperCase(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: _fullScreen.value == 3 ? 9 : 14,
+                ),
+                maxLines: 2,
+              ),
+              Container()
             ],
           ),
         ),
@@ -261,8 +264,9 @@ class VideoPlay extends HookWidget {
   Center buttonsMiddle(VideoPlayerController vp, ValueNotifier<bool> showMenu) {
     return Center(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Container(),
           GestureDetector(
             onTap: () {
               showMenu.value = false;
@@ -277,6 +281,23 @@ class VideoPlay extends HookWidget {
               !vp.value.isPlaying ? Icons.play_arrow : Icons.pause_sharp,
               size: 64,
               color: Color(0xFF4CAAB1),
+            ),
+          ),
+          Container(
+            height: 200,
+            child: RotatedBox(
+              quarterTurns: -1,
+              child: Slider(
+                min: 0,
+                max: 1,
+                divisions: 10,
+                label: 'VOL: ${vp.value.volume * 10}',
+                value: vp.value.volume,
+                onChanged: (data) {
+                  vp.setVolume(data);
+                },
+                activeColor: Color(0xFF4CAAB1),
+              ),
             ),
           ),
         ],

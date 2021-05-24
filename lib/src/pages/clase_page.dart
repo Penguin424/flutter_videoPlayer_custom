@@ -6,11 +6,11 @@ class ClasePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: VideoPlay(
+    return SafeArea(
+      child: Scaffold(
+        body: VideoPlay(
           url:
-              'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+              'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
         ),
       ),
     );
