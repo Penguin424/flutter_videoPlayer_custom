@@ -13,10 +13,8 @@ class PageHome extends HookWidget {
   Widget build(BuildContext context) {
     useEffect(() {
       LocalStorage localStorage = LocalStorage('localStorage.json');
-      User user = User.fromJson((jsonDecode(localStorage.getItem('user'))));
-      user.user.usuarioCursos.forEach((element) {
-        print(element.cursoTitulo);
-      });
+
+      print(localStorage.getItem('token'));
     }, []);
 
     return SafeArea(

@@ -208,13 +208,13 @@ class VideoPlay extends HookWidget {
                   color: Color(0xFF4CAAB1),
                 ),
               ),
-              AutoSizeText(
+              Text(
                 'Pautas de normalizacion en nuestro pais parte 2'.toUpperCase(),
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: _fullScreen.value == 3 ? 9 : 14,
+                  fontSize: _fullScreen.value == 3 ? 7 : 12,
                 ),
-                maxLines: 2,
+                // maxLines: 1,
               ),
               Container()
             ],
@@ -284,7 +284,7 @@ class VideoPlay extends HookWidget {
             ),
           ),
           Container(
-            height: 200,
+            height: 150,
             child: RotatedBox(
               quarterTurns: -1,
               child: Slider(
