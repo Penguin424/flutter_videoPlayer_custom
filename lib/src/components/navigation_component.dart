@@ -11,7 +11,7 @@ class NavigationBar extends StatelessWidget {
     return FancyBottomNavigation(
       tabs: [
         TabData(iconData: Icons.shopping_cart, title: "Compras"),
-        TabData(iconData: Icons.class__sharp, title: "Clases"),
+        TabData(iconData: Icons.class__sharp, title: "Cursos"),
         TabData(iconData: Icons.person, title: "Perfil"),
       ],
       onTabChangedListener: (position) {

@@ -1,20 +1,35 @@
 import 'dart:convert';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:http/http.dart' as http;
 import 'package:localstorage/localstorage.dart';
 import 'package:reproductor/src/components/navigation_component.dart';
-import 'package:reproductor/src/models/User.dart';
+import 'package:reproductor/src/models/Curso.dart';
+import 'package:reproductor/src/utils/Http.dart';
 
 class PageHome extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    useEffect(() {
-      LocalStorage localStorage = LocalStorage('localStorage.json');
+    final _cursosAlumnos = useState<List<Curso>>([]);
 
-      print(localStorage.getItem('token'));
+    void initGetDate() async {
+      LocalStorage localStorage = LocalStorage('localStorage.json');
+      final id = localStorage.getItem('idUser');
+
+      final res = await HttpMod.get('/users/$id', {});
+
+      if (res.statusCode == 200) {
+        List<Curso> data =
+            jsonDecode(res.body)['UsuarioCursos'].map<Curso>((a) {
+          return Curso.fromJson(a);
+        }).toList();
+
+        _cursosAlumnos.value = data;
+      } else {}
+    }
+
+    useEffect(() {
+      initGetDate();
     }, []);
 
     return SafeArea(
@@ -22,89 +37,72 @@ class PageHome extends HookWidget {
         bottomNavigationBar: NavigationBar(),
         body: ListView(
           padding: EdgeInsets.all(5),
-          children: [
-            card(context),
-            card(context),
-            card(context),
-            card(context),
-            card(context),
-            card(context),
-          ],
+          children: _cursosAlumnos.value.length > 0
+              ? _cursosAlumnos.value
+                  .map((e) => card(context, e.cursoTitulo))
+                  .toList()
+              : [
+                  Center(
+                    child: CircularProgressIndicator(),
+                  )
+                ],
         ),
       ),
     );
   }
 
-  Container card(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Color(0xFF4CAAB1),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xFF36787D),
-            spreadRadius: 3,
-            blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
-          ),
-        ],
-      ),
-      margin: EdgeInsets.all(10),
-      height: MediaQuery.of(context).size.height / 3,
-      width: MediaQuery.of(context).size.width,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          AutoSizeText(
-            'Carrera de Cosmetologia Facial Mayo 2021 Febrero'.toUpperCase(),
-            style: TextStyle(
-              color: Colors.white,
+  GestureDetector card(BuildContext context, String title) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, '/clases');
+      },
+      child: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          color: Color(0xFF4CAAB1),
+          boxShadow: [
+            BoxShadow(
+              color: Color(0xFF36787D),
+              spreadRadius: 3,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
             ),
-            maxLines: 2,
-            textAlign: TextAlign.justify,
-            textDirection: TextDirection.ltr,
-          ),
-          Center(
-            child: Column(
+          ],
+        ),
+        margin: EdgeInsets.all(10),
+        height: MediaQuery.of(context).size.height / 3,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            AutoSizeText(
+              title.toUpperCase(),
+              style: TextStyle(
+                color: Colors.white,
+              ),
+              maxLines: 2,
+              textAlign: TextAlign.justify,
+              textDirection: TextDirection.ltr,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'CLASES COMPLETADAS 7/24',
+                  'CONTINUAR CLASE',
                   style: TextStyle(
                     color: Colors.white,
                   ),
                 ),
-                Text(
-                  'QUIMICA COSMETOCA',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'CONTINUAR CLASE',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/clase');
-                },
-                child: Icon(
+                Icon(
                   Icons.chevron_right_sharp,
                   size: 32,
                   color: Color(0xFFBFE3ED),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
