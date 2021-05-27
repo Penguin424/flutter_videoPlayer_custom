@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -8,9 +7,13 @@ import 'package:reproductor/src/utils/convertsTime.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlay extends HookWidget {
-  VideoPlay({required this.url});
+  VideoPlay({
+    required this.url,
+    required this.title,
+  });
 
   final String url;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +53,6 @@ class VideoPlay extends HookWidget {
       height: MediaQuery.of(context).size.height / _fullScreen.value,
       color: Colors.black,
       child: GestureDetector(
-        // onTap: () {
-        //   _menurview.value = !_menurview.value;
-        // },
         behavior: HitTestBehavior.translucent,
         onTap: () {
           _menurview.value = !_menurview.value;
@@ -209,7 +209,7 @@ class VideoPlay extends HookWidget {
                 ),
               ),
               Text(
-                'Pautas de normalizacion en nuestro pais parte 2'.toUpperCase(),
+                this.title.toUpperCase(),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: _fullScreen.value == 3 ? 7 : 12,

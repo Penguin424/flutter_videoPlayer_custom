@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:reproductor/src/pages/clase_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/clases_page.dart';
+import 'package:reproductor/src/pages/cursoPageDetalle/tareas_page.dart';
 
 class CursoDetallePage extends HookWidget {
   // const ClasesPage({Key key}) : super(key: key);
@@ -16,7 +16,7 @@ class CursoDetallePage extends HookWidget {
       body: PageView(
         children: [
           ClasesPage(),
-          ClasePage(),
+          TareasPage(),
         ],
       ),
     );

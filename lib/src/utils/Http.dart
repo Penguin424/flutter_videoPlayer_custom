@@ -79,12 +79,12 @@ class HttpMod {
 
   static Future<http.Response> get(
     String path,
-    Map<String, dynamic>? parameters,
+    Map<String, String>? parameters,
   ) async {
     final url = Uri(
       host: _host,
       port: _port,
-      queryParameters: parameters != null ? {} : parameters,
+      queryParameters: parameters,
       path: path,
     );
     final response = await http.get(
@@ -98,13 +98,13 @@ class HttpMod {
   static Future<http.Response> update(
     String path,
     String body,
-    Map<String, dynamic>? parameters,
+    Map<String, String>? parameters,
   ) async {
     final url = Uri(
       host: _host,
       port: _port,
       path: path,
-      queryParameters: parameters != null ? {} : parameters,
+      queryParameters: parameters,
     );
     final response = await http.put(
       url,
@@ -117,13 +117,13 @@ class HttpMod {
 
   static Future<http.Response> delete(
     String path,
-    Map<String, dynamic>? parameters,
+    Map<String, String>? parameters,
   ) async {
     final url = Uri(
       host: _host,
       port: _port,
       path: path,
-      queryParameters: parameters != null ? {} : parameters,
+      queryParameters: parameters,
     );
     final response = await http.put(
       url,

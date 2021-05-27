@@ -16,11 +16,15 @@ class PageHome extends HookWidget {
       LocalStorage localStorage = LocalStorage('localStorage.json');
       final id = localStorage.getItem('idUser');
 
-      final res = await HttpMod.get('/users/$id', {});
+      final res = await HttpMod.get(
+        '/cursos',
+        {
+          '_where[0][CursoAlumnos.id]': id.toString(),
+        },
+      );
 
       if (res.statusCode == 200) {
-        List<Curso> data =
-            jsonDecode(res.body)['UsuarioCursos'].map<Curso>((a) {
+        List<Curso> data = jsonDecode(res.body).map<Curso>((a) {
           return Curso.fromJson(a);
         }).toList();
 
@@ -39,7 +43,15 @@ class PageHome extends HookWidget {
           padding: EdgeInsets.all(5),
           children: _cursosAlumnos.value.length > 0
               ? _cursosAlumnos.value
-                  .map((e) => card(context, e.cursoTitulo))
+                  .map(
+                    (e) => card(
+                      context,
+                      e.cursoTitulo,
+                      e.id,
+                      e.cursoClases[e.cursoClases.length - 1],
+                      e.cursoClases.length,
+                    ),
+                  )
                   .toList()
               : [
                   Center(
@@ -51,10 +63,22 @@ class PageHome extends HookWidget {
     );
   }
 
-  GestureDetector card(BuildContext context, String title) {
+  GestureDetector card(
+    BuildContext context,
+    String title,
+    int curso,
+    CursoClase claseCurso,
+    int clasesTotal,
+  ) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/clases');
+        Navigator.pushNamed(
+          context,
+          '/clases',
+          arguments: {
+            'curso': curso.toString(),
+          },
+        );
       },
       child: Container(
         padding: EdgeInsets.all(10),
@@ -84,6 +108,24 @@ class PageHome extends HookWidget {
               maxLines: 2,
               textAlign: TextAlign.justify,
               textDirection: TextDirection.ltr,
+            ),
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    'CLASES COMPLETADAS $clasesTotal/12',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    claseCurso.claseTitulo,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
