@@ -77,6 +77,7 @@ class PageHome extends HookWidget {
           '/clases',
           arguments: {
             'curso': curso.toString(),
+            'cursoTitulo': title,
           },
         );
       },

@@ -50,6 +50,7 @@ class HttpMod {
       _localStorage.setItem('token', user.jwt);
       _localStorage.setItem('idUser', user.user.id);
       _localStorage.setItem('userName', user.user.username);
+      _localStorage.setItem('role', user.user.role.name);
 
       return response;
     } else {

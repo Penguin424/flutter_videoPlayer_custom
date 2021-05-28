@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reproductor/src/pages/clase_page.dart';
 import 'package:reproductor/src/pages/cursoDetalle_page.dart';
+import 'package:reproductor/src/pages/cursoPageDetalle/AlumnosPages/alumnoTarea_page.dart';
 import 'package:reproductor/src/pages/home_page.dart';
 import 'package:reproductor/src/pages/login_page.dart';
 
@@ -19,6 +20,7 @@ class MyApp extends HookWidget {
         "/home": (BuildContext context) => PageHome(),
         "/clases": (BuildContext context) => CursoDetallePage(),
         "/clase": (BuildContext context) => ClasePage(),
+        "/entregaTarea": (BuildContext context) => AlumnoTareaPage(),
       },
     );
   }

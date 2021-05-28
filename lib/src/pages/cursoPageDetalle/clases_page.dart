@@ -39,7 +39,7 @@ class ClasesPage extends HookWidget {
                 title: clase.claseTitulo,
                 id: clase.id,
                 url: clase.claseVideo,
-                maestro: clase.clasemaestro.mestroNombre,
+                maestro: clase.clasemaestro.username,
               );
             }).toList()
           : [
