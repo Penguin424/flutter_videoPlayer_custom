@@ -5,6 +5,7 @@ import 'package:reproductor/src/models/Asistencia_model.dart';
 import 'package:reproductor/src/models/Clase_model.dart';
 import 'package:reproductor/src/models/Curso.dart';
 import 'package:reproductor/src/utils/Http.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class AsistenciasTomaPage extends HookWidget {
   @override
@@ -16,6 +17,7 @@ class AsistenciasTomaPage extends HookWidget {
     final _curso = useState<Map<String, dynamic>>(
       ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>,
     );
+    final _isLoading = useState<bool>(true);
 
     void handleGetInitData() async {
       final res = await HttpMod.get('/clases', {
@@ -42,34 +44,42 @@ class AsistenciasTomaPage extends HookWidget {
         _clases.value = data;
         _claseSelect.value = data[0].id;
 
-        final resAsistencia = await HttpMod.get('/asistencias',
-            {'_where[0][AsistenciaClase.id]': data[0].id.toString()});
-
-        if (resAsistencia.statusCode == 2) {
-          List<Asistencia> data =
-              jsonDecode(resAsistencia.body).map<Asistencia>((a) {
-            return Asistencia.fromJson(a);
-          }).toList();
-
-          _asistencias.value = data;
-        }
-      } else {}
+        await _hanldeGetAsistencias(
+            data[0].id.toString(), _asistencias, _isLoading);
+      }
     }
 
     useEffect(() {
       handleGetInitData();
     }, []);
 
-    return Container(
+    useEffect(() {
+      print(_asistencias.value.length);
+    }, [_asistencias.value]);
+
+    return LoadingOverlay(
+      isLoading: _isLoading.value,
+      color: Color(0xFF4CAAB1),
+      opacity: 0.2,
       child: ListView(
         padding: EdgeInsets.all(20.0),
         children: _alumnos.value.length > 0
             ? [
-                _clasesListas(_claseSelect, _clases),
+                _clasesListas(
+                  _claseSelect,
+                  _clases,
+                  _asistencias,
+                  _isLoading,
+                ),
                 ..._alumnos.value
                     .where((element) => element.role == 3)
                     .map((e) {
-                  return _listasCardsAsistencias(e);
+                  return _listasCardsAsistencias(
+                    e,
+                    _asistencias,
+                    _claseSelect,
+                    _isLoading,
+                  );
                 }).toList()
               ]
             : [],
@@ -77,7 +87,36 @@ class AsistenciasTomaPage extends HookWidget {
     );
   }
 
-  Container _listasCardsAsistencias(CursoAlumno e) {
+  Future<void> _hanldeGetAsistencias(
+    String id,
+    ValueNotifier<List<Asistencia>> _asistencias,
+    ValueNotifier<bool> _isLoading,
+  ) async {
+    _isLoading.value = true;
+    final resAsistencia = await HttpMod.get(
+        '/asistencias', {'_where[0][AsistenciaClase.id]': id});
+
+    if (resAsistencia.statusCode == 200) {
+      List<Asistencia> data =
+          jsonDecode(resAsistencia.body).map<Asistencia>((a) {
+        return Asistencia.fromJson(a);
+      }).toList();
+
+      _asistencias.value = data;
+      _isLoading.value = false;
+    }
+  }
+
+  Container _listasCardsAsistencias(
+    CursoAlumno e,
+    ValueNotifier<List<Asistencia>> _asistencias,
+    ValueNotifier<int> _claseSelect,
+    ValueNotifier<bool> _isLoading,
+  ) {
+    List<Asistencia> veriAsis = _asistencias.value
+        .where((asi) => asi.asistenciaAlumno.id == e.id)
+        .toList();
+
     return Container(
       height: 60,
       child: Row(
@@ -96,8 +135,31 @@ class AsistenciasTomaPage extends HookWidget {
             ),
           ),
           Checkbox(
-            value: true,
-            onChanged: (value) {},
+            value: veriAsis.length > 0 ? veriAsis[0].asistenciaCheck : false,
+            onChanged: veriAsis.length > 0
+                ? null
+                : (value) async {
+                    _isLoading.value = true;
+                    final res = await HttpMod.post(
+                      '/asistencias',
+                      jsonEncode(
+                        {
+                          'asistenciaAlumno': e.id,
+                          'asistenciaCheck': true,
+                          'asistenciaClase': _claseSelect.value,
+                          'asistenciaFecha': DateTime.now().toString(),
+                        },
+                      ),
+                    );
+
+                    if (res.statusCode == 200) {
+                      await _hanldeGetAsistencias(
+                        _claseSelect.value.toString(),
+                        _asistencias,
+                        _isLoading,
+                      );
+                    }
+                  },
           )
         ],
       ),
@@ -107,6 +169,8 @@ class AsistenciasTomaPage extends HookWidget {
   DropdownButton<int> _clasesListas(
     ValueNotifier<int> _claseSelect,
     ValueNotifier<List<Clase>> _clases,
+    ValueNotifier<List<Asistencia>> _asistencias,
+    ValueNotifier<bool> _isLoading,
   ) {
     return DropdownButton<int>(
       icon: Icon(Icons.arrow_downward),
@@ -129,8 +193,10 @@ class AsistenciasTomaPage extends HookWidget {
                 ),
               )
             ],
-      onChanged: (int? value) {
+      onChanged: (int? value) async {
         if (value != null) {
+          await _hanldeGetAsistencias(
+              value.toString(), _asistencias, _isLoading);
           _claseSelect.value = value;
         }
       },

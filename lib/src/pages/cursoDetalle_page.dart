@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/asistenciasToma_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/clases_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/tareas_page.dart';
@@ -18,12 +19,28 @@ class CursoDetallePage extends HookWidget {
     );
 
     useEffect(() {
-      if (HttpMod.localStorage.getItem('role') == 'MAESTRO') {
+      LocalStorage localStorage = new LocalStorage('localStorage.json');
+
+      print(localStorage.getItem('role'));
+
+      if (localStorage.getItem('role') == 'MAESTRO') {
         _pages.value.add(AsistenciasTomaPage());
       }
     }, []);
 
     return Scaffold(
+      floatingActionButton: HttpMod.localStorage.getItem('role') == 'MAESTRO'
+          ? FloatingActionButton.extended(
+              label: Text('Agregar Tarea'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/tarea/crear');
+              },
+              backgroundColor: Color(0xFF4CAAB1),
+              icon: Icon(
+                Icons.post_add_rounded,
+              ),
+            )
+          : Container(),
       appBar: AppBar(
         title: Text(_curso.value['cursoTitulo']),
         centerTitle: true,

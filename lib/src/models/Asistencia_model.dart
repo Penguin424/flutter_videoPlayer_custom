@@ -14,7 +14,6 @@ class Asistencia {
     required this.id,
     required this.asistenciaFecha,
     required this.asistenciaClase,
-    required this.publishedAt,
     required this.createdAt,
     required this.updatedAt,
     required this.asistenciaAlumno,
@@ -24,7 +23,7 @@ class Asistencia {
   int id;
   DateTime asistenciaFecha;
   AsistenciaClase asistenciaClase;
-  DateTime publishedAt;
+
   DateTime createdAt;
   DateTime updatedAt;
   AsistenciaAlumno asistenciaAlumno;
@@ -34,7 +33,6 @@ class Asistencia {
         id: json["id"],
         asistenciaFecha: DateTime.parse(json["AsistenciaFecha"]),
         asistenciaClase: AsistenciaClase.fromJson(json["AsistenciaClase"]),
-        publishedAt: DateTime.parse(json["published_at"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         asistenciaAlumno: AsistenciaAlumno.fromJson(json["AsistenciaAlumno"]),
@@ -45,7 +43,6 @@ class Asistencia {
         "id": id,
         "AsistenciaFecha": asistenciaFecha.toIso8601String(),
         "AsistenciaClase": asistenciaClase.toJson(),
-        "published_at": publishedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "AsistenciaAlumno": asistenciaAlumno.toJson(),

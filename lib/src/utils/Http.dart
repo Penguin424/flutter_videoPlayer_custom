@@ -22,7 +22,7 @@ class HttpMod {
     'Accept': 'application/json',
     'Authorization': 'Bearer ${localStorage.getItem('token')}',
   };
-  static String _host = 'localhost';
+  static String _host = '192.168.68.151';
   static int _port = 1337;
 
   static Future<http.Response> login(LoginData loginData) async {
@@ -46,11 +46,15 @@ class HttpMod {
 
     if (response.statusCode == 200) {
       final user = User.fromJson(jsonDecode(response.body));
+      print(user.user.role.name);
       LocalStorage _localStorage = LocalStorage('localStorage.json');
-      _localStorage.setItem('token', user.jwt);
-      _localStorage.setItem('idUser', user.user.id);
-      _localStorage.setItem('userName', user.user.username);
-      _localStorage.setItem('role', user.user.role.name);
+      bool localCard = await _localStorage.ready;
+      if (localCard) {
+        await _localStorage.setItem('token', user.jwt);
+        await _localStorage.setItem('idUser', user.user.id);
+        await _localStorage.setItem('userName', user.user.username);
+        await _localStorage.setItem('role', user.user.role.name);
+      }
 
       return response;
     } else {
@@ -60,12 +64,12 @@ class HttpMod {
 
   static Future<http.Response> post(
     String path,
-    String body, [
-    String parameters = '',
-  ]) async {
+    String body,
+  ) async {
     final url = Uri(
       host: _host,
       port: _port,
+      scheme: 'http',
       path: path,
     );
 
@@ -84,6 +88,7 @@ class HttpMod {
   ) async {
     final url = Uri(
       host: _host,
+      scheme: 'http',
       port: _port,
       queryParameters: parameters,
       path: path,
@@ -99,13 +104,12 @@ class HttpMod {
   static Future<http.Response> update(
     String path,
     String body,
-    Map<String, String>? parameters,
   ) async {
     final url = Uri(
       host: _host,
+      scheme: 'http',
       port: _port,
       path: path,
-      queryParameters: parameters,
     );
     final response = await http.put(
       url,
@@ -118,13 +122,12 @@ class HttpMod {
 
   static Future<http.Response> delete(
     String path,
-    Map<String, String>? parameters,
   ) async {
     final url = Uri(
       host: _host,
+      scheme: 'http',
       port: _port,
       path: path,
-      queryParameters: parameters,
     );
     final response = await http.put(
       url,
