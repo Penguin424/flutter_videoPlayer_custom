@@ -16,11 +16,12 @@ class ClasePage extends HookWidget {
 
     return SafeArea(
       child: Scaffold(
-        body: VideoPlay(
-          url: 'http://192.168.15.157:8000/live/prueba.flv',
-          title: params.value['titulo'],
-        ),
-      ),
+          // body: VideoPlay(
+          //   url: 'http://192.168.15.157:8000/live/prueba.flv',
+          //   title: params.value['titulo'],
+          // ),
+
+          ),
     );
   }
 }
