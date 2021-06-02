@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:reproductor/src/utils/Http.dart';
+import 'package:reproductor/src/models/DetalleTareas_model.dart';
 
-class CardTarea extends HookWidget {
-  const CardTarea({
+class CardTareaDetalle extends HookWidget {
+  const CardTareaDetalle({
     Key? key,
     required this.title,
     required this.descripcion,
-    required this.clase,
+    required this.detalleTarea,
     required this.id,
   }) : super(key: key);
 
   final String title;
   final String descripcion;
-  final String clase;
   final int id;
+  final DetalleTareas detalleTarea;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class CardTarea extends HookWidget {
               color: Color(0xFFBFE3ED),
             ),
             title: Text(
-              '${this.clase} - ${this.title}',
+              '${this.title}',
               style: TextStyle(
                 color: Colors.white,
               ),
@@ -53,17 +53,11 @@ class CardTarea extends HookWidget {
                   ),
                 ),
                 onPressed: () {
-                  if (HttpMod.localStorage.getItem('role') == 'MAESTRO') {
-                    Navigator.pushNamed(
-                      context,
-                      '/tareas',
-                      arguments: {
-                        'idTarea': id,
-                      },
-                    );
-                  } else {
-                    Navigator.pushNamed(context, '/entregaTarea');
-                  }
+                  Navigator.pushNamed(
+                    context,
+                    '/tarea/calificar',
+                    arguments: this.detalleTarea,
+                  );
                 },
               ),
               const SizedBox(width: 8),

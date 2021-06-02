@@ -13,7 +13,6 @@ class Tarea {
     required this.tareaNombre,
     required this.tareaDescripcion,
     required this.tareaArchivo,
-    required this.publishedAt,
     required this.createdAt,
     required this.updatedAt,
     required this.tareaClase,
@@ -29,7 +28,7 @@ class Tarea {
   String tareaNombre;
   String tareaDescripcion;
   dynamic tareaArchivo;
-  DateTime publishedAt;
+
   DateTime createdAt;
   DateTime updatedAt;
   TareaClase tareaClase;
@@ -45,7 +44,6 @@ class Tarea {
         tareaNombre: json["TareaNombre"],
         tareaDescripcion: json["TareaDescripcion"],
         tareaArchivo: json["TareaArchivo"],
-        publishedAt: DateTime.parse(json["published_at"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         tareaClase: TareaClase.fromJson(json["TareaClase"]),
@@ -63,7 +61,6 @@ class Tarea {
         "TareaNombre": tareaNombre,
         "TareaDescripcion": tareaDescripcion,
         "TareaArchivo": tareaArchivo,
-        "published_at": publishedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "TareaClase": tareaClase.toJson(),
@@ -164,7 +161,6 @@ class TareaCurso {
 class TareaDetalle {
   TareaDetalle({
     required this.id,
-    required this.publishedAt,
     required this.createdAt,
     required this.updatedAt,
     required this.tareaDetDescripcion,
@@ -176,7 +172,7 @@ class TareaDetalle {
   });
 
   int id;
-  DateTime publishedAt;
+
   DateTime createdAt;
   DateTime updatedAt;
   String tareaDetDescripcion;
@@ -188,7 +184,6 @@ class TareaDetalle {
 
   factory TareaDetalle.fromJson(Map<String, dynamic> json) => TareaDetalle(
         id: json["id"],
-        publishedAt: DateTime.parse(json["published_at"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         tareaDetDescripcion: json["TareaDetDescripcion"],
@@ -201,7 +196,6 @@ class TareaDetalle {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "published_at": publishedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "TareaDetDescripcion": tareaDetDescripcion,

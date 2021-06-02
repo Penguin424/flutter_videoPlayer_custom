@@ -104,7 +104,6 @@ class ClaseTarea {
     required this.tareaNombre,
     required this.tareaDescripcion,
     required this.tareaArchivo,
-    required this.publishedAt,
     required this.createdAt,
     required this.updatedAt,
     required this.tareaClase,
@@ -119,7 +118,7 @@ class ClaseTarea {
   String tareaNombre;
   String tareaDescripcion;
   dynamic tareaArchivo;
-  DateTime publishedAt;
+
   DateTime createdAt;
   DateTime updatedAt;
   int tareaClase;
@@ -134,7 +133,6 @@ class ClaseTarea {
         tareaNombre: json["TareaNombre"],
         tareaDescripcion: json["TareaDescripcion"],
         tareaArchivo: json["TareaArchivo"],
-        publishedAt: DateTime.parse(json["published_at"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         tareaClase: json["TareaClase"],
@@ -150,7 +148,6 @@ class ClaseTarea {
         "TareaNombre": tareaNombre,
         "TareaDescripcion": tareaDescripcion,
         "TareaArchivo": tareaArchivo,
-        "published_at": publishedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
         "TareaClase": tareaClase,

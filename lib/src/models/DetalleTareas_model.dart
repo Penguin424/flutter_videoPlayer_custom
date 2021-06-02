@@ -1,66 +1,68 @@
 // To parse this JSON data, do
 //
-//     final curso = cursoFromJson(jsonString);
+//     final detalleTareas = detalleTareasFromJson(jsonString);
 
 import 'dart:convert';
 
-Curso cursoFromJson(String str) => Curso.fromJson(json.decode(str));
+DetalleTareas detalleTareasFromJson(String str) =>
+    DetalleTareas.fromJson(json.decode(str));
 
-String cursoToJson(Curso data) => json.encode(data.toJson());
+String detalleTareasToJson(DetalleTareas data) => json.encode(data.toJson());
 
-class Curso {
-  Curso({
+class DetalleTareas {
+  DetalleTareas({
     required this.id,
-    required this.cursoTitulo,
-    required this.cursoActivo,
-    required this.publishedAt,
     required this.createdAt,
     required this.updatedAt,
-    required this.cursoClases,
-    required this.cursoAlumnos,
-    required this.cursoTarea,
+    required this.tareaDetDescripcion,
+    required this.tareaDetArchivo,
+    required this.tareaDetEntrega,
+    required this.tareaDetCalificacion,
+    required this.tareaDetAlumno,
+    required this.tareaDetTarea,
+    required this.tareaDetEntregada,
   });
 
   int id;
-  String cursoTitulo;
-  bool cursoActivo;
-  DateTime publishedAt;
   DateTime createdAt;
   DateTime updatedAt;
-  List<CursoClase> cursoClases;
-  List<CursoAlumno> cursoAlumnos;
-  List<CursoTarea> cursoTarea;
+  String tareaDetDescripcion;
+  String tareaDetArchivo;
+  DateTime tareaDetEntrega;
+  int tareaDetCalificacion;
+  TareaDetAlumno tareaDetAlumno;
+  TareaDetTarea tareaDetTarea;
+  bool tareaDetEntregada;
 
-  factory Curso.fromJson(Map<String, dynamic> json) => Curso(
+  factory DetalleTareas.fromJson(Map<String, dynamic> json) => DetalleTareas(
         id: json["id"],
-        cursoTitulo: json["CursoTitulo"],
-        cursoActivo: json["CursoActivo"],
-        publishedAt: DateTime.parse(json["published_at"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-        cursoClases: List<CursoClase>.from(
-            json["CursoClases"].map((x) => CursoClase.fromJson(x))),
-        cursoAlumnos: List<CursoAlumno>.from(
-            json["CursoAlumnos"].map((x) => CursoAlumno.fromJson(x))),
-        cursoTarea: List<CursoTarea>.from(
-            json["CursoTarea"].map((x) => CursoTarea.fromJson(x))),
+        tareaDetDescripcion: json["TareaDetDescripcion"],
+        tareaDetArchivo: json["TareaDetArchivo"],
+        tareaDetEntrega: DateTime.parse(json["TareaDetEntrega"]),
+        tareaDetCalificacion: json["TareaDetCalificacion"],
+        tareaDetAlumno: TareaDetAlumno.fromJson(json["TareaDetAlumno"]),
+        tareaDetTarea: TareaDetTarea.fromJson(json["TareaDetTarea"]),
+        tareaDetEntregada: json["TareaDetEntregada"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "CursoTitulo": cursoTitulo,
-        "CursoActivo": cursoActivo,
-        "published_at": publishedAt.toIso8601String(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
-        "CursoClases": List<dynamic>.from(cursoClases.map((x) => x.toJson())),
-        "CursoAlumnos": List<dynamic>.from(cursoAlumnos.map((x) => x.toJson())),
-        "CursoTarea": List<dynamic>.from(cursoTarea.map((x) => x.toJson())),
+        "TareaDetDescripcion": tareaDetDescripcion,
+        "TareaDetArchivo": tareaDetArchivo,
+        "TareaDetEntrega": tareaDetEntrega.toIso8601String(),
+        "TareaDetCalificacion": tareaDetCalificacion,
+        "TareaDetAlumno": tareaDetAlumno.toJson(),
+        "TareaDetTarea": tareaDetTarea.toJson(),
+        "TareaDetEntregada": tareaDetEntregada,
       };
 }
 
-class CursoAlumno {
-  CursoAlumno({
+class TareaDetAlumno {
+  TareaDetAlumno({
     required this.id,
     required this.username,
     required this.email,
@@ -82,7 +84,7 @@ class CursoAlumno {
   DateTime createdAt;
   DateTime updatedAt;
 
-  factory CursoAlumno.fromJson(Map<String, dynamic> json) => CursoAlumno(
+  factory TareaDetAlumno.fromJson(Map<String, dynamic> json) => TareaDetAlumno(
         id: json["id"],
         username: json["username"],
         email: json["email"],
@@ -107,56 +109,8 @@ class CursoAlumno {
       };
 }
 
-class CursoClase {
-  CursoClase({
-    required this.id,
-    required this.claseTitulo,
-    required this.claseVideo,
-    required this.claseActiva,
-    required this.claseCurso,
-    required this.publishedAt,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.clasemaestro,
-  });
-
-  int id;
-  String claseTitulo;
-  String claseVideo;
-  bool claseActiva;
-  int claseCurso;
-  DateTime publishedAt;
-  DateTime createdAt;
-  DateTime updatedAt;
-  int clasemaestro;
-
-  factory CursoClase.fromJson(Map<String, dynamic> json) => CursoClase(
-        id: json["id"],
-        claseTitulo: json["ClaseTitulo"],
-        claseVideo: json["ClaseVideo"],
-        claseActiva: json["ClaseActiva"],
-        claseCurso: json["ClaseCurso"],
-        publishedAt: DateTime.parse(json["published_at"]),
-        createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
-        clasemaestro: json["Clasemaestro"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "id": id,
-        "ClaseTitulo": claseTitulo,
-        "ClaseVideo": claseVideo,
-        "ClaseActiva": claseActiva,
-        "ClaseCurso": claseCurso,
-        "published_at": publishedAt.toIso8601String(),
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
-        "Clasemaestro": clasemaestro,
-      };
-}
-
-class CursoTarea {
-  CursoTarea({
+class TareaDetTarea {
+  TareaDetTarea({
     required this.id,
     required this.tareaNombre,
     required this.tareaDescripcion,
@@ -168,13 +122,13 @@ class CursoTarea {
     required this.tareaCurso,
     required this.tareaPuntos,
     required this.tareaActiva,
+    required this.tareaMaestro,
   });
 
   int id;
   String tareaNombre;
   String tareaDescripcion;
-  dynamic tareaArchivo;
-
+  String tareaArchivo;
   DateTime createdAt;
   DateTime updatedAt;
   int tareaClase;
@@ -182,8 +136,9 @@ class CursoTarea {
   int tareaCurso;
   int tareaPuntos;
   bool tareaActiva;
+  int tareaMaestro;
 
-  factory CursoTarea.fromJson(Map<String, dynamic> json) => CursoTarea(
+  factory TareaDetTarea.fromJson(Map<String, dynamic> json) => TareaDetTarea(
         id: json["id"],
         tareaNombre: json["TareaNombre"],
         tareaDescripcion: json["TareaDescripcion"],
@@ -195,6 +150,7 @@ class CursoTarea {
         tareaCurso: json["TareaCurso"],
         tareaPuntos: json["TareaPuntos"],
         tareaActiva: json["TareaActiva"],
+        tareaMaestro: json["TareaMaestro"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -209,5 +165,6 @@ class CursoTarea {
         "TareaCurso": tareaCurso,
         "TareaPuntos": tareaPuntos,
         "TareaActiva": tareaActiva,
+        "TareaMaestro": tareaMaestro,
       };
 }
