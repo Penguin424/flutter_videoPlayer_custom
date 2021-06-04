@@ -42,6 +42,18 @@ class VideoPlay extends HookWidget {
     }
 
     useEffect(() {
+      final seconsAdd =
+          Duration(milliseconds: _position.value.toInt()).inSeconds;
+      if (seconsAdd == 0) {
+        _duration.value =
+            _duration.value + Duration(seconds: 24).inMilliseconds.toDouble();
+
+        print(
+            'activado0 => ${Duration(milliseconds: _position.value.toInt()).inSeconds}');
+      }
+    }, [_position.value]);
+
+    useEffect(() {
       handleInit();
 
       return () {
@@ -94,7 +106,8 @@ class VideoPlay extends HookWidget {
           nextAndBackPanel(_playerController, context, _duration),
           upMenuVideoPlayer(context, _playerController, _fullScreen),
           sliderProgVideo(context, _duration, _position, _playerController),
-          downMenuVideoPlayer(context, _fullScreen, _playerController),
+          downMenuVideoPlayer(
+              context, _fullScreen, _playerController, _duration),
           buttonsMiddle(_playerController.value, _menurview),
         ],
       ),
@@ -105,6 +118,7 @@ class VideoPlay extends HookWidget {
     BuildContext context,
     ValueNotifier<int> _fullScreen,
     ValueNotifier<VideoPlayerController> _playerController,
+    ValueNotifier<double> _duration,
   ) {
     Duration position = _playerController.value.value.position;
     Duration duration = _playerController.value.value.duration;
@@ -224,8 +238,11 @@ class VideoPlay extends HookWidget {
     );
   }
 
-  Row nextAndBackPanel(ValueNotifier<VideoPlayerController> _playerController,
-      BuildContext context, ValueNotifier<double> _duration) {
+  Row nextAndBackPanel(
+    ValueNotifier<VideoPlayerController> _playerController,
+    BuildContext context,
+    ValueNotifier<double> _duration,
+  ) {
     return Row(
       children: [
         GestureDetector(

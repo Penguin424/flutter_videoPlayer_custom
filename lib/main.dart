@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reproductor/src/pages/ViewsDocuemnts/imageView_page.dart';
+import 'package:reproductor/src/pages/ViewsDocuemnts/pdfView_page.dart';
 import 'package:reproductor/src/pages/clase_page.dart';
 import 'package:reproductor/src/pages/cursoDetalle_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/AlumnosPages/alumnoTarea_page.dart';
@@ -27,6 +29,8 @@ class MyApp extends HookWidget {
         "/tarea/crear": (BuildContext context) => TareaCrear(),
         "/tarea/calificar": (BuildContext context) => DetalleTareaPage(),
         "/tareas": (BuildContext context) => RevisionTareas(),
+        "/readers/pdf": (BuildContext context) => PdfViewPage(),
+        "/readers/img": (BuildContext context) => ImgViewer(),
       },
     );
   }
