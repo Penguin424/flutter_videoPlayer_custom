@@ -1,6 +1,7 @@
 // To parse this JSON data, do
 //
 //     final tarea = tareaFromJson(jsonString);
+
 import 'dart:convert';
 
 Tarea tareaFromJson(String str) => Tarea.fromJson(json.decode(str));
@@ -27,8 +28,7 @@ class Tarea {
   int id;
   String tareaNombre;
   String tareaDescripcion;
-  dynamic tareaArchivo;
-
+  String tareaArchivo;
   DateTime createdAt;
   DateTime updatedAt;
   TareaClase tareaClase;
@@ -169,18 +169,19 @@ class TareaDetalle {
     required this.tareaDetCalificacion,
     required this.tareaDetAlumno,
     required this.tareaDetTarea,
+    required this.tareaDetEntregada,
   });
 
   int id;
-
   DateTime createdAt;
   DateTime updatedAt;
   String tareaDetDescripcion;
-  dynamic tareaDetArchivo;
+  String tareaDetArchivo;
   DateTime tareaDetEntrega;
   int tareaDetCalificacion;
   int tareaDetAlumno;
   int tareaDetTarea;
+  bool tareaDetEntregada;
 
   factory TareaDetalle.fromJson(Map<String, dynamic> json) => TareaDetalle(
         id: json["id"],
@@ -192,6 +193,7 @@ class TareaDetalle {
         tareaDetCalificacion: json["TareaDetCalificacion"],
         tareaDetAlumno: json["TareaDetAlumno"],
         tareaDetTarea: json["TareaDetTarea"],
+        tareaDetEntregada: json["TareaDetEntregada"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -204,6 +206,7 @@ class TareaDetalle {
         "TareaDetCalificacion": tareaDetCalificacion,
         "TareaDetAlumno": tareaDetAlumno,
         "TareaDetTarea": tareaDetTarea,
+        "TareaDetEntregada": tareaDetEntregada,
       };
 }
 

@@ -9,13 +9,21 @@ class PdfViewPage extends HookWidget {
       ModalRoute.of(context)!.settings.arguments as String,
     );
 
+    final _pdfViewerController =
+        useState<PdfViewerController>(PdfViewerController());
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_params.value.split('/').last),
         centerTitle: true,
         backgroundColor: Color(0xFF4CAAB1),
       ),
-      body: Container(child: SfPdfViewer.network(_params.value)),
+      body: Container(
+        child: SfPdfViewer.network(
+          _params.value,
+          controller: _pdfViewerController.value,
+        ),
+      ),
     );
   }
 }

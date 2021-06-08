@@ -9,12 +9,16 @@ class CardTarea extends HookWidget {
     required this.descripcion,
     required this.clase,
     required this.id,
+    required this.entr,
+    required this.calificacion,
   }) : super(key: key);
 
   final String title;
   final String descripcion;
   final String clase;
   final int id;
+  final bool entr;
+  final int calificacion;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,7 @@ class CardTarea extends HookWidget {
               color: Color(0xFFBFE3ED),
             ),
             title: Text(
-              '${this.clase} - ${this.title}',
+              '${this.clase} - ${this.title}  ${this.entr ? '\nPUNTOS: ${this.calificacion}' : ''} ',
               style: TextStyle(
                 color: Colors.white,
               ),
@@ -52,19 +56,21 @@ class CardTarea extends HookWidget {
                     color: Color(0xFFBFE3ED),
                   ),
                 ),
-                onPressed: () {
-                  if (HttpMod.localStorage.getItem('role') == 'MAESTRO') {
-                    Navigator.pushNamed(
-                      context,
-                      '/tareas',
-                      arguments: {
-                        'idTarea': id,
+                onPressed: this.entr
+                    ? null
+                    : () {
+                        if (HttpMod.localStorage.getItem('role') == 'MAESTRO') {
+                          Navigator.pushNamed(
+                            context,
+                            '/tareas',
+                            arguments: {
+                              'idTarea': id,
+                            },
+                          );
+                        } else {
+                          Navigator.pushNamed(context, '/entregaTarea');
+                        }
                       },
-                    );
-                  } else {
-                    Navigator.pushNamed(context, '/entregaTarea');
-                  }
-                },
               ),
               const SizedBox(width: 8),
             ],

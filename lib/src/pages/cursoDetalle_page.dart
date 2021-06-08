@@ -10,9 +10,14 @@ class CursoDetallePage extends HookWidget {
   // const ClasesPage({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final _titleAppBar = useState<String>('CURSO');
     final _pages = useState<List<Widget>>([
-      ClasesPage(),
-      TareasPage(),
+      ClasesPage(
+        titleAppBar: _titleAppBar,
+      ),
+      TareasPage(
+        titleAppBar: _titleAppBar,
+      ),
     ]);
     final _curso = useState<Map<String, dynamic>>(
       ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>,
@@ -24,7 +29,9 @@ class CursoDetallePage extends HookWidget {
       print(localStorage.getItem('role'));
 
       if (localStorage.getItem('role') == 'MAESTRO') {
-        _pages.value.add(AsistenciasTomaPage());
+        _pages.value.add(AsistenciasTomaPage(
+          titleAppBar: _titleAppBar,
+        ));
       }
     }, []);
 
@@ -42,7 +49,7 @@ class CursoDetallePage extends HookWidget {
             )
           : Container(),
       appBar: AppBar(
-        title: Text(_curso.value['cursoTitulo']),
+        title: Text(_titleAppBar.value),
         centerTitle: true,
         backgroundColor: Color(0xFF4CAAB1),
       ),

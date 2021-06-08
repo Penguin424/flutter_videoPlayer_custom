@@ -8,6 +8,12 @@ import 'package:reproductor/src/utils/Http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class AsistenciasTomaPage extends HookWidget {
+  const AsistenciasTomaPage({
+    required this.titleAppBar,
+  }) : super();
+
+  final ValueNotifier<String> titleAppBar;
+
   @override
   Widget build(BuildContext context) {
     final _asistencias = useState<List<Asistencia>>([]);
@@ -41,6 +47,7 @@ class AsistenciasTomaPage extends HookWidget {
           return Clase.fromJson(a);
         }).toList();
 
+        this.titleAppBar.value = 'ASISTENCIAS';
         _clases.value = data;
         _claseSelect.value = data[0].id;
 

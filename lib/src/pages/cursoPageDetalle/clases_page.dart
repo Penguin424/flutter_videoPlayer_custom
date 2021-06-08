@@ -6,6 +6,12 @@ import 'package:reproductor/src/models/Clase_model.dart';
 import 'package:reproductor/src/utils/Http.dart';
 
 class ClasesPage extends HookWidget {
+  const ClasesPage({
+    required this.titleAppBar,
+  }) : super();
+
+  final ValueNotifier<String> titleAppBar;
+
   @override
   Widget build(BuildContext context) {
     final _clases = useState<List<Clase>>([]);
@@ -23,6 +29,7 @@ class ClasesPage extends HookWidget {
           return Clase.fromJson(a);
         }).toList();
 
+        this.titleAppBar.value = data.last.claseTitulo;
         _clases.value = data;
       } else {}
     }

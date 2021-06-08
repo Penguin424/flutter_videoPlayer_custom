@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:reproductor/src/utils/Http.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -23,6 +27,8 @@ class DetalleTareaPage extends HookWidget {
         text: _tareaDetalle.value.tareaDetCalificacion.toString(),
       ),
     );
+    final _isLoading = useState<bool>(false);
+    final _modalCal = useState<bool>(true);
 
     useEffect(() {
       print(_tareaDetalle.value);
@@ -34,32 +40,44 @@ class DetalleTareaPage extends HookWidget {
         centerTitle: true,
         backgroundColor: Color(0xFF4CAAB1),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.all(20),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                _comentariosForm(_tareaDetalle),
-                SizedBox(
-                  height: 40.0,
-                ),
-                _createTable(
-                  _tareaDetalle,
-                  _totalArchivo,
-                  _porcentajeTotal,
-                  context,
-                ),
-                SizedBox(
-                  height: 40.0,
-                ),
-                _createCalificacion(_calificacion),
-                SizedBox(
-                  height: 50.0,
-                ),
-                _createButtonsCalReg(_tareaDetalle)
-              ],
+      body: LoadingOverlay(
+        progressIndicator: _modalCal.value
+            ? _modalCompleto(_porcentajeTotal, _totalArchivo)
+            : CircularProgressIndicator(),
+        isLoading: _isLoading.value,
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.all(20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  _comentariosForm(_tareaDetalle),
+                  SizedBox(
+                    height: 40.0,
+                  ),
+                  _createTable(
+                    _tareaDetalle,
+                    _totalArchivo,
+                    _porcentajeTotal,
+                    _isLoading,
+                    context,
+                  ),
+                  SizedBox(
+                    height: 40.0,
+                  ),
+                  _createCalificacion(_calificacion, _tareaDetalle),
+                  SizedBox(
+                    height: 50.0,
+                  ),
+                  _createButtonsCalReg(
+                    _tareaDetalle,
+                    _isLoading,
+                    _modalCal,
+                    context,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -67,31 +85,89 @@ class DetalleTareaPage extends HookWidget {
     );
   }
 
-  Row _createButtonsCalReg(ValueNotifier<DetalleTareas> _tareaDetalle) {
+  Container _modalCompleto(
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<int> _totalArchivo,
+  ) {
+    return Container(
+      height: 100,
+      width: 200,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: _modalDescarga(
+        _porcentajeTotal,
+        _totalArchivo,
+      ),
+    );
+  }
+
+  Center _modalDescarga(
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<int> _totalArchivo,
+  ) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text('DESCARGANDO'),
+          Text('${_porcentajeTotal.value}% / ${_totalArchivo.value} MB'),
+        ],
+      ),
+    );
+  }
+
+  Row _createButtonsCalReg(
+    ValueNotifier<DetalleTareas> _tareaDetalle,
+    ValueNotifier<bool> _isLoading,
+    ValueNotifier<bool> _modalCal,
+    BuildContext context,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         ElevatedButton(
-          onPressed: () {
-            print(_tareaDetalle.value.id);
+          onPressed: () async {
+            _modalCal.value = false;
+            final id = _tareaDetalle.value.id;
+            _isLoading.value = true;
+            await HttpMod.update(
+              '/detalletareas/$id',
+              jsonEncode(
+                {
+                  'TareaDetCalificacion':
+                      _tareaDetalle.value.tareaDetCalificacion,
+                },
+              ),
+            );
+            _isLoading.value = false;
+            Navigator.pop(context);
           },
           child: Text('CALIFICAR'),
           style: ElevatedButton.styleFrom(
             primary: Color(0xFF4CAAB1),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
           ),
         ),
         ElevatedButton(
-          onPressed: () {
-            print(_tareaDetalle.value.id);
+          onPressed: () async {
+            _modalCal.value = false;
+            final id = _tareaDetalle.value.id;
+            _isLoading.value = true;
+            await HttpMod.delete(
+              '/detalletareas/$id',
+            );
+            _isLoading.value = false;
+            Navigator.pop(context);
           },
           child: Text('REGRESAR'),
           style: ElevatedButton.styleFrom(
             primary: Colors.red,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
           ),
         ),
@@ -100,9 +176,14 @@ class DetalleTareaPage extends HookWidget {
   }
 
   TextField _createCalificacion(
-      ValueNotifier<TextEditingController> _calificacion) {
+    ValueNotifier<TextEditingController> _calificacion,
+    ValueNotifier<DetalleTareas> _tareaDetalle,
+  ) {
     return TextField(
       controller: _calificacion.value,
+      onChanged: (String value) {
+        _tareaDetalle.value.tareaDetCalificacion = int.parse(value);
+      },
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: '0/100',
@@ -154,6 +235,7 @@ class DetalleTareaPage extends HookWidget {
     ValueNotifier<DetalleTareas> _tareaDetalle,
     ValueNotifier<int> _totalArchivo,
     ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<bool> _isLoading,
     BuildContext context,
   ) {
     return Table(
@@ -194,6 +276,7 @@ class DetalleTareaPage extends HookWidget {
           _tareaDetalle.value.tareaDetArchivo.split(',').toList(),
           _totalArchivo,
           _porcentajeTotal,
+          _isLoading,
           context,
         ),
       ],
@@ -201,10 +284,12 @@ class DetalleTareaPage extends HookWidget {
   }
 
   List<TableRow> _generadorProducto(
-      List<String> archivoss,
-      ValueNotifier<int> _totalArchivo,
-      ValueNotifier<int> _porcentajeTotal,
-      BuildContext context) {
+    List<String> archivoss,
+    ValueNotifier<int> _totalArchivo,
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<bool> _isLoading,
+    BuildContext context,
+  ) {
     if (archivoss.length <= 0) return [];
 
     final List<TableRow> archivos = archivoss.map<TableRow>((a) {
@@ -238,6 +323,9 @@ class DetalleTareaPage extends HookWidget {
                 ),
                 onPressed: () => _showDialog(
                   context,
+                  _porcentajeTotal,
+                  _totalArchivo,
+                  _isLoading,
                   a.split('/').last.split('.').last,
                   a,
                 ),
@@ -253,6 +341,9 @@ class DetalleTareaPage extends HookWidget {
 
   Future<void> _showDialog(
     BuildContext context,
+    ValueNotifier<int> _totalArchivo,
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<bool> _isLoading,
     String ext,
     String url,
   ) async {
@@ -277,6 +368,9 @@ class DetalleTareaPage extends HookWidget {
                     Navigator.pop(context);
                     handleGetArchive(
                       context,
+                      _totalArchivo,
+                      _porcentajeTotal,
+                      _isLoading,
                       url,
                     );
                   },
@@ -285,7 +379,13 @@ class DetalleTareaPage extends HookWidget {
                   child: Text('VER'),
                   onPressed: () {
                     if (kIsWeb) {
-                      handleGetArchive(context, url);
+                      handleGetArchive(
+                        context,
+                        _totalArchivo,
+                        _porcentajeTotal,
+                        _isLoading,
+                        url,
+                      );
                     } else {
                       if (ext == 'mp4') {
                         Navigator.pop(context);
@@ -325,6 +425,9 @@ class DetalleTareaPage extends HookWidget {
 
   void handleGetArchive(
     BuildContext context,
+    ValueNotifier<int> _totalArchivo,
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<bool> _isLoading,
     String url,
   ) async {
     if (kIsWeb) {
@@ -338,17 +441,19 @@ class DetalleTareaPage extends HookWidget {
       final nameVideo = url.split('/').last;
 
       try {
+        _isLoading.value = true;
         final dir = await getExternalStorageDirectory();
         await dio.download(
           url,
           '${dir!.path}/$nameVideo',
           onReceiveProgress: (prog, tot) {
-            // _porcentajeTotal.value = ((prog / tot) * 100).toInt();
-            // _totalArchivo.value = tot ~/ 1000000;
+            _porcentajeTotal.value = tot ~/ 1000000;
+            _totalArchivo.value = ((prog / tot) * 100).toInt();
 
             print('sad');
           },
         );
+        _isLoading.value = false;
       } catch (e) {
         print(e);
       }
