@@ -68,7 +68,13 @@ class CardTarea extends HookWidget {
                             },
                           );
                         } else {
-                          Navigator.pushNamed(context, '/entregaTarea');
+                          Navigator.pushNamed(
+                            context,
+                            '/entregaTarea',
+                            arguments: {
+                              'idTarea': id,
+                            },
+                          );
                         }
                       },
               ),

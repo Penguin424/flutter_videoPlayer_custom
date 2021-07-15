@@ -22,8 +22,8 @@ class HttpMod {
     'Accept': 'application/json',
     'Authorization': 'Bearer ${localStorage.getItem('token')}',
   };
-  static String _host = '192.168.15.157';
-  static int _port = 1337;
+  static String _host = '192.168.68.151';
+  static int _port = 3001;
 
   static Future<http.Response> login(LoginData loginData) async {
     final url = Uri(

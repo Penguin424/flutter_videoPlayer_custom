@@ -40,7 +40,13 @@ class CursoDetallePage extends HookWidget {
           ? FloatingActionButton.extended(
               label: Text('Agregar Tarea'),
               onPressed: () {
-                Navigator.pushNamed(context, '/tarea/crear');
+                Navigator.pushNamed(
+                  context,
+                  '/tarea/crear',
+                  arguments: {
+                    'idCurso': _curso.value['curso'],
+                  },
+                );
               },
               backgroundColor: Color(0xFF4CAAB1),
               icon: Icon(

@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
+import 'package:reproductor/src/utils/Http.dart';
 
 class AlumnoTareaPage extends HookWidget {
   // const AlumnoTareaPage({Key key}) : super(key: key);
@@ -12,6 +15,9 @@ class AlumnoTareaPage extends HookWidget {
   Widget build(BuildContext context) {
     final _archivos = useState<List<MultipartFile>>([]);
     final _comentario = useState<String>('');
+    final _params = useState<Map<String, dynamic>>(
+      ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>,
+    );
 
     useEffect(() {
       print(_archivos.value);
@@ -41,11 +47,60 @@ class AlumnoTareaPage extends HookWidget {
                   height: 40.0,
                 ),
                 _loadFiles(_archivos),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 4.5,
+                ),
+                _updloadAndSendTask(_archivos, _comentario, _params),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  ElevatedButton _updloadAndSendTask(
+    ValueNotifier<List<MultipartFile>> _archivos,
+    ValueNotifier<String> _comentario,
+    ValueNotifier<Map<String, dynamic>> _params,
+  ) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        primary: Color(0xFF01DF3A),
+      ),
+      child: Text('ENTREGAR TAREA'),
+      onPressed: () async {
+        try {
+          List<String> archs = [];
+
+          for (MultipartFile file in _archivos.value) {
+            String url = 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
+            MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
+            request.files.add(file);
+
+            request.fields.addAll({
+              'key': file.filename!,
+            });
+            StreamedResponse resa = await request.send();
+
+            archs.add('${resa.request!.url.origin}/${file.filename!}');
+          }
+
+          HttpMod.post(
+              'detalletareas',
+              jsonEncode({
+                'tareaDetDescripcion': _comentario.value,
+                'tareaDetArchivo': archs.join(','),
+                'tareaDetEntrega': DateTime.now().toString(),
+                'tareaDetCalificacion': 0.0,
+                'tareaDetAlumno': HttpMod.localStorage.getItem('idUser'),
+                'tareaDetTarea': _params.value['idTarea'] as int,
+                'tareaDetEntregada': 1,
+              }));
+        } catch (e) {
+          print(e);
+        }
+      },
     );
   }
 
@@ -179,6 +234,9 @@ class AlumnoTareaPage extends HookWidget {
           color: Color(0xFF4CAAB1),
         ),
       ),
+      onChanged: (value) {
+        _comentario.value = value;
+      },
     );
   }
 
@@ -218,6 +276,8 @@ class AlumnoTareaPage extends HookWidget {
                 filename: e['name'],
               );
             }).toList();
+
+            print(files);
 
             _archivos.value = files;
           } else {
