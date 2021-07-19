@@ -31,6 +31,7 @@ class UserClass {
   UserClass({
     required this.id,
     required this.username,
+    required this.usuarioFoto,
     required this.email,
     required this.provider,
     required this.confirmed,
@@ -45,6 +46,7 @@ class UserClass {
   String username;
   String email;
   String provider;
+  String usuarioFoto;
   bool confirmed;
   bool blocked;
   Role role;
@@ -59,6 +61,7 @@ class UserClass {
         provider: json["provider"],
         confirmed: json["confirmed"],
         blocked: json["blocked"],
+        usuarioFoto: json["UsuarioFoto"],
         role: Role.fromJson(json["role"]),
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
@@ -73,6 +76,7 @@ class UserClass {
         "provider": provider,
         "confirmed": confirmed,
         "blocked": blocked,
+        'UsuarioFoto': usuarioFoto,
         "role": role.toJson(),
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),

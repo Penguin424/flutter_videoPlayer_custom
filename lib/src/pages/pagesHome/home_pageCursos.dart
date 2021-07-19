@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:auto_size_text/auto_size_text.dart';
+// import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:localstorage/localstorage.dart';
-import 'package:reproductor/src/components/navigation_component.dart';
+// import 'package:reproductor/src/components/navigation_component.dart';
 import 'package:reproductor/src/models/Curso.dart';
 import 'package:reproductor/src/utils/Http.dart';
 
@@ -11,25 +12,28 @@ class PageHome extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final _cursosAlumnos = useState<List<Curso>>([]);
-
     void initGetDate() async {
-      LocalStorage localStorage = LocalStorage('localStorage.json');
-      final id = localStorage.getItem('idUser');
+      try {
+        LocalStorage localStorage = LocalStorage('localStorage.json');
+        final id = localStorage.getItem('idUser');
 
-      final res = await HttpMod.get(
-        '/cursos',
-        {
-          '_where[0][CursoAlumnos.id]': id.toString(),
-        },
-      );
+        final res = await HttpMod.get(
+          '/cursos',
+          {
+            '_where[0][CursoAlumnos.id]': id.toString(),
+          },
+        );
 
-      if (res.statusCode == 200) {
-        List<Curso> data = jsonDecode(res.body).map<Curso>((a) {
-          return Curso.fromJson(a);
-        }).toList();
+        if (res.statusCode == 200) {
+          List<Curso> data = jsonDecode(res.body).map<Curso>((a) {
+            return Curso.fromJson(a);
+          }).toList();
 
-        _cursosAlumnos.value = data;
-      } else {}
+          _cursosAlumnos.value = data;
+        } else {}
+      } catch (e) {
+        print(e);
+      }
     }
 
     useEffect(() {
@@ -38,7 +42,6 @@ class PageHome extends HookWidget {
 
     return SafeArea(
       child: Scaffold(
-        bottomNavigationBar: NavigationBar(),
         body: ListView(
           padding: EdgeInsets.all(5),
           children: _cursosAlumnos.value.length > 0

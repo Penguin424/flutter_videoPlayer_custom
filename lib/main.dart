@@ -8,7 +8,8 @@ import 'package:reproductor/src/pages/cursoPageDetalle/AlumnosPages/alumnoTarea_
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/detalleTarea_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/revicionTareas_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/tareaCrear_page.dart';
-import 'package:reproductor/src/pages/home_page.dart';
+import 'package:reproductor/src/pages/pagesHome/home.dart';
+import 'package:reproductor/src/pages/pagesHome/home_pageCursos.dart';
 import 'package:reproductor/src/pages/login_page.dart';
 
 void main() => runApp(MyApp());
@@ -22,7 +23,7 @@ class MyApp extends HookWidget {
       initialRoute: "/",
       routes: {
         "/": (BuildContext context) => LoginPage(),
-        "/home": (BuildContext context) => PageHome(),
+        "/home": (BuildContext context) => HomeApp(),
         "/clases": (BuildContext context) => CursoDetallePage(),
         "/clase": (BuildContext context) => ClasePage(),
         "/entregaTarea": (BuildContext context) => AlumnoTareaPage(),

@@ -60,7 +60,9 @@ class CursoDetallePage extends HookWidget {
         backgroundColor: Color(0xFF4CAAB1),
       ),
       body: Container(
-        child: PageView(children: _pages.value),
+        child: PageView(
+          children: _pages.value,
+        ),
       ),
     );
   }

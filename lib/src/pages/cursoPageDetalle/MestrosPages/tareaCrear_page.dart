@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
+import 'package:reproductor/src/models/Clase_model.dart';
 import 'package:reproductor/src/utils/Http.dart';
 
 class TareaCrear extends HookWidget {
@@ -15,13 +16,31 @@ class TareaCrear extends HookWidget {
   Widget build(BuildContext context) {
     final _archivos = useState<List<MultipartFile>>([]);
     final _comentario = useState<String>('');
-    final _puntos = useState<int>(0);
+    final _tareaNombre = useState<String>('');
+    final _puntos = useState<int>(1);
+    final _clases = useState<List<Clase>>([]);
+    final _claseSelect = useState<int>(0);
     final _params = useState<Map<String, dynamic>>(
       ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>,
     );
 
+    void handleGetInitData() async {
+      final res = await HttpMod.get('/clases', {
+        '_where[0][ClaseCurso.id]': _params.value['idCurso'],
+      });
+
+      if (res.statusCode == 200) {
+        List<Clase> data = jsonDecode(res.body).map<Clase>((a) {
+          return Clase.fromJson(a);
+        }).toList();
+
+        _claseSelect.value = data.first.id;
+        _clases.value = data;
+      }
+    }
+
     useEffect(() {
-      print(_archivos.value);
+      handleGetInitData();
     }, [_archivos.value]);
 
     return Scaffold(
@@ -39,31 +58,19 @@ class TareaCrear extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                _clasesListas(_clases, _claseSelect),
+                SizedBox(
+                  height: 40.0,
+                ),
+                _nombreTareaText(_tareaNombre),
+                SizedBox(
+                  height: 40.0,
+                ),
                 _comentariosForm(_comentario),
                 SizedBox(
                   height: 40.0,
                 ),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'PUNTOS DE LA TAREA',
-                    focusColor: Color(0xFF4CAAB1),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFF4CAAB1),
-                      ),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFF4CAAB1),
-                      ),
-                    ),
-                    labelStyle: TextStyle(
-                      color: Color(0xFF4CAAB1),
-                    ),
-                  ),
-                  onChanged: (value) => _puntos.value = int.parse(value),
-                ),
+                _puntosTarea(_puntos),
                 SizedBox(
                   height: 40.0,
                 ),
@@ -75,7 +82,15 @@ class TareaCrear extends HookWidget {
                 SizedBox(
                   height: MediaQuery.of(context).size.height / 4.5,
                 ),
-                _updloadAndSendTask(_archivos, _comentario, _params),
+                _updloadAndSendTask(
+                  _archivos,
+                  _comentario,
+                  _params,
+                  _puntos,
+                  _claseSelect,
+                  _tareaNombre,
+                  context,
+                ),
               ],
             ),
           ),
@@ -84,10 +99,100 @@ class TareaCrear extends HookWidget {
     );
   }
 
+  TextFormField _nombreTareaText(ValueNotifier<String> _tareaNombre) {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: 'TAREA NOMBRE',
+        focusColor: Color(0xFF4CAAB1),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0xFF4CAAB1),
+          ),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0xFF4CAAB1),
+          ),
+        ),
+        labelStyle: TextStyle(
+          color: Color(0xFF4CAAB1),
+        ),
+      ),
+      onChanged: (value) => _tareaNombre.value = value,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Debe ingresar un nombre para la tarea';
+        }
+      },
+    );
+  }
+
+  TextFormField _puntosTarea(ValueNotifier<int> _puntos) {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Debe ingresar un número de puntos de la tarea';
+        }
+      },
+      decoration: InputDecoration(
+        labelText: 'PUNTOS DE LA TAREA',
+        focusColor: Color(0xFF4CAAB1),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0xFF4CAAB1),
+          ),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+            color: Color(0xFF4CAAB1),
+          ),
+        ),
+        labelStyle: TextStyle(
+          color: Color(0xFF4CAAB1),
+        ),
+      ),
+      onChanged: (value) => _puntos.value = int.parse(value),
+    );
+  }
+
+  DropdownButton<int> _clasesListas(
+      ValueNotifier<List<Clase>> _clases, ValueNotifier<int> _claseSelect) {
+    return DropdownButton<int>(
+      icon: Icon(Icons.arrow_downward),
+      value: _claseSelect.value,
+      isExpanded: true,
+      items: _clases.value.length > 0
+          ? _clases.value.map((e) {
+              return DropdownMenuItem<int>(
+                value: e.id,
+                child: Center(
+                  child: Text(e.claseTitulo),
+                ),
+              );
+            }).toList()
+          : [
+              DropdownMenuItem<int>(
+                value: 0,
+                child: Center(
+                  child: Text('CLASE'),
+                ),
+              )
+            ],
+      onChanged: (int? value) {
+        _claseSelect.value = value ?? 0;
+      },
+    );
+  }
+
   ElevatedButton _updloadAndSendTask(
     ValueNotifier<List<MultipartFile>> _archivos,
     ValueNotifier<String> _comentario,
     ValueNotifier<Map<String, dynamic>> _params,
+    ValueNotifier<int> _puntos,
+    ValueNotifier<int> _claseSelect,
+    ValueNotifier<String> _tareaNombre,
+    BuildContext context,
   ) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -96,45 +201,52 @@ class TareaCrear extends HookWidget {
       child: Text('ENTREGAR TAREA'),
       onPressed: () async {
         try {
-          List<String> archs = [];
+          if (_formKey.currentState!.validate()) {
+            List<String> archs = [];
 
-          for (MultipartFile file in _archivos.value) {
-            String url = 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
-            MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
-            request.files.add(file);
+            for (MultipartFile file in _archivos.value) {
+              String url =
+                  'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
+              MultipartRequest request =
+                  MultipartRequest('POST', Uri.parse(url));
+              request.files.add(file);
 
-            request.fields.addAll({
-              'key': file.filename!,
-            });
-            StreamedResponse resa = await request.send();
+              request.fields.addAll({
+                'key': file.filename!,
+              });
+              StreamedResponse resa = await request.send();
 
-            archs.add('${resa.request!.url.origin}/${file.filename!}');
+              archs.add('${resa.request!.url.origin}/${file.filename!}');
+            }
+
+            // tareaDescripcion
+            // tareaArchivo
+            // tareaEntrega
+            // tareaPuntos
+            // tareaMaestro
+            // tareaCurso
+            // tareaClase
+            // tareaActiva
+
+            HttpMod.post(
+              'tareas',
+              jsonEncode(
+                {
+                  'tareaDescripcion': _comentario.value,
+                  'tareaArchivo': archs.join(','),
+                  'tareaNombre': _tareaNombre.value,
+                  'tareaEntrega': DateTime.now().toString(),
+                  'tareaPuntos': _puntos.value,
+                  'tareaMaestro': HttpMod.localStorage.getItem('idUser'),
+                  'tareaCurso': int.parse(_params.value['idCurso']),
+                  'tareaClase': _claseSelect.value,
+                  'tareaActiva': 1,
+                },
+              ),
+            );
+
+            Navigator.pop(context);
           }
-
-          // tareaDescripcion
-          // tareaArchivo
-          // tareaEntrega
-          // tareaPuntos
-          // tareaMaestro
-          // tareaCurso
-          // tareaClase
-          // tareaActiva
-
-          HttpMod.post(
-            'tareas',
-            jsonEncode(
-              {
-                'tareaDescripcion': _comentario.value,
-                'tareaArchivo': archs.join(','),
-                'tareaEntrega': DateTime.now().toString(),
-                'tareaPuntos': 0.0,
-                'tareaMaestro': HttpMod.localStorage.getItem('idUser'),
-                'tareaCurso': int.parse(_params.value['idCurso']),
-                'tareaClase': 1,
-                'tareaActiva': 1,
-              },
-            ),
-          );
         } catch (e) {
           print(e);
         }

@@ -159,13 +159,13 @@ class AsistenciasTomaPage extends HookWidget {
                       ),
                     );
 
-                    if (res.statusCode == 200) {
-                      await _hanldeGetAsistencias(
-                        _claseSelect.value.toString(),
-                        _asistencias,
-                        _isLoading,
-                      );
-                    }
+                    // if (res.statusCode != 200) {
+                    await _hanldeGetAsistencias(
+                      _claseSelect.value.toString(),
+                      _asistencias,
+                      _isLoading,
+                    );
+                    // }
                   },
           )
         ],

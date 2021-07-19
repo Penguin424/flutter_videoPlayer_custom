@@ -1,10 +1,15 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart' as dioo;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:reproductor/src/models/Tarea.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:path_provider/path_provider.dart';
 import 'package:reproductor/src/utils/Http.dart';
 
 class AlumnoTareaPage extends HookWidget {
@@ -18,43 +23,117 @@ class AlumnoTareaPage extends HookWidget {
     final _params = useState<Map<String, dynamic>>(
       ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>,
     );
+    final _archivosTarea = useState<String>('');
+    final _isLoading = useState<bool>(false);
+    final _modalCal = useState<bool>(true);
+    final _porcentajeTotal = useState(0);
+    final _totalArchivo = useState(0);
+    final _tituloTarea = useState<String>('TAREA');
+
+    void handleGetInitData() async {
+      final res = await HttpMod.get(
+        'tareas/${_params.value['idTarea']}',
+        {},
+      );
+
+      if (res.statusCode == 200) {
+        Tarea tarea = Tarea.fromJson(jsonDecode(res.body));
+
+        _archivosTarea.value = tarea.tareaArchivo;
+        _tituloTarea.value = tarea.tareaNombre;
+      }
+    }
 
     useEffect(() {
-      print(_archivos.value);
-    }, [_archivos.value]);
+      handleGetInitData();
+    }, []);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('ENTREGAR TAREA'),
+        title: Text(_tituloTarea.value),
         centerTitle: true,
         backgroundColor: Color(0xFF4CAAB1),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.all(20),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _comentariosForm(_comentario),
-                SizedBox(
-                  height: 40.0,
-                ),
-                _createTable(_archivos),
-                SizedBox(
-                  height: 40.0,
-                ),
-                _loadFiles(_archivos),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height / 4.5,
-                ),
-                _updloadAndSendTask(_archivos, _comentario, _params),
-              ],
+      body: LoadingOverlay(
+        progressIndicator: _modalCal.value
+            ? _modalCompleto(_porcentajeTotal, _totalArchivo)
+            : CircularProgressIndicator(),
+        isLoading: _isLoading.value,
+        child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.all(20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _comentariosForm(_comentario),
+                  SizedBox(
+                    height: 40.0,
+                  ),
+                  _createTableLinks(
+                    _archivosTarea,
+                    _totalArchivo,
+                    _porcentajeTotal,
+                    _isLoading,
+                    context,
+                  ),
+                  SizedBox(
+                    height: 40.0,
+                  ),
+                  _createTable(_archivos),
+                  SizedBox(
+                    height: 40.0,
+                  ),
+                  _loadFiles(_archivos),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 4.5,
+                  ),
+                  _updloadAndSendTask(
+                    _archivos,
+                    _comentario,
+                    _params,
+                    context,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Container _modalCompleto(
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<int> _totalArchivo,
+  ) {
+    return Container(
+      height: 100,
+      width: 200,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: _modalDescarga(
+        _porcentajeTotal,
+        _totalArchivo,
+      ),
+    );
+  }
+
+  Center _modalDescarga(
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<int> _totalArchivo,
+  ) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text('DESCARGANDO'),
+          Text('${_porcentajeTotal.value}% / ${_totalArchivo.value} MB'),
+        ],
       ),
     );
   }
@@ -63,6 +142,7 @@ class AlumnoTareaPage extends HookWidget {
     ValueNotifier<List<MultipartFile>> _archivos,
     ValueNotifier<String> _comentario,
     ValueNotifier<Map<String, dynamic>> _params,
+    BuildContext context,
   ) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -87,8 +167,9 @@ class AlumnoTareaPage extends HookWidget {
           }
 
           HttpMod.post(
-              'detalletareas',
-              jsonEncode({
+            'detalletareas',
+            jsonEncode(
+              {
                 'tareaDetDescripcion': _comentario.value,
                 'tareaDetArchivo': archs.join(','),
                 'tareaDetEntrega': DateTime.now().toString(),
@@ -96,7 +177,11 @@ class AlumnoTareaPage extends HookWidget {
                 'tareaDetAlumno': HttpMod.localStorage.getItem('idUser'),
                 'tareaDetTarea': _params.value['idTarea'] as int,
                 'tareaDetEntregada': 1,
-              }));
+              },
+            ),
+          );
+
+          Navigator.pop(context);
         } catch (e) {
           print(e);
         }
@@ -238,6 +323,236 @@ class AlumnoTareaPage extends HookWidget {
         _comentario.value = value;
       },
     );
+  }
+
+  Widget _createTableLinks(
+    // ValueNotifier<Tarea> _tarea,
+    ValueNotifier<String> _archivosTarea,
+    ValueNotifier<int> _totalArchivo,
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<bool> _isLoading,
+    BuildContext context,
+  ) {
+    return Table(
+      border: TableBorder.all(),
+      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+      children: <TableRow>[
+        TableRow(
+          children: <Widget>[
+            Container(
+              color: Color.fromRGBO(76, 170, 177, 0.8),
+              height: 48,
+              child: Center(
+                child: Text(
+                  'NOMBRE DE ARCHIVO',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            Center(
+              child: Container(
+                color: Color.fromRGBO(76, 170, 177, 0.8),
+                height: 48,
+                child: Center(
+                  child: Text(
+                    'VER',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        ..._generadorProductoLinks(
+          _archivosTarea.value.split(',').toList(),
+          _totalArchivo,
+          _porcentajeTotal,
+          _isLoading,
+          context,
+        ),
+      ],
+    );
+  }
+
+  List<TableRow> _generadorProductoLinks(
+    List<String> archivoss,
+    ValueNotifier<int> _totalArchivo,
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<bool> _isLoading,
+    BuildContext context,
+  ) {
+    if (archivoss.length <= 0) return [];
+
+    final List<TableRow> archivos = archivoss.map<TableRow>((a) {
+      // String megas = (a.length / 100000).toStringAsFixed(2);
+
+      return TableRow(
+        children: [
+          Container(
+            color: Color.fromRGBO(76, 170, 177, 0.1),
+            height: 48,
+            child: Center(
+              child: Text(
+                a.split('/').last,
+                style: TextStyle(fontSize: 10.0),
+              ),
+            ),
+          ),
+          Container(
+            color: Color.fromRGBO(76, 170, 177, 0.1),
+            height: 48,
+            child: Center(
+              child: ElevatedButton(
+                child: Container(
+                  child: Text(
+                    'VER',
+                    style: TextStyle(fontSize: 10.0),
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFF4CAAB1),
+                ),
+                onPressed: () => _showDialog(
+                  context,
+                  _porcentajeTotal,
+                  _totalArchivo,
+                  _isLoading,
+                  a.split('/').last.split('.').last,
+                  a,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }).toList();
+
+    return archivos;
+  }
+
+  Future<void> _showDialog(
+    BuildContext context,
+    ValueNotifier<int> _totalArchivo,
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<bool> _isLoading,
+    String ext,
+    String url,
+  ) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('OPCION DE VISULIZACION'),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
+                  child: Text('CANCELAR'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                TextButton(
+                  child: Text('DESCARGAR'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    handleGetArchive(
+                      context,
+                      _totalArchivo,
+                      _porcentajeTotal,
+                      _isLoading,
+                      url,
+                    );
+                  },
+                ),
+                TextButton(
+                  child: Text('VER'),
+                  onPressed: () {
+                    if (kIsWeb) {
+                      handleGetArchive(
+                        context,
+                        _totalArchivo,
+                        _porcentajeTotal,
+                        _isLoading,
+                        url,
+                      );
+                    } else {
+                      if (ext == 'mp4') {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          '/clase',
+                          arguments: {
+                            'video': url,
+                            'titulo': url.split('/').last,
+                          },
+                        );
+                      } else if (ext == 'pdf') {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          '/readers/pdf',
+                          arguments: url,
+                        );
+                      } else if (ext == 'jpg' || ext == 'png') {
+                        Navigator.pop(context);
+                        Navigator.pushNamed(
+                          context,
+                          '/readers/img',
+                          arguments: url,
+                        );
+                      }
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void handleGetArchive(
+    BuildContext context,
+    ValueNotifier<int> _totalArchivo,
+    ValueNotifier<int> _porcentajeTotal,
+    ValueNotifier<bool> _isLoading,
+    String url,
+  ) async {
+    if (kIsWeb) {
+      html.window.open(
+        url,
+        'new tab',
+      );
+    } else {
+      dioo.Dio dio = dioo.Dio();
+
+      final nameVideo = url.split('/').last;
+
+      try {
+        _isLoading.value = true;
+        final dir = await getExternalStorageDirectory();
+        await dio.download(
+          url,
+          '${dir!.path}/$nameVideo',
+          onReceiveProgress: (prog, tot) {
+            _porcentajeTotal.value = tot ~/ 1000000;
+            _totalArchivo.value = ((prog / tot) * 100).toInt();
+
+            print('sad');
+          },
+        );
+        _isLoading.value = false;
+      } catch (e) {
+        print(e);
+      }
+    }
   }
 
   ElevatedButton _loadFiles(ValueNotifier<List<MultipartFile>> _archivos) {

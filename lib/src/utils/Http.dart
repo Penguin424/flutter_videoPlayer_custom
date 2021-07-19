@@ -22,7 +22,7 @@ class HttpMod {
     'Accept': 'application/json',
     'Authorization': 'Bearer ${localStorage.getItem('token')}',
   };
-  static String _host = '192.168.68.151';
+  static String _host = '192.168.100.23';
   static int _port = 3001;
 
   static Future<http.Response> login(LoginData loginData) async {
@@ -45,8 +45,8 @@ class HttpMod {
     );
 
     if (response.statusCode == 200) {
+      print(response.body);
       final user = User.fromJson(jsonDecode(response.body));
-      print(user.user.role.name);
       LocalStorage _localStorage = LocalStorage('localStorage.json');
       bool localCard = await _localStorage.ready;
       if (localCard) {
@@ -54,6 +54,7 @@ class HttpMod {
         await _localStorage.setItem('idUser', user.user.id);
         await _localStorage.setItem('userName', user.user.username);
         await _localStorage.setItem('role', user.user.role.name);
+        await _localStorage.setItem('imagenPerfil', user.user.usuarioFoto);
       }
 
       return response;
