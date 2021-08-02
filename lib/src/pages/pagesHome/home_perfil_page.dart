@@ -60,14 +60,14 @@ class HomePerfil extends HookWidget {
                         ? CircleAvatar(
                             backgroundImage: NetworkImage(_fotoPerfil.value),
                             backgroundColor: Color(0xFF4CAAB1),
-                            maxRadius: medidas.width / 4,
+                            maxRadius: 120,
                           )
                         : CircleAvatar(
                             backgroundColor: Color(0xFF4CAAB1),
                             child: Text(
                               '${_nombreList.value.first[0]}${_nombreList.value.last[0]}',
                             ),
-                            maxRadius: medidas.width / 4,
+                            maxRadius: 120,
                           ),
                     SizedBox(
                       height: 20.0,
