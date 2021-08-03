@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "270342511775",
+    "firebase_url": "https://cosbiome-bcdf4.firebaseio.com",
+    "project_id": "cosbiome-bcdf4",
+    "storage_bucket": "cosbiome-bcdf4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270342511775:android:0886751dfc4dfa7cc5d6aa",
+        "android_client_info": {
+          "package_name": "com.cosbiome.escuela"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270342511775-4n1p8m8vtm84r5ru4r5fe7tbgssbrili.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJwOVBMFoT2hbfjwzfO4QEDLxjawrzof4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "270342511775-4n1p8m8vtm84r5ru4r5fe7tbgssbrili.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270342511775:android:70c6b725e4ddcb53c5d6aa",
+        "android_client_info": {
+          "package_name": "com.cosbiome.puntoventa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270342511775-4n1p8m8vtm84r5ru4r5fe7tbgssbrili.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJwOVBMFoT2hbfjwzfO4QEDLxjawrzof4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "270342511775-4n1p8m8vtm84r5ru4r5fe7tbgssbrili.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

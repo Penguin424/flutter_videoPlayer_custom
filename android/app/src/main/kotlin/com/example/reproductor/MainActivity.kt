@@ -1,4 +1,4 @@
-package com.example.reproductor
+package com.cosbiome.escuela
 import io.flutter.embedding.android.FlutterActivity
 import android.view.WindowManager.LayoutParams
 import io.flutter.embedding.engine.FlutterEngine

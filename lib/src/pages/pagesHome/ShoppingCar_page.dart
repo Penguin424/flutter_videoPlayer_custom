@@ -41,7 +41,11 @@ class ShoppingCar extends StatelessWidget {
                         maxWidth: 64,
                         maxHeight: 64,
                       ),
-                      child: Image.asset(producto.image, fit: BoxFit.cover),
+                      child: Image.network(
+                        producto.image,
+                        fit: BoxFit.cover,
+                        scale: 1.3,
+                      ),
                     ),
                     trailing: IconButton(
                       icon: Icon(

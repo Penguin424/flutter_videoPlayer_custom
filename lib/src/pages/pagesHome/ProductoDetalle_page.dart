@@ -67,15 +67,32 @@ class ProductoDetalle extends HookWidget {
                 height: 30.0,
               ),
               SizedBox(
-                height: size.height * 0.4,
+                height: size.height * 0.2,
                 child: Stack(
                   children: [
                     Positioned.fill(
                       child: Hero(
                         tag: producto!.name,
-                        child: Image.asset(
+                        child: Image.network(
                           producto!.image,
                           fit: BoxFit.fitHeight,
+                          loadingBuilder: (
+                            BuildContext context,
+                            Widget child,
+                            ImageChunkEvent? loadingProgress,
+                          ) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: Color.fromRGBO(76, 170, 177, 1.0),
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
