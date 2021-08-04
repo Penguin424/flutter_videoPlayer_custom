@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
+import 'package:reproductor/src/pages/Ventas/DetalleFinalVenta_page.dart';
 import 'package:reproductor/src/pages/ViewsDocuemnts/imageView_page.dart';
 import 'package:reproductor/src/pages/ViewsDocuemnts/pdfView_page.dart';
 import 'package:reproductor/src/pages/clase_page.dart';
@@ -45,6 +46,7 @@ class MyApp extends HookWidget {
         "/readers/img": (BuildContext context) => ImgViewer(),
         '/detalleProducto': (BuildContext context) => ProductoDetalle(),
         '/shoppingCar': (BuildContext context) => ShoppingCar(),
+        '/detalleVentaMandar': (BuildContext context) => VentaSendVendedor(),
       },
     );
   }

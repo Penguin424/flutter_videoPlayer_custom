@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
+import 'package:reproductor/src/pages/Ventas/DetalleFinalVenta_page.dart';
 
 class ShoppingCar extends StatelessWidget {
   const ShoppingCar({Key? key}) : super(key: key);
@@ -82,13 +83,27 @@ class ShoppingCar extends StatelessWidget {
                   ),
                   ElevatedButton(
                     child: Text(
-                      'PAGAR',
+                      'MANDAR PEDIDO',
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        PageRouteBuilder(
+                          transitionDuration: Duration(milliseconds: 650),
+                          pageBuilder: (context, animation, _) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: VentaSendVendedor(),
+                            );
+                          },
+                        ),
+                      );
+                      Navigator.pushNamed(context, '/detalleVentaMandar');
+                    },
                     style: ElevatedButton.styleFrom(
                       primary: Color.fromRGBO(76, 170, 177, 1.0),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100.0)),
+                        borderRadius: BorderRadius.circular(100.0),
+                      ),
                     ),
                   ),
                 ],

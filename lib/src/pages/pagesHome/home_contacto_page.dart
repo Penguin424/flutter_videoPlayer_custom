@@ -35,7 +35,7 @@ class ContactoHome extends HookWidget {
     Future<void> _getProductos() async {
       final numers = await FirebaseFirestore.instance
           .collection('productos')
-          // .limit(10)
+          .limit(5)
           .where('imagen', isNotEqualTo: '')
           .get();
 
@@ -47,8 +47,6 @@ class ContactoHome extends HookWidget {
 
       numers.docs.forEach(
         (element) {
-          print(
-              'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/productos/${element.data()['imagen']}');
           imagenes.add(
             Producto(
               name: element.data()['nombreProducto'],
@@ -59,6 +57,10 @@ class ContactoHome extends HookWidget {
           );
         },
       );
+
+      final _ = Get.find<GlobalController>();
+
+      print(_.alumno.alumnoCodiPostal);
 
       _productos.value = imagenes;
     }

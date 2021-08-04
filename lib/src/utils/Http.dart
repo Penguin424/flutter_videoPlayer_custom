@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter_login/flutter_login.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:localstorage/localstorage.dart';
+import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/User.dart';
 import 'dart:async';
 
@@ -22,7 +24,7 @@ class HttpMod {
     'Accept': 'application/json',
     'Authorization': 'Bearer ${localStorage.getItem('token')}',
   };
-  static String _host = '192.168.68.124';
+  static String _host = '138.197.209.230';
   static int _port = 3001;
 
   static Future<http.Response> login(LoginData loginData) async {
@@ -46,10 +48,13 @@ class HttpMod {
 
     if (response.statusCode == 200) {
       print(response.body);
+      final controller = Get.find<GlobalController>();
       final user = User.fromJson(jsonDecode(response.body));
       LocalStorage _localStorage = LocalStorage('localStorage.json');
       bool localCard = await _localStorage.ready;
       if (localCard) {
+        controller.onAddAlumno(response.body);
+
         await _localStorage.setItem('token', user.jwt);
         await _localStorage.setItem('idUser', user.user.id);
         await _localStorage.setItem('userName', user.user.username);

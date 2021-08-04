@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:reproductor/src/models/Alumno_model.dart';
 import 'package:reproductor/src/models/Producto_model.dart';
 
 class GlobalController extends GetxController {
@@ -6,12 +9,26 @@ class GlobalController extends GetxController {
   double _total = 0.0;
   List<ProductoShoppingCart> get productos => _productos;
   double get total => _total;
+  late AlumnoDatos _alumno;
+  AlumnoDatos get alumno => _alumno;
 
   @override
   void onInit() {
     super.onInit();
 
     print('Hola, Mundo');
+  }
+
+  onAddAlumno(String data) {
+    final datos = jsonDecode(data)['user'];
+    final datosString = jsonEncode(datos);
+    _alumno = AlumnoDatos.fromJson(jsonDecode(datosString));
+  }
+
+  onClearShoppingCart() {
+    this._productos = [];
+
+    update(['shopping_car']);
   }
 
   onAddShoppingCart(ProductoShoppingCart producto) {
