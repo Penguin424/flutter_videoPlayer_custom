@@ -179,17 +179,9 @@ class ProductoDetalle extends HookWidget {
                               price: producto!.price,
                               canitdad: _cantidad.value,
                               total: producto!.price * _cantidad.value,
+                              canitdadAlamacen: producto!.cantidad,
                             ),
-                          );
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${_cantidad.value} - AGREGADOS AL CARRITO',
-                              ),
-                              backgroundColor:
-                                  Color.fromRGBO(76, 170, 177, 1.0),
-                            ),
+                            context,
                           );
                         },
                         child: Text('AGREGAR'),

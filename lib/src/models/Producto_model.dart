@@ -44,6 +44,7 @@ class ProductoShoppingCart {
     required this.price,
     required this.canitdad,
     required this.total,
+    required this.canitdadAlamacen,
   });
 
   int id;
@@ -51,6 +52,7 @@ class ProductoShoppingCart {
   String image;
   double price;
   int canitdad;
+  int canitdadAlamacen;
   double total;
 
   factory ProductoShoppingCart.fromJson(Map<String, dynamic> json) =>
@@ -61,6 +63,7 @@ class ProductoShoppingCart {
         price: json["price"],
         canitdad: json['cantidad'],
         total: json['total'],
+        canitdadAlamacen: json['canitdadAlamacen'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -70,5 +73,6 @@ class ProductoShoppingCart {
         "price": price,
         "cantidad": canitdad,
         "total": total,
+        "canitdadAlamacen": canitdadAlamacen,
       };
 }

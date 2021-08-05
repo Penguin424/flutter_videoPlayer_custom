@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/models/Alumno_model.dart';
 import 'package:reproductor/src/models/Producto_model.dart';
@@ -31,26 +32,68 @@ class GlobalController extends GetxController {
     update(['shopping_car']);
   }
 
-  onAddShoppingCart(ProductoShoppingCart producto) {
+  onAddShoppingCart(ProductoShoppingCart producto, BuildContext context) {
     final productoEcontrado = this
         ._productos
         .where((element) => element.name == producto.name)
         .toList();
 
-    print(productoEcontrado);
     if (productoEcontrado.isEmpty) {
-      _productos.add(producto);
+      if (producto.canitdadAlamacen < producto.canitdad) {
+        return ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'SI SUFICIENTE PRODUCTO EN ALAMACEN',
+            ),
+            backgroundColor: Color.fromRGBO(255, 0, 0, 1.0),
+          ),
+        );
+      } else {
+        _productos.add(producto);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${producto.canitdad} - AGREGADOS AL CARRITO',
+            ),
+            backgroundColor: Color.fromRGBO(76, 170, 177, 1.0),
+          ),
+        );
+      }
     } else {
-      this._productos = this._productos.map((elem) {
-        if (elem.id == productoEcontrado[0].id) {
-          elem.canitdad += producto.canitdad;
-          elem.total = elem.canitdad * elem.price;
+      if (producto.canitdadAlamacen <
+          producto.canitdad + productoEcontrado.first.canitdad) {
+        return ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'SI SUFICIENTE PRODUCTO EN ALAMACEN',
+            ),
+            backgroundColor: Color.fromRGBO(255, 0, 0, 1.0),
+          ),
+        );
+      } else {
+        this._productos = this._productos.map(
+          (elem) {
+            if (elem.id == productoEcontrado[0].id) {
+              elem.canitdad += producto.canitdad;
+              elem.total = elem.canitdad * elem.price;
 
-          return elem;
-        }
+              return elem;
+            }
 
-        return elem;
-      }).toList();
+            return elem;
+          },
+        ).toList();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${producto.canitdad} - AGREGADOS AL CARRITO',
+            ),
+            backgroundColor: Color.fromRGBO(76, 170, 177, 1.0),
+          ),
+        );
+      }
     }
 
     _total = _productos.map((e) => e.total).toList().reduce(

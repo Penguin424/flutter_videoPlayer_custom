@@ -162,7 +162,9 @@ class HomePerfil extends HookWidget {
                               'https://i.pinimg.com/originals/dc/30/85/dc3085dbbc9897fc374f804d4649b502.png',
                           name: 'COLEGIATURA',
                           total: _.alumno.alumnoMensualidad! * 1,
+                          canitdadAlamacen: 2,
                         ),
+                        context,
                       );
 
                       Navigator.pushNamed(context, '/shoppingCar');
