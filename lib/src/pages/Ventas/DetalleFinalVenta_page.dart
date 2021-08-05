@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:reproductor/src/components/StripeButton_component.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/Venta_model.dart';
 import 'package:simple_moment/simple_moment.dart';
@@ -163,6 +164,16 @@ class VentaSendVendedor extends HookWidget {
             fontWeight: FontWeight.w200,
           ),
         ),
+        SizedBox(height: 10),
+        Text(
+          'COSTO CON SERVICIO POR TARJETA DE ${((_.total + (_.total * 0.046) + 3)).toInt()} MXN',
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          style: TextStyle(
+            fontSize: 8,
+            fontWeight: FontWeight.w200,
+          ),
+        ),
         SizedBox(height: 20),
         Text(
           'TOTAL A PAGAR ${_.total.toStringAsFixed(2)}',
@@ -201,7 +212,8 @@ class VentaSendVendedor extends HookWidget {
               borderRadius: BorderRadius.circular(100.0),
             ),
           ),
-        )
+        ),
+        StripePayButton(),
       ],
     );
   }

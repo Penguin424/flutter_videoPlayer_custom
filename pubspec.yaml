@@ -46,6 +46,7 @@ dependencies:
   cloud_firestore: ^2.4.0
   simple_moment: ^1.0.7
   cloud_firestore_web: ^2.3.0
+  flutter_stripe: ^1.2.0
   cached_network_image: ^3.1.0
 
   # The following adds the Cupertino Icons font to your application.
