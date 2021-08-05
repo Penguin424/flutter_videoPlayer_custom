@@ -13,22 +13,26 @@ class Producto {
     required this.name,
     required this.image,
     required this.price,
+    required this.cantidad,
   });
 
   String name;
   String image;
   double price;
+  int cantidad;
 
   factory Producto.fromJson(Map<String, dynamic> json) => Producto(
         name: json["name"],
         image: json["image"],
         price: json["price"],
+        cantidad: json["cantidad"],
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "image": image,
         "price": price,
+        "cantidad": cantidad,
       };
 }
 

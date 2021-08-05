@@ -21,6 +21,7 @@ class AlumnoDatos {
     this.alumnoEstado,
     this.alumnoMunicipio,
     this.alumnoVendedor,
+    this.alumnoMensualidad,
   });
 
   String? alumnoApellidoPaterno;
@@ -33,18 +34,21 @@ class AlumnoDatos {
   String? alumnoEstado;
   String? alumnoMunicipio;
   String? alumnoVendedor;
+  double? alumnoMensualidad;
 
   factory AlumnoDatos.fromJson(Map<String, dynamic> json) => AlumnoDatos(
-      alumnoApellidoPaterno: json["AlumnoApellidoPaterno"],
-      alumnoApellidoMaterno: json["AlumnoApellidoMaterno"],
-      alumnoNombres: json["AlumnoNombres"],
-      alumnoCelular: json["AlumnoCelular"],
-      alumnoDomicilio: json["AlumnoDomicilio"],
-      alumnoCodiPostal: json["AlumnoCodiPostal"],
-      alumnoPais: json["AlumnoPais"],
-      alumnoEstado: json["AlumnoEstado"],
-      alumnoMunicipio: json["AlumnoMunicipio"],
-      alumnoVendedor: json["AlumnoVendedor"]);
+        alumnoApellidoPaterno: json["AlumnoApellidoPaterno"],
+        alumnoApellidoMaterno: json["AlumnoApellidoMaterno"],
+        alumnoNombres: json["AlumnoNombres"],
+        alumnoCelular: json["AlumnoCelular"],
+        alumnoDomicilio: json["AlumnoDomicilio"],
+        alumnoCodiPostal: json["AlumnoCodiPostal"],
+        alumnoPais: json["AlumnoPais"],
+        alumnoEstado: json["AlumnoEstado"],
+        alumnoMunicipio: json["AlumnoMunicipio"],
+        alumnoVendedor: json["AlumnoVendedor"],
+        alumnoMensualidad: double.parse(json["AlumnoMensualidad"]),
+      );
 
   Map<String, dynamic> toJson() => {
         "AlumnoApellidoPaterno": alumnoApellidoPaterno,
@@ -56,6 +60,7 @@ class AlumnoDatos {
         "AlumnoPais": alumnoPais,
         "AlumnoEstado": alumnoEstado,
         "AlumnoMunicipio": alumnoMunicipio,
-        "AlumnoVendedor": alumnoVendedor
+        "AlumnoVendedor": alumnoVendedor,
+        "AlumnoMensualidad": alumnoMensualidad,
       };
 }

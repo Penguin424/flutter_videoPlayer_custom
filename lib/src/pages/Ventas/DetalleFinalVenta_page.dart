@@ -186,25 +186,29 @@ class VentaSendVendedor extends HookWidget {
         ),
         SizedBox(height: 20),
         ElevatedButton(
-          onPressed: () async {
-            _isLoading.value = true;
-            final url = Uri(
-              host: 'cosbiome.online',
-              path: '/cosbiomepedidos',
-              scheme: "https",
-            );
-            final response = await post(
-              url,
-              body: jsonEncode(_venta.toJson()),
-              headers: {HttpHeaders.contentTypeHeader: "application/json"},
-            );
+          onPressed: _.productos[0].name.toLowerCase().startsWith('colegiatura')
+              ? null
+              : () async {
+                  _isLoading.value = true;
+                  final url = Uri(
+                    host: 'cosbiome.online',
+                    path: '/cosbiomepedidos',
+                    scheme: "https",
+                  );
+                  final response = await post(
+                    url,
+                    body: jsonEncode(_venta.toJson()),
+                    headers: {
+                      HttpHeaders.contentTypeHeader: "application/json"
+                    },
+                  );
 
-            if (response.statusCode == 200) {
-              _isLoading.value = false;
+                  if (response.statusCode == 200) {
+                    _isLoading.value = false;
 
-              await _showDialog(context, _);
-            }
-          },
+                    await _showDialog(context, _);
+                  }
+                },
           child: Text('CREAR PEDIDO'),
           style: ElevatedButton.styleFrom(
             primary: Color.fromRGBO(76, 170, 177, 1.0),

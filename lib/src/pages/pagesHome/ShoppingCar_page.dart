@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/pages/Ventas/DetalleFinalVenta_page.dart';
 
-class ShoppingCar extends StatelessWidget {
+class ShoppingCar extends HookWidget {
   const ShoppingCar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    useEffect(() {
+      return () {
+        final controller = Get.find<GlobalController>();
+        final valid = controller.productos[0].name
+            .toLowerCase()
+            .startsWith('colegiatura');
+
+        if (valid) {
+          controller.onClearShoppingCart();
+        }
+      };
+    }, []);
+
     return GetBuilder<GlobalController>(
       id: 'shopping_car',
       builder: (_) => Scaffold(

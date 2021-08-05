@@ -14,12 +14,13 @@ class ContactoHome extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final _productos = useState<List<Producto>>([]);
+    // final _productos = useState<List<Producto>>([]);
     final _currentPage = useState<double>(0.0);
     final _textPage = useState<double>(0.0);
     final _pageCoffeControles = useState<PageController>(new PageController(
       viewportFraction: 0.35,
     ));
+
     final _pageCoffeTextControles =
         useState<PageController>(new PageController());
     final _autoCompleteController = useTextEditingController();
@@ -33,36 +34,10 @@ class ContactoHome extends HookWidget {
     }
 
     Future<void> _getProductos() async {
-      final numers = await FirebaseFirestore.instance
-          .collection('productos')
-          .limit(5)
-          .where('imagen', isNotEqualTo: '')
-          .get();
-
+      // final numersStreams =
       _pageCoffeControles.value.addListener(_coffeScrollListener);
       _pageCoffeControles.value.addListener(_coffeScrollListener);
       _pageCoffeTextControles.value.addListener(_coffeScrollTextListener);
-
-      List<Producto> imagenes = [];
-
-      numers.docs.forEach(
-        (element) {
-          imagenes.add(
-            Producto(
-              name: element.data()['nombreProducto'],
-              image:
-                  'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/productos/${element.data()['imagen']}',
-              price: double.parse(element.data()['precioVenta'].toString()),
-            ),
-          );
-        },
-      );
-
-      final _ = Get.find<GlobalController>();
-
-      print(_.alumno.alumnoCodiPostal);
-
-      _productos.value = imagenes;
     }
 
     useEffect(() {
@@ -91,21 +66,44 @@ class ContactoHome extends HookWidget {
             ),
           ],
         ),
-        body: _productos.value.length > 0
-            ? _body(
-                size,
-                _pageCoffeControles,
-                _productos,
-                _pageCoffeTextControles,
-                _currentPage,
-                _textPage,
-                _autoCompleteController,
-                context,
-              )
-            : Center(
+        body: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('productos')
+              .limit(5)
+              .where('imagen', isNotEqualTo: '')
+              .snapshots(),
+          builder: (context,
+              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            if (!snapshot.hasData)
+              return Center(
                 child: CircularProgressIndicator(
-                color: Color.fromRGBO(76, 170, 177, 1.0),
-              )),
+                  color: Color.fromRGBO(76, 170, 177, 1.0),
+                ),
+              );
+            final productos = snapshot.data!.docs
+                .map(
+                  (element) => Producto(
+                    name: element.data()['nombreProducto'],
+                    image:
+                        'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/productos/${element.data()['imagen']}',
+                    price:
+                        double.parse(element.data()['precioVenta'].toString()),
+                    cantidad: int.parse(element.data()['general'].toString()),
+                  ),
+                )
+                .toList();
+            return _body(
+              size,
+              _pageCoffeControles,
+              productos,
+              _pageCoffeTextControles,
+              _currentPage,
+              _textPage,
+              _autoCompleteController,
+              context,
+            );
+          },
+        ),
       ),
     );
   }
@@ -113,7 +111,7 @@ class ContactoHome extends HookWidget {
   Stack _body(
       Size size,
       ValueNotifier<PageController> _pageCoffeControles,
-      ValueNotifier<List<Producto>> _productos,
+      List<Producto> _productos,
       ValueNotifier<PageController> _pageCoffeTextControles,
       ValueNotifier<double> _currentPage,
       ValueNotifier<double> _textPage,
@@ -143,7 +141,7 @@ class ContactoHome extends HookWidget {
   }
 
   Positioned _textProductos(
-      ValueNotifier<List<Producto>> _productos,
+      List<Producto> _productos,
       ValueNotifier<PageController> _pageCoffeTextControles,
       ValueNotifier<double> _textPage,
       Size size,
@@ -154,7 +152,7 @@ class ContactoHome extends HookWidget {
       left: 0,
       top: 0,
       right: 0,
-      height: 160,
+      height: 180,
       child: TweenAnimationBuilder(
         tween: Tween(
           begin: 1.0,
@@ -171,7 +169,7 @@ class ContactoHome extends HookWidget {
           children: [
             Expanded(
               child: new PageView.builder(
-                itemCount: _productos.value.length,
+                itemCount: _productos.length,
                 key: Key('sad'),
                 controller: _pageCoffeTextControles.value,
                 physics: NeverScrollableScrollPhysics(),
@@ -186,14 +184,14 @@ class ContactoHome extends HookWidget {
                         horizontal: size.width * 0.2,
                       ),
                       child: Hero(
-                        tag: "text_${_productos.value[index].name}",
+                        tag: "text_${_productos[index].name}",
                         child: Material(
                           child: Text(
-                            _productos.value[index].name,
+                            _productos[index].name,
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 20,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
@@ -205,17 +203,33 @@ class ContactoHome extends HookWidget {
               ),
             ),
             SizedBox(
+              height: 2,
+            ),
+            AnimatedSwitcher(
+              duration: _duration,
+              child: Text(
+                'DISPONIBLE: ${_productos[_textPage.value.toInt()].cantidad}',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w300,
+                ),
+                key: Key(
+                  _productos[_textPage.value.toInt()].name,
+                ),
+              ),
+            ),
+            SizedBox(
               height: 12,
             ),
             AnimatedSwitcher(
               duration: _duration,
               child: Text(
-                '\$${_productos.value[_textPage.value.toInt()].price.toStringAsFixed(2)}',
+                '\$${_productos[_textPage.value.toInt()].price.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 24,
                 ),
                 key: Key(
-                  _productos.value[_textPage.value.toInt()].name,
+                  _productos[_textPage.value.toInt()].name,
                 ),
               ),
             ),
@@ -271,7 +285,7 @@ class ContactoHome extends HookWidget {
                     if (textEditingValue == '') {
                       return Iterable<Producto>.empty();
                     }
-                    return _productos.value.where(
+                    return _productos.where(
                       (Producto option) {
                         return option.name.toLowerCase().trim().contains(
                               textEditingValue.toLowerCase().trim(),
@@ -280,7 +294,7 @@ class ContactoHome extends HookWidget {
                     );
                   },
                   onSuggestionSelected: (Producto selection) {
-                    final producto = _productos.value.indexWhere(
+                    final producto = _productos.indexWhere(
                       (element) => element.name == selection.name,
                     );
 
@@ -311,7 +325,7 @@ class ContactoHome extends HookWidget {
 
   Transform _imagesProductos(
       ValueNotifier<PageController> _pageCoffeControles,
-      ValueNotifier<List<Producto>> _productos,
+      List<Producto> _productos,
       ValueNotifier<PageController> _pageCoffeTextControles,
       ValueNotifier<double> _currentPage,
       Size size) {
@@ -321,7 +335,7 @@ class ContactoHome extends HookWidget {
       child: new PageView.builder(
         controller: _pageCoffeControles.value,
         onPageChanged: (page) {
-          if (page < _productos.value.length) {
+          if (page < _productos.length) {
             print('asd $page');
             _pageCoffeTextControles.value.animateToPage(
               page,
@@ -331,13 +345,13 @@ class ContactoHome extends HookWidget {
           }
         },
         scrollDirection: Axis.vertical,
-        itemCount: _productos.value.length + 1,
+        itemCount: _productos.length + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
             return SizedBox.shrink();
           }
 
-          final producto = _productos.value[index - 1];
+          final producto = _productos[index - 1];
           final result = _currentPage.value - index + 1;
           final value = -0.4 * result + 1;
           final opcity = value.clamp(0.0, 1.0);
