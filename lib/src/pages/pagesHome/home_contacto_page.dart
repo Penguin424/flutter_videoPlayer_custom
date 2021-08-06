@@ -66,41 +66,47 @@ class ContactoHome extends HookWidget {
             ),
           ],
         ),
-        body: StreamBuilder(
+        body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: FirebaseFirestore.instance
               .collection('productos')
               .limit(5)
               .where('imagen', isNotEqualTo: '')
               .snapshots(),
-          builder: (context,
-              AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-            if (!snapshot.hasData)
-              return Center(
-                child: CircularProgressIndicator(
-                  color: Color.fromRGBO(76, 170, 177, 1.0),
-                ),
+          builder: (
+            context,
+            snapshot,
+          ) {
+            print(snapshot.data!.docs.length);
+            if (snapshot.hasData) {
+              final productos = snapshot.data!.docs
+                  .map(
+                    (element) => Producto(
+                      name: element.data()['nombreProducto'],
+                      image:
+                          'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/productos/${element.data()['imagen']}',
+                      price: double.parse(
+                          element.data()['precioVenta'].toString()),
+                      cantidad: int.parse(element.data()['general'].toString()),
+                    ),
+                  )
+                  .toList();
+              return _body(
+                size,
+                _pageCoffeControles,
+                productos,
+                _pageCoffeTextControles,
+                _currentPage,
+                _textPage,
+                _autoCompleteController,
+                context,
               );
-            final productos = snapshot.data!.docs
-                .map(
-                  (element) => Producto(
-                    name: element.data()['nombreProducto'],
-                    image:
-                        'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/productos/${element.data()['imagen']}',
-                    price:
-                        double.parse(element.data()['precioVenta'].toString()),
-                    cantidad: int.parse(element.data()['general'].toString()),
-                  ),
-                )
-                .toList();
-            return _body(
-              size,
-              _pageCoffeControles,
-              productos,
-              _pageCoffeTextControles,
-              _currentPage,
-              _textPage,
-              _autoCompleteController,
-              context,
+            } else if (snapshot.hasError) {
+              return Text('No data avaible right now');
+            }
+            return Center(
+              child: CircularProgressIndicator(
+                color: Color.fromRGBO(76, 170, 177, 1.0),
+              ),
             );
           },
         ),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -9,6 +10,9 @@ import 'package:http/http.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/Venta_model.dart';
 import 'package:simple_moment/simple_moment.dart';
+import 'package:reproductor/src/utils/StripeCheckOutMobile.dart'
+    if (dart.library.js) 'package:reproductor/src/utils/StripeWebCheckout.dart'
+    as st;
 
 class StripePayButton extends HookWidget {
   const StripePayButton({Key? key}) : super(key: key);
@@ -88,36 +92,38 @@ class StripePayButton extends HookWidget {
               borderRadius: BorderRadius.circular(100.0),
             ),
           ),
-          onPressed: () async {
-            final url = Uri.parse(
-              'http://138.197.209.230:2999/pago?amount=${((_.total + (_.total * 0.046) + 3) * 100).toInt()}&currency=MXN',
-            );
+          onPressed: kIsWeb
+              ? () => st.redirectToCheckout(context)
+              : () async {
+                  final url = Uri.parse(
+                    'http://138.197.209.230:2999/pago?amount=${((_.total + (_.total * 0.046) + 3) * 100).toInt()}&currency=MXN',
+                  );
 
-            final response = await post(
-              url,
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            );
+                  final response = await post(
+                    url,
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                  );
 
-            if (response.statusCode == 200) {
-              paymentIntentData.value = jsonDecode(response.body);
+                  if (response.statusCode == 200) {
+                    paymentIntentData.value = jsonDecode(response.body);
 
-              await Stripe.instance.initPaymentSheet(
-                paymentSheetParameters: SetupPaymentSheetParameters(
-                  paymentIntentClientSecret:
-                      paymentIntentData.value['paymentIntent'],
-                  applePay: true,
-                  googlePay: true,
-                  style: ThemeMode.light,
-                  merchantCountryCode: 'MXN',
-                  merchantDisplayName: 'PRODUCTO COSBIOME',
-                ),
-              );
-            }
+                    await Stripe.instance.initPaymentSheet(
+                      paymentSheetParameters: SetupPaymentSheetParameters(
+                        paymentIntentClientSecret:
+                            paymentIntentData.value['paymentIntent'],
+                        applePay: true,
+                        googlePay: true,
+                        style: ThemeMode.light,
+                        merchantCountryCode: 'MXN',
+                        merchantDisplayName: 'PRODUCTO COSBIOME',
+                      ),
+                    );
+                  }
 
-            _diaplayPaymentSheet(paymentIntentData, context, _, _venta);
-          },
+                  _diaplayPaymentSheet(paymentIntentData, context, _, _venta);
+                },
           child: Text(
             'PAGO CON TARJETA',
           ),

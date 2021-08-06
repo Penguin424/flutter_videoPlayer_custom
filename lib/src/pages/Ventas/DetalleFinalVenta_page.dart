@@ -217,6 +217,7 @@ class VentaSendVendedor extends HookWidget {
             ),
           ),
         ),
+        SizedBox(height: 20),
         StripePayButton(),
       ],
     );
