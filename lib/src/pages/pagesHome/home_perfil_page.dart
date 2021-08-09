@@ -151,24 +151,26 @@ class HomePerfil extends HookWidget {
                         borderRadius: BorderRadius.circular(100.0),
                       ),
                     ),
-                    onPressed: () {
-                      _.onClearShoppingCart();
-                      _.onAddShoppingCart(
-                        ProductoShoppingCart(
-                          price: _.alumno.alumnoMensualidad!,
-                          canitdad: 1,
-                          id: _.productos.length + 1,
-                          image:
-                              'https://i.pinimg.com/originals/dc/30/85/dc3085dbbc9897fc374f804d4649b502.png',
-                          name: 'COLEGIATURA',
-                          total: _.alumno.alumnoMensualidad! * 1,
-                          canitdadAlamacen: 2,
-                        ),
-                        context,
-                      );
+                    onPressed: _.ultimoPago.month == DateTime.now().month
+                        ? null
+                        : () {
+                            _.onClearShoppingCart();
+                            _.onAddShoppingCart(
+                              ProductoShoppingCart(
+                                price: _.alumno.alumnoMensualidad!,
+                                canitdad: 1,
+                                id: _.productos.length + 1,
+                                image:
+                                    'https://i.pinimg.com/originals/dc/30/85/dc3085dbbc9897fc374f804d4649b502.png',
+                                name: 'COLEGIATURA',
+                                total: _.alumno.alumnoMensualidad! * 1,
+                                canitdadAlamacen: 2,
+                              ),
+                              context,
+                            );
 
-                      Navigator.pushNamed(context, '/shoppingCar');
-                    },
+                            Navigator.pushNamed(context, '/shoppingCar');
+                          },
                     child: Text('PAGAR COLEGIATURA'),
                   ),
                 ],

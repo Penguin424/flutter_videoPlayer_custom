@@ -11,6 +11,7 @@ String alumnoDatosToJson(AlumnoDatos data) => json.encode(data.toJson());
 
 class AlumnoDatos {
   AlumnoDatos({
+    this.id,
     this.alumnoApellidoPaterno,
     this.alumnoApellidoMaterno,
     this.alumnoNombres,
@@ -22,8 +23,10 @@ class AlumnoDatos {
     this.alumnoMunicipio,
     this.alumnoVendedor,
     this.alumnoMensualidad,
+    this.alumnoPagoStripe,
   });
 
+  int? id;
   String? alumnoApellidoPaterno;
   String? alumnoApellidoMaterno;
   String? alumnoNombres;
@@ -35,8 +38,10 @@ class AlumnoDatos {
   String? alumnoMunicipio;
   String? alumnoVendedor;
   double? alumnoMensualidad;
+  String? alumnoPagoStripe;
 
   factory AlumnoDatos.fromJson(Map<String, dynamic> json) => AlumnoDatos(
+        id: json['id'],
         alumnoApellidoPaterno: json["AlumnoApellidoPaterno"],
         alumnoApellidoMaterno: json["AlumnoApellidoMaterno"],
         alumnoNombres: json["AlumnoNombres"],
@@ -48,9 +53,11 @@ class AlumnoDatos {
         alumnoMunicipio: json["AlumnoMunicipio"],
         alumnoVendedor: json["AlumnoVendedor"],
         alumnoMensualidad: double.parse(json["AlumnoMensualidad"]),
+        alumnoPagoStripe: json["AlumnoPagoStripe"],
       );
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         "AlumnoApellidoPaterno": alumnoApellidoPaterno,
         "AlumnoApellidoMaterno": alumnoApellidoMaterno,
         "AlumnoNombres": alumnoNombres,
@@ -62,5 +69,6 @@ class AlumnoDatos {
         "AlumnoMunicipio": alumnoMunicipio,
         "AlumnoVendedor": alumnoVendedor,
         "AlumnoMensualidad": alumnoMensualidad,
+        "AlumnoPagoStripe": alumnoPagoStripe,
       };
 }

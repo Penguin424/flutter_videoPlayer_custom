@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/Venta_model.dart';
+import 'package:reproductor/src/utils/Http.dart';
 import 'package:simple_moment/simple_moment.dart';
 import 'package:reproductor/src/utils/StripeCheckOutMobile.dart'
     if (dart.library.js) 'package:reproductor/src/utils/StripeWebCheckout.dart'
@@ -93,7 +94,7 @@ class StripePayButton extends HookWidget {
             ),
           ),
           onPressed: kIsWeb
-              ? () => st.redirectToCheckout(context)
+              ? () => st.redirectToCheckout(context, _.alumno.alumnoPagoStripe!)
               : () async {
                   final url = Uri.parse(
                     'http://138.197.209.230:2999/pago?amount=${((_.total + (_.total * 0.046) + 3) * 100).toInt()}&currency=MXN',
@@ -122,7 +123,8 @@ class StripePayButton extends HookWidget {
                     );
                   }
 
-                  _diaplayPaymentSheet(paymentIntentData, context, _, _venta);
+                  _diaplayPaymentSheet(
+                      paymentIntentData, context, _, _venta, moment);
                 },
           child: Text(
             'PAGO CON TARJETA',
@@ -133,11 +135,11 @@ class StripePayButton extends HookWidget {
   }
 
   void _diaplayPaymentSheet(
-    ValueNotifier<Map<String, dynamic>> paymentIntentData,
-    BuildContext context,
-    GlobalController _,
-    ValueNotifier<Venta> _venta,
-  ) async {
+      ValueNotifier<Map<String, dynamic>> paymentIntentData,
+      BuildContext context,
+      GlobalController _,
+      ValueNotifier<Venta> _venta,
+      Moment moment) async {
     try {
       await Stripe.instance.presentPaymentSheet(
         parameters: PresentPaymentSheetParameters(
@@ -146,21 +148,30 @@ class StripePayButton extends HookWidget {
         ),
       );
 
-      _venta.value.referencia = paymentIntentData.value['id'];
+      if (_.productos[0].name.toLowerCase().trim().startsWith('colegiatura')) {
+        HttpMod.post(
+          'colegiaturas',
+          jsonEncode({
+            'colegiaturaAlumno': _.alumno.id,
+            'colegiaturaCantidad': _.total,
+            'colegiaturaFecha': moment.format('MM/dd/yyyy'),
+            'colegiaturaReferencia': paymentIntentData.value['id'],
+          }),
+        );
+      } else {
+        _venta.value.referencia = paymentIntentData.value['id'];
 
-      print('id => ${paymentIntentData.value['id']}');
-      print('id => ref ${_venta.value.referencia}');
-
-      final url = Uri(
-        host: 'cosbiome.online',
-        path: '/cosbiomepedidos',
-        scheme: "https",
-      );
-      await post(
-        url,
-        body: jsonEncode(_venta.value.toJson()),
-        headers: {HttpHeaders.contentTypeHeader: "application/json"},
-      );
+        final url = Uri(
+          host: 'cosbiome.online',
+          path: '/cosbiomepedidos',
+          scheme: "https",
+        );
+        await post(
+          url,
+          body: jsonEncode(_venta.value.toJson()),
+          headers: {HttpHeaders.contentTypeHeader: "application/json"},
+        );
+      }
 
       Navigator.pushNamed(context, '/home');
 

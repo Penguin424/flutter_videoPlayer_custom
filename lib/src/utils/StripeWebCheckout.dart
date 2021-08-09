@@ -4,13 +4,13 @@ library stripe;
 import 'package:flutter/material.dart';
 import 'package:js/js.dart';
 
-void redirectToCheckout(BuildContext _) async {
+void redirectToCheckout(BuildContext _, String pago) async {
   final stripe = Stripe(
       'pk_test_51JKmmuHfPPJjPocOu06RcDMNGCY42PENFLJSd5wo3DRG52aUqIidshY72iHbN0fFgAB6qII9I1hrpzIwAu70AvjC00IlJnWbTk');
   stripe.redirectToCheckout(
     CheckoutOptions(
       lineItems: [
-        LineItem(price: 'price_1JLWNBHfPPJjPocOCjCUI8YT', quantity: 1),
+        LineItem(price: pago, quantity: 1),
       ],
       mode: 'payment',
       successUrl: 'http://localhost:8080/#/success',

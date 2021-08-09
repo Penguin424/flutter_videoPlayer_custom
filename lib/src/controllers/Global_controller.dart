@@ -12,12 +12,18 @@ class GlobalController extends GetxController {
   double get total => _total;
   late AlumnoDatos _alumno;
   AlumnoDatos get alumno => _alumno;
+  DateTime _ultimoPago = DateTime.now();
+  DateTime get ultimoPago => _ultimoPago;
 
   @override
   void onInit() {
     super.onInit();
 
     print('Hola, Mundo');
+  }
+
+  onAddUltimoPago(DateTime fecha) {
+    _ultimoPago = fecha;
   }
 
   onAddAlumno(String data) {
