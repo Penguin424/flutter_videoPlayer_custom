@@ -58,6 +58,19 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.9.0
+  flutter_native_splash: ^1.0.3
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "icons/LOGO-COSBIOME_PABLO.jpg"
+
+flutter_native_splash:
+  color: "#4CAAB1"
+  image: "icons/LOGO-COSBIOME_PABLO.png"
+  android: true
+  ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:label="reproductor"
+        android:label="Escuela Cosbiome"
         android:usesCleartextTraffic="true" 
         android:icon="@mipmap/ic_launcher">
 

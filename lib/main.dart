@@ -31,7 +31,7 @@ class MyApp extends HookWidget {
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Material App',
+      title: 'Escuela Cosbiome',
       initialRoute: "/",
       routes: {
         "/": (BuildContext context) => LoginPage(),

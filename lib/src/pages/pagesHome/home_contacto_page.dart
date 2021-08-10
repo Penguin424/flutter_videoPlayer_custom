@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -69,7 +68,7 @@ class ContactoHome extends HookWidget {
         body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: FirebaseFirestore.instance
               .collection('productos')
-              .limit(5)
+              // .limit(5)
               .where('imagen', isNotEqualTo: '')
               .snapshots(),
           builder: (
