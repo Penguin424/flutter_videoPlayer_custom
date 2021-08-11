@@ -1,6 +1,7 @@
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:reproductor/src/pages/pagesHome/Chat_home.dart';
 import 'package:reproductor/src/pages/pagesHome/home_pageCursos.dart';
 import 'package:reproductor/src/pages/pagesHome/home_perfil_page.dart';
 
@@ -16,11 +17,14 @@ class HomeApp extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final _selector = useState<int>(1);
-    final _pages = useState<List<Widget>>([
-      ContactoHome(),
-      PageHome(),
-      HomePerfil(),
-    ]);
+    final _pages = useState<List<Widget>>(
+      [
+        ContactoHome(),
+        PageHome(),
+        HomePerfil(),
+        ChatHome(),
+      ],
+    );
 
     return SafeArea(
       child: Scaffold(
@@ -29,6 +33,7 @@ class HomeApp extends HookWidget {
             TabData(iconData: Icons.shopping_cart, title: "Compras"),
             TabData(iconData: Icons.class__sharp, title: "Cursos"),
             TabData(iconData: Icons.person, title: "Perfil"),
+            TabData(iconData: Icons.chat, title: "Chat"),
           ],
           onTabChangedListener: (position) {
             print(position);

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/models/Alumno_model.dart';
 import 'package:reproductor/src/models/Producto_model.dart';
+import 'package:reproductor/src/models/UsuarioChat_model.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class GlobalController extends GetxController {
   List<ProductoShoppingCart> _productos = [];
@@ -14,12 +16,42 @@ class GlobalController extends GetxController {
   AlumnoDatos get alumno => _alumno;
   DateTime _ultimoPago = DateTime.now();
   DateTime get ultimoPago => _ultimoPago;
+  String _token = "";
+  String get token => _token;
+  String _idChat = "";
+  String get idChat => _idChat;
+  late IO.Socket _socket;
+  IO.Socket get socket => _socket;
+  late UsuarioChat _usuarioChat;
+  UsuarioChat get usuarioChat => _usuarioChat;
 
   @override
   void onInit() {
     super.onInit();
 
     print('Hola, Mundo');
+  }
+
+  onAddOtraParte(UsuarioChat usuarioChat) {
+    _usuarioChat = usuarioChat;
+  }
+
+  onAddTokenChat(String token, String id) {
+    _token = token;
+    _idChat = id;
+    _socket = IO.io(
+      'http://192.168.68.124:8080',
+      IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .setQuery(
+            {
+              'x-token': token,
+            },
+          )
+          .enableAutoConnect()
+          .enableForceNew()
+          .build(),
+    );
   }
 
   onAddUltimoPago(DateTime fecha) {

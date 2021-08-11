@@ -2,10 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/pages/Ventas/DetalleFinalVenta_page.dart';
 import 'package:reproductor/src/pages/ViewsDocuemnts/imageView_page.dart';
 import 'package:reproductor/src/pages/ViewsDocuemnts/pdfView_page.dart';
+import 'package:reproductor/src/pages/chat/ChatDetalle_page.dart';
 import 'package:reproductor/src/pages/clase_page.dart';
 import 'package:reproductor/src/pages/cursoDetalle_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/AlumnosPages/alumnoTarea_page.dart';
@@ -15,7 +17,6 @@ import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/tareaCrear_p
 import 'package:reproductor/src/pages/pagesHome/ProductoDetalle_page.dart';
 import 'package:reproductor/src/pages/pagesHome/ShoppingCar_page.dart';
 import 'package:reproductor/src/pages/pagesHome/home.dart';
-import 'package:reproductor/src/pages/pagesHome/home_pageCursos.dart';
 import 'package:reproductor/src/pages/login_page.dart';
 
 void main() {
@@ -47,6 +48,7 @@ class MyApp extends HookWidget {
         '/detalleProducto': (BuildContext context) => ProductoDetalle(),
         '/shoppingCar': (BuildContext context) => ShoppingCar(),
         '/detalleVentaMandar': (BuildContext context) => VentaSendVendedor(),
+        '/detalleChat': (BuildContext context) => ChatDetalle(),
       },
     );
   }
