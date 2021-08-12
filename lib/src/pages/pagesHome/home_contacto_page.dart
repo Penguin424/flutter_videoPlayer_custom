@@ -99,8 +99,6 @@ class ContactoHome extends HookWidget {
                 _autoCompleteController,
                 context,
               );
-            } else if (snapshot.hasError) {
-              return Text('No data avaible right now');
             }
             return Center(
               child: CircularProgressIndicator(

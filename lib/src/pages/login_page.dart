@@ -35,15 +35,26 @@ class LoginPage extends StatelessWidget {
                 '_sort': 'ColegiaturaFecha:ASC'
               },
             );
+            final moment = new Moment.now().locale(new LocaleDe());
 
             List<Colegiatura> data =
-                jsonDecode(resCol.body).map<Colegiatura>((a) {
-              return Colegiatura.fromJson(a);
-            }).toList();
+                resCol.statusCode != 403 || resCol.statusCode == 200
+                    ? jsonDecode(resCol.body).map<Colegiatura>((a) {
+                        return Colegiatura.fromJson(a);
+                      }).toList()
+                    : [
+                        Colegiatura(
+                          createdAt: DateTime.now(),
+                          colegiaturaFecha:
+                              moment.add(months: -3).format('MM/dd/yyyy'),
+                          id: 1,
+                          colegiaturaCantidad: 2600.toString(),
+                          updatedAt: DateTime.now(),
+                        ),
+                      ];
 
             final controller = Get.find<GlobalController>();
 
-            final moment = new Moment.now().locale(new LocaleDe());
             final limite = DateTime(moment.year, moment.month, 10);
             final pago =
                 DateFormat('MM/dd/yyyy').parse(data.last.colegiaturaFecha);
@@ -55,7 +66,7 @@ class LoginPage extends StatelessWidget {
               controller.onAddUltimoPago(pago);
 
               final resChat = await post(
-                Uri.parse('http://192.168.68.124:8080/api/login'),
+                Uri.parse('https://chat.cosbiome.online/api/login'),
                 body: jsonEncode(
                   {
                     'email': value.name,
@@ -67,10 +78,35 @@ class LoginPage extends StatelessWidget {
                   'Accept': 'application/json',
                 },
               );
-
+              print(resChat.body);
               controller.onAddTokenChat(
                 jsonDecode(resChat.body)['token'],
                 jsonDecode(resChat.body)['usuario']['uid'],
+                user.user.usuarioCursos.first.id,
+              );
+
+              Navigator.pushNamed(context, '/home');
+            } else if (user.user.role.name == 'MAESTRO') {
+              controller.onAddUltimoPago(DateTime.now());
+
+              final resChat = await post(
+                Uri.parse('https://chat.cosbiome.online/api/login'),
+                body: jsonEncode(
+                  {
+                    'email': value.name,
+                    'password': value.password,
+                  },
+                ),
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+                },
+              );
+              print(resChat.body);
+              controller.onAddTokenChat(
+                jsonDecode(resChat.body)['token'],
+                jsonDecode(resChat.body)['usuario']['uid'],
+                user.user.usuarioCursos.first.id,
               );
 
               Navigator.pushNamed(context, '/home');

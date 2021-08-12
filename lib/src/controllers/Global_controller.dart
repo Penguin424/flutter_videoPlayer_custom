@@ -24,6 +24,8 @@ class GlobalController extends GetxController {
   IO.Socket get socket => _socket;
   late UsuarioChat _usuarioChat;
   UsuarioChat get usuarioChat => _usuarioChat;
+  int _idCurso = 0;
+  int get idCurso => _idCurso;
 
   @override
   void onInit() {
@@ -36,11 +38,12 @@ class GlobalController extends GetxController {
     _usuarioChat = usuarioChat;
   }
 
-  onAddTokenChat(String token, String id) {
+  onAddTokenChat(String token, String id, idCursoF) {
     _token = token;
     _idChat = id;
+    _idCurso = idCursoF;
     _socket = IO.io(
-      'http://192.168.68.124:8080',
+      'https://chat.cosbiome.online/',
       IO.OptionBuilder()
           .setTransports(['websocket'])
           .setQuery(

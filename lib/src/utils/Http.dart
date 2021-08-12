@@ -47,7 +47,6 @@ class HttpMod {
     );
 
     if (response.statusCode == 200) {
-      print(response.body);
       final controller = Get.find<GlobalController>();
       final user = User.fromJson(jsonDecode(response.body));
       LocalStorage _localStorage = LocalStorage('localStorage.json');

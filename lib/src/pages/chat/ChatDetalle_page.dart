@@ -6,8 +6,11 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:http/src/multipart_file.dart' as mt;
 
 String randomString() {
   final random = Random.secure();
@@ -38,11 +41,14 @@ class _ChatDetalleState extends State<ChatDetalle> {
   );
 
   void _addMessage(types.Message message, String texto) {
-    Get.find<GlobalController>().socket.emit('mensaje-personal', {
-      'de': Get.find<GlobalController>().idChat,
-      'para': Get.find<GlobalController>().usuarioChat.uid,
-      'mensaje': texto,
-    });
+    Get.find<GlobalController>().socket.emit(
+      'mensaje-personal',
+      {
+        'de': Get.find<GlobalController>().idChat,
+        'para': Get.find<GlobalController>().usuarioChat.uid,
+        'mensaje': texto,
+      },
+    );
   }
 
   void _handleSendPressed(types.PartialText message) {
@@ -54,6 +60,47 @@ class _ChatDetalleState extends State<ChatDetalle> {
     );
 
     _addMessage(textMessage, message.text);
+  }
+
+  void _handleImageSelection() async {
+    final result = await ImagePicker().pickImage(
+      imageQuality: 70,
+      maxWidth: 1440,
+      source: ImageSource.gallery,
+    );
+
+    if (result != null) {
+      final bytes = await result.readAsBytes();
+      final image = await decodeImageFromList(bytes);
+
+      final message = types.ImageMessage(
+        author: _user,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        height: image.height.toDouble(),
+        id: randomString(),
+        name: result.name,
+        size: bytes.length,
+        uri: result.path,
+        width: image.width.toDouble(),
+      );
+
+      final imageMul = mt.MultipartFile.fromBytes(
+        'file',
+        bytes,
+        filename: result.name,
+      );
+
+      String url = 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
+      MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
+      request.files.add(imageMul);
+
+      request.fields.addAll({
+        'key': result.name,
+      });
+      StreamedResponse resa = await request.send();
+
+      _addMessage(message, '${resa.request!.url.origin}/${result.name}');
+    }
   }
 
   _addMessageFefore(types.Message textMessage) {
@@ -69,7 +116,7 @@ class _ChatDetalleState extends State<ChatDetalle> {
   onGetMessages() async {
     final resChat = await http.get(
       Uri.parse(
-          'http://192.168.68.124:8080/api/mensajes/${Get.find<GlobalController>().usuarioChat.uid}'),
+          'https://chat.cosbiome.online/api/mensajes/${Get.find<GlobalController>().usuarioChat.uid}'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -84,13 +131,27 @@ class _ChatDetalleState extends State<ChatDetalle> {
           _messages = mensajes['mensajes'].map<types.Message>(
             (m) {
               final usuarios = [_user, _userRemote];
-              return types.TextMessage(
-                author: usuarios.firstWhere((element) => element.id == m['de']),
-                createdAt:
-                    DateTime.parse(m['createdAt']).millisecondsSinceEpoch,
-                id: randomString(),
-                text: m['mensaje'],
-              );
+              if (m['mensaje'].startsWith('https')) {
+                return types.ImageMessage(
+                  author:
+                      usuarios.firstWhere((element) => element.id == m['de']),
+                  createdAt:
+                      DateTime.parse(m['createdAt']).millisecondsSinceEpoch,
+                  id: randomString(),
+                  uri: m['mensaje'],
+                  size: 20000,
+                  name: m['mensaje'].split('/').last,
+                );
+              } else {
+                return types.TextMessage(
+                  author:
+                      usuarios.firstWhere((element) => element.id == m['de']),
+                  createdAt:
+                      DateTime.parse(m['createdAt']).millisecondsSinceEpoch,
+                  id: randomString(),
+                  text: m['mensaje'],
+                );
+              }
             },
           ).toList();
         },
@@ -102,13 +163,25 @@ class _ChatDetalleState extends State<ChatDetalle> {
       (data) {
         print(data);
         final usuarios = [_user, _userRemote];
+        late final textMessage;
 
-        final textMessage = types.TextMessage(
-          author: usuarios.firstWhere((element) => element.id == data['de']),
-          createdAt: DateTime.now().millisecondsSinceEpoch,
-          id: randomString(),
-          text: data['mensaje'],
-        );
+        if (data['mensaje'].startsWith('https')) {
+          textMessage = types.ImageMessage(
+            author: usuarios.firstWhere((element) => element.id == data['de']),
+            createdAt: DateTime.parse(data['createdAt']).millisecondsSinceEpoch,
+            id: randomString(),
+            uri: data['mensaje'],
+            size: 20000,
+            name: data['mensaje'].split('/').last,
+          );
+        } else {
+          textMessage = types.TextMessage(
+            author: usuarios.firstWhere((element) => element.id == data['de']),
+            createdAt: DateTime.parse(data['createdAt']).millisecondsSinceEpoch,
+            id: randomString(),
+            text: data['mensaje'],
+          );
+        }
 
         _addMessageFefore(textMessage);
       },
@@ -126,12 +199,27 @@ class _ChatDetalleState extends State<ChatDetalle> {
     return GetBuilder<GlobalController>(
       builder: (_) {
         return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              _.usuarioChat.nombre,
+              style: TextStyle(
+                color: Colors.black,
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: BackButton(
+              color: Colors.black,
+            ),
+          ),
           body: Chat(
             messages: _messages,
             onSendPressed: _handleSendPressed,
             user: _user,
             showUserNames: true,
-            disableImageGallery: true,
+            disableImageGallery: false,
+            onAttachmentPressed: _handleImageSelection,
           ),
         );
       },
