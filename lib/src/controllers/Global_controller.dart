@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/models/Alumno_model.dart';
@@ -26,12 +28,21 @@ class GlobalController extends GetxController {
   UsuarioChat get usuarioChat => _usuarioChat;
   int _idCurso = 0;
   int get idCurso => _idCurso;
+  int _idClase = 0;
+  int get idClase => _idClase;
+  bool _chatAc = false;
+  bool get chastAc => _chatAc;
 
   @override
   void onInit() {
     super.onInit();
 
     print('Hola, Mundo');
+  }
+
+  onAddClaseId(idCl, bool chat) {
+    _idClase = idCl;
+    _chatAc = chat;
   }
 
   onAddOtraParte(UsuarioChat usuarioChat) {
@@ -55,6 +66,36 @@ class GlobalController extends GetxController {
           .enableForceNew()
           .build(),
     );
+
+    if (!kIsWeb) {
+      _socket.on(
+        'mensaje-personal',
+        (data) async {
+          if (_idChat != data['de']) {
+            if (data['mensaje'].startsWith('https')) {
+              await AwesomeNotifications().createNotification(
+                content: NotificationContent(
+                  id: 1,
+                  channelKey: 'key1',
+                  title: 'Nuevo mensaje con imagen',
+                  bigPicture: data['mensaje'],
+                  notificationLayout: NotificationLayout.BigPicture,
+                ),
+              );
+            } else {
+              await AwesomeNotifications().createNotification(
+                content: NotificationContent(
+                  id: 1,
+                  channelKey: 'key1',
+                  title: 'Nuevo mensaje',
+                  body: data['mensaje'],
+                ),
+              );
+            }
+          }
+        },
+      );
+    }
   }
 
   onAddUltimoPago(DateTime fecha) {

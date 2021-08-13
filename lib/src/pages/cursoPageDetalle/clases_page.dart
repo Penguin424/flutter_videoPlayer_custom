@@ -25,6 +25,7 @@ class ClasesPage extends HookWidget {
       });
 
       if (res.statusCode == 200) {
+        print(jsonDecode(res.body));
         List<Clase> data = jsonDecode(res.body).map<Clase>((a) {
           return Clase.fromJson(a);
         }).toList();
@@ -42,11 +43,13 @@ class ClasesPage extends HookWidget {
       padding: EdgeInsets.all(5),
       children: _clases.value.length > 0
           ? _clases.value.map((clase) {
+              print(clase.id);
               return CardClase(
                 title: clase.claseTitulo,
                 id: clase.id,
                 url: clase.claseVideo,
                 maestro: clase.clasemaestro.username,
+                chat: clase.claseActiva,
               );
             }).toList()
           : [

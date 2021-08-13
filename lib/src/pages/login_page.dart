@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/Colegiatura_model.dart';
+import 'package:reproductor/src/models/Producto_model.dart';
 import 'package:reproductor/src/models/User.dart';
 import 'package:reproductor/src/utils/Http.dart';
 import 'package:intl/intl.dart';
@@ -111,7 +112,21 @@ class LoginPage extends StatelessWidget {
 
               Navigator.pushNamed(context, '/home');
             } else {
-              _showDialog(context, 'PLATAFORMA CERRADA');
+              controller.onAddShoppingCart(
+                ProductoShoppingCart(
+                  price: controller.alumno.alumnoMensualidad!,
+                  canitdad: 1,
+                  id: controller.productos.length + 1,
+                  image:
+                      'https://i.pinimg.com/originals/dc/30/85/dc3085dbbc9897fc374f804d4649b502.png',
+                  name: 'COLEGIATURA',
+                  total: controller.alumno.alumnoMensualidad! * 1,
+                  canitdadAlamacen: 2,
+                ),
+                context,
+              );
+
+              Navigator.pushNamed(context, '/shoppingCar');
             }
           } else {
             _showDialog(context, 'CONTRASEÑA O USUARIO INCORRECTOS');
@@ -143,6 +158,7 @@ class LoginPage extends StatelessWidget {
               child: Text('Aceptar'),
               onPressed: () {
                 Navigator.pushNamed(context, '/');
+                HttpMod.localStorage.clear();
               },
             ),
           ],

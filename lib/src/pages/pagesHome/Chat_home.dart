@@ -11,48 +11,83 @@ import 'package:reproductor/src/pages/chat/ChatDetalle_page.dart';
 import 'package:reproductor/src/utils/Http.dart';
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class ChatHome extends HookWidget {
-  const ChatHome({Key? key}) : super(key: key);
+// class ChatHome extends HookWidget {
+
+// }
+
+class ChatHome extends StatefulWidget {
+  ChatHome({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final _usuarioschat = useState<List<UsuarioChat>>([]);
-    final _nombres = useState<List<String>>([]);
+  _ChatHomeState createState() => _ChatHomeState();
+}
 
-    void getUsersChat() async {
-      final contoller = Get.find<GlobalController>();
+class _ChatHomeState extends State<ChatHome> {
+  // const ChatHome({Key? key}) : super(key: key);
 
-      final resChatMaestos = await HttpMod.get(
-        '/users',
-        {
-          '_where[0][role.name]': 'MAESTRO',
-          '_where[0][UsuarioCursos.id]': contoller.idCurso.toString(),
-        },
-      );
+  List<UsuarioChat> _usuarioschat = [];
+  List<String> _nombres = [];
 
-      List<String> nombres = [];
-      if (resChatMaestos.statusCode == 200) {
-        final maestros = jsonDecode(resChatMaestos.body);
+  void getUsersChat() async {
+    final contoller = Get.find<GlobalController>();
 
-        for (var maestro in maestros) {
-          nombres.add(maestro['username']);
-        }
+    final resChatMaestos = await HttpMod.get(
+      '/users',
+      {
+        '_where[0][role.name]': 'MAESTRO',
+        '_where[0][UsuarioCursos.id]': contoller.idCurso.toString(),
+      },
+    );
 
-        _nombres.value = nombres;
+    List<String> nombres = [];
+    if (resChatMaestos.statusCode == 200) {
+      final maestros = jsonDecode(resChatMaestos.body);
+
+      for (var maestro in maestros) {
+        nombres.add(maestro['username']);
       }
 
-      final resChat = await http.get(
-        Uri.parse('https://chat.cosbiome.online/api/login/usuarios'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'x-token': contoller.token,
-        },
-      );
+      setState(() {
+        _nombres = nombres;
+      });
+    }
 
-      if (resChat.statusCode == 200) {
-        final usuarios = jsonDecode(resChat.body)['usuarios'];
+    final resChat = await http.get(
+      Uri.parse('https://chat.cosbiome.online/api/login/usuarios'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'x-token': contoller.token,
+      },
+    );
 
+    if (resChat.statusCode == 200) {
+      final usuarios = jsonDecode(resChat.body)['usuarios'];
+
+      List<UsuarioChat> usuariosChat = [];
+      for (var usuario in usuarios) {
+        UsuarioChat usuarioChat = UsuarioChat.fromJson(usuario);
+
+        if (HttpMod.localStorage.getItem('role') != 'MAESTRO') {
+          for (var item in nombres) {
+            if (item == usuarioChat.nombre) usuariosChat.add(usuarioChat);
+          }
+        } else {
+          usuariosChat.add(usuarioChat);
+        }
+      }
+      setState(() {
+        _usuarioschat = usuariosChat
+            .where((element) =>
+                element.nombre != HttpMod.localStorage.getItem('userName'))
+            .toList();
+      });
+    }
+
+    contoller.socket.on(
+      'lista-usuarios',
+      (usuarios) {
+        print(usuarios);
         List<UsuarioChat> usuariosChat = [];
         for (var usuario in usuarios) {
           UsuarioChat usuarioChat = UsuarioChat.fromJson(usuario);
@@ -66,50 +101,35 @@ class ChatHome extends HookWidget {
           }
         }
 
-        _usuarioschat.value = usuariosChat
-            .where((element) =>
-                element.nombre != HttpMod.localStorage.getItem('userName'))
-            .toList();
-      }
+        if (mounted) {
+          setState(() {
+            _usuarioschat = usuariosChat
+                .where((element) =>
+                    element.nombre != HttpMod.localStorage.getItem('userName'))
+                .toList();
+          });
+        }
+      },
+    );
+  }
 
-      contoller.socket.on(
-        'lista-usuarios',
-        (usuarios) {
-          print(usuarios);
-          List<UsuarioChat> usuariosChat = [];
-          for (var usuario in usuarios) {
-            UsuarioChat usuarioChat = UsuarioChat.fromJson(usuario);
+  @override
+  void initState() {
+    getUsersChat();
+    super.initState();
+  }
 
-            if (HttpMod.localStorage.getItem('role') != 'MAESTRO') {
-              for (var item in nombres) {
-                if (item == usuarioChat.nombre) usuariosChat.add(usuarioChat);
-              }
-            } else {
-              usuariosChat.add(usuarioChat);
-            }
-          }
-
-          _usuarioschat.value = usuariosChat
-              .where((element) =>
-                  element.nombre != HttpMod.localStorage.getItem('userName'))
-              .toList();
-        },
-      );
-    }
-
-    useEffect(() {
-      getUsersChat();
-    }, []);
-
+  @override
+  Widget build(BuildContext context) {
     return GetBuilder<GlobalController>(
       builder: (_) => Scaffold(
-        body: _usuarioschat.value.length > 0
+        body: _usuarioschat.length > 0
             ? ListView.separated(
                 separatorBuilder: (BuildContext context, int index) =>
                     Divider(),
-                itemCount: _usuarioschat.value.length,
+                itemCount: _usuarioschat.length,
                 itemBuilder: (context, index) {
-                  final usuariochat = _usuarioschat.value[index];
+                  final usuariochat = _usuarioschat[index];
 
                   return ListTile(
                     title: Text(

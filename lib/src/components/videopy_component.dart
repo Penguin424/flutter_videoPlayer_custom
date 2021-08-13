@@ -214,6 +214,9 @@ class VideoPlay extends HookWidget {
             children: [
               GestureDetector(
                 onTap: () {
+                  SystemChrome.setPreferredOrientations([
+                    DeviceOrientation.portraitUp,
+                  ]);
                   Navigator.pop(context);
                 },
                 child: Icon(
@@ -300,23 +303,24 @@ class VideoPlay extends HookWidget {
               color: Color(0xFF4CAAB1),
             ),
           ),
-          Container(
-            height: 150,
-            child: RotatedBox(
-              quarterTurns: -1,
-              child: Slider(
-                min: 0,
-                max: 1,
-                divisions: 10,
-                label: 'VOL: ${vp.value.volume * 10}',
-                value: vp.value.volume,
-                onChanged: (data) {
-                  vp.setVolume(data);
-                },
-                activeColor: Color(0xFF4CAAB1),
-              ),
-            ),
-          ),
+          // Container(
+          //   height: 150,
+          //   child: RotatedBox(
+          //     quarterTurns: -1,
+          //     child: Slider(
+          //       min: 0,
+          //       max: 1,
+          //       divisions: 10,
+          //       label: 'VOL: ${vp.value.volume * 10}',
+          //       value: vp.value.volume,
+          //       onChanged: (data) {
+          //         vp.setVolume(data);
+          //       },
+          //       activeColor: Color(0xFF4CAAB1),
+          //     ),
+          //   ),
+          // ),
+          Container()
         ],
       ),
     );

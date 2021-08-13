@@ -18,8 +18,22 @@ import 'package:reproductor/src/pages/pagesHome/ProductoDetalle_page.dart';
 import 'package:reproductor/src/pages/pagesHome/ShoppingCar_page.dart';
 import 'package:reproductor/src/pages/pagesHome/home.dart';
 import 'package:reproductor/src/pages/login_page.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 void main() {
+  AwesomeNotifications().initialize(
+    // set the icon to null if you want to use the default app icon
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'key1',
+        channelName: 'cosbiome escuela',
+        channelDescription: 'notificaciones de cosbiome escuela',
+        defaultColor: Color(0xFF9D50DD),
+        ledColor: Colors.white,
+      )
+    ],
+  );
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
   runApp(MyApp());

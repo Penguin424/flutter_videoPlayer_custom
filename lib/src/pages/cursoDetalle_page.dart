@@ -26,8 +26,6 @@ class CursoDetallePage extends HookWidget {
     useEffect(() {
       LocalStorage localStorage = new LocalStorage('localStorage.json');
 
-      print(localStorage.getItem('role'));
-
       if (localStorage.getItem('role') == 'MAESTRO') {
         _pages.value.add(AsistenciasTomaPage(
           titleAppBar: _titleAppBar,
