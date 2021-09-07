@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart';
+import 'package:reproductor/src/components/VideoPlayFull.dart';
 import 'package:reproductor/src/components/videopy_component.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
@@ -217,33 +219,38 @@ class _ClasePageState extends State<ClasePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: BackButton(
-          color: Colors.black,
-        ),
+        elevation: 0.0,
+        toolbarHeight: 0.1,
+        backwardsCompatibility: false,
+        systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
       ),
-      body: ListView(
-        children: [
-          VideoPlay(
-            url: params['video'],
-            title: params['titulo'],
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height / 1.8,
-            child: _controller.chastAc
-                ? Chat(
-                    messages: _messages,
-                    onSendPressed: _handleSendPressed,
-                    user: _user,
-                    showUserNames: true,
-                    disableImageGallery: false,
-                    onAttachmentPressed: _handleImageSelection,
-                  )
-                : Center(
-                    child: Text('DISFRUTA TU CLASE'),
-                  ),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            VideoPlayerFull(
+              url: params['video'],
+              title: params['titulo'],
+            ),
+            // SizedBox(
+            //   height: 20,
+            // ),
+            Container(
+              height: MediaQuery.of(context).size.height / 1.6,
+              child: _controller.chastAc
+                  ? Chat(
+                      messages: _messages,
+                      onSendPressed: _handleSendPressed,
+                      user: _user,
+                      showUserNames: true,
+                      disableImageGallery: false,
+                      onAttachmentPressed: _handleImageSelection,
+                    )
+                  : Center(
+                      child: Text('DISFRUTA TU CLASE'),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

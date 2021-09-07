@@ -1,3 +1,4 @@
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -23,6 +24,7 @@ class VideoPlay extends HookWidget {
     final _menurview = useState<bool>(false);
     final _position = useState<double>(0);
     final _duration = useState<double>(0);
+    final _buffer = useState<double>(0);
     final _fullScreen = useState<int>(kIsWeb ? 1 : 3);
 
     handleInit() async {
@@ -36,6 +38,11 @@ class VideoPlay extends HookWidget {
 
         _duration.value =
             _playerController.value.value.duration.inMilliseconds.toDouble();
+
+        print('(buffer) => ${_playerController.value.value.buffered[0].end}');
+        _buffer.value = _playerController
+            .value.value.buffered[0].end.inMilliseconds
+            .toDouble();
       });
       _playerController.value.play();
       _playerController.value.setLooping(true);
@@ -80,6 +87,7 @@ class VideoPlay extends HookWidget {
                 _position,
                 _fullScreen,
                 _menurview,
+                _buffer,
               )
             else
               GestureDetector(onTap: () {
@@ -98,6 +106,7 @@ class VideoPlay extends HookWidget {
     ValueNotifier<double> _position,
     ValueNotifier<int> _fullScreen,
     ValueNotifier<bool> _menurview,
+    ValueNotifier<double> _buffer,
   ) {
     return Container(
       color: Color.fromRGBO(13, 27, 42, 0.6),
@@ -105,7 +114,8 @@ class VideoPlay extends HookWidget {
         children: [
           nextAndBackPanel(_playerController, context, _duration),
           upMenuVideoPlayer(context, _playerController, _fullScreen),
-          sliderProgVideo(context, _duration, _position, _playerController),
+          sliderProgVideo(
+              context, _duration, _position, _playerController, _buffer),
           downMenuVideoPlayer(
               context, _fullScreen, _playerController, _duration),
           buttonsMiddle(_playerController.value, _menurview),
@@ -120,23 +130,20 @@ class VideoPlay extends HookWidget {
     ValueNotifier<VideoPlayerController> _playerController,
     ValueNotifier<double> _duration,
   ) {
-    Duration position = _playerController.value.value.position;
-    Duration duration = _playerController.value.value.duration;
-
     return Positioned(
       bottom: 0,
       child: Container(
         padding: EdgeInsets.only(left: 20, right: 20, top: 5),
         width: MediaQuery.of(context).size.width,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(
-              '${printDuration(position)}/${printDuration(duration)}',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
+            // Text(
+            //   '${printDuration(position)}/${printDuration(duration)}',
+            //   style: TextStyle(
+            //     color: Colors.white,
+            //   ),
+            // ),
             GestureDetector(
               onTap: () {
                 print('volu => ${_playerController.value.value.volume}');
@@ -168,31 +175,50 @@ class VideoPlay extends HookWidget {
   }
 
   Positioned sliderProgVideo(
-      BuildContext context,
-      ValueNotifier<double> _duration,
-      ValueNotifier<double> _position,
-      ValueNotifier<VideoPlayerController> _playerController) {
+    BuildContext context,
+    ValueNotifier<double> _duration,
+    ValueNotifier<double> _position,
+    ValueNotifier<VideoPlayerController> _playerController,
+    ValueNotifier<double> _buffer,
+  ) {
     return Positioned(
-      bottom: 20,
+      bottom: 30,
       child: Container(
         padding: EdgeInsets.only(left: 5, right: 5),
         width: MediaQuery.of(context).size.width,
-        child: Slider(
-          min: 0,
-          label: printDuration(Duration(milliseconds: _position.value.toInt())),
-          divisions: _position.value > 0 ? _position.value.toInt() : 1,
-          max: _duration.value,
-          value: _position.value,
-          onChanged: (double data) {
-            _playerController.value.seekTo(
-              Duration(
-                milliseconds: data.toInt(),
-              ),
-            );
+        child: ProgressBar(
+          // min: 0,
+          // // label: printDuration(Duration(milliseconds: _position.value.toInt())),
+          // divisions: _position.value > 0 ? _position.value.toInt() : 1,
+          // max: _duration.value,
+          // values: RangeValues(_position.value, _buffer.value),
+          // // value: _position.value,
+          // onChanged: (RangeValues data) {
+          //   _playerController.value.seekTo(
+          //     Duration(
+          //       milliseconds: data.start.toInt(),
+          //     ),
+          //   );
+          // },
+          // onChangeEnd: (value) {},
+          // inactiveColor: Color(0xFFBFE3ED),
+          // activeColor: Color(0xFF4CAAB1),
+          progress: Duration(milliseconds: _position.value.toInt()),
+          buffered: Duration(milliseconds: _buffer.value.toInt()),
+          timeLabelLocation: TimeLabelLocation.sides,
+          total: Duration(milliseconds: _duration.value.toInt()),
+          onSeek: (Duration value) {
+            _playerController.value.seekTo(value);
           },
-          onChangeEnd: (value) {},
-          inactiveColor: Color(0xFFBFE3ED),
-          activeColor: Color(0xFF4CAAB1),
+          progressBarColor: Color(0xFF4CAAB1),
+          baseBarColor: Color(0xFF4CAAB1).withOpacity(0.24),
+          bufferedBarColor: Color(0xFFBFE3ED).withOpacity(0.24),
+          thumbColor: Colors.white,
+          barHeight: 10.0,
+          thumbRadius: 5.0,
+          timeLabelTextStyle: TextStyle(
+            color: Colors.white,
+          ),
         ),
       ),
     );
