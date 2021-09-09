@@ -2,6 +2,8 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerFull extends StatefulWidget {
@@ -24,6 +26,7 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
   double _buffer = 0.0;
   double _position = 0.0;
   bool _isOPenMenu = false;
+  final _globalstate = Get.find<GlobalController>();
 
   void _handleInitialize() {
     setState(() {
@@ -153,7 +156,7 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
 
   Positioned _bottomButtons(Size media, Orientation orientation) {
     return Positioned(
-      bottom: _fullScreen == 1 ? 35 : 0,
+      bottom: _fullScreen == 1 ? 0 : 0,
       width: media.width,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -164,10 +167,12 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
                 SystemChrome.setPreferredOrientations([
                   DeviceOrientation.portraitUp,
                 ]);
+                _globalstate.setFullScreen(false);
               } else {
                 SystemChrome.setPreferredOrientations([
                   DeviceOrientation.landscapeLeft,
                 ]);
+                _globalstate.setFullScreen(true);
               }
               setState(() {
                 _fullScreen = _fullScreen == 1 ? 3 : 1;
@@ -188,7 +193,7 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
 
   Positioned _timeBarVideo(Size media) {
     return Positioned(
-      bottom: _fullScreen == 1 ? 70 : 30,
+      bottom: _fullScreen == 1 ? 30 : 30,
       child: Container(
         width: media.width,
         padding: EdgeInsets.only(left: 20, right: 20),

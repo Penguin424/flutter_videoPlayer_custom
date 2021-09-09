@@ -32,12 +32,18 @@ class GlobalController extends GetxController {
   int get idClase => _idClase;
   bool _chatAc = false;
   bool get chastAc => _chatAc;
+  bool _fullScreen = false;
+  bool get fullScreen => _fullScreen;
 
   @override
   void onInit() {
     super.onInit();
 
     print('Hola, Mundo');
+  }
+
+  setFullScreen(bool value) {
+    _fullScreen = value;
   }
 
   onAddClaseId(idCl, bool chat) {
