@@ -244,7 +244,7 @@ class _ClasePageState extends State<ClasePage> {
               //   height: 20,
               // ),
               Container(
-                height: MediaQuery.of(context).size.height / 1.6,
+                height: MediaQuery.of(context).size.height / 1.5,
                 child: _controller.chastAc
                     ? Chat(
                         messages: _messages,

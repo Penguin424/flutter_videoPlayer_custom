@@ -75,7 +75,7 @@ class ContactoHome extends HookWidget {
             context,
             snapshot,
           ) {
-            print(snapshot.data!.docs.length);
+            // print(snapshot.data!.docs.length);
             if (snapshot.hasData) {
               final productos = snapshot.data!.docs
                   .map(
