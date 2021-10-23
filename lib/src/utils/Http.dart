@@ -24,14 +24,14 @@ class HttpMod {
     'Accept': 'application/json',
     'Authorization': 'Bearer ${localStorage.getItem('token')}',
   };
-  static String _host = '138.197.209.230';
-  static int _port = 3001;
+  static String _host = 'escuela.cosbiome.online';
+  // static int _port = 3001;
 
   static Future<http.Response> login(LoginData loginData) async {
     final url = Uri(
       host: _host,
-      port: _port,
-      scheme: 'http',
+      // port: _port,
+      scheme: 'https',
       path: '/auth/local',
     );
 
@@ -73,8 +73,8 @@ class HttpMod {
   ) async {
     final url = Uri(
       host: _host,
-      port: _port,
-      scheme: 'http',
+      // port: _port,
+      scheme: 'https',
       path: path,
     );
 
@@ -93,8 +93,8 @@ class HttpMod {
   ) async {
     final url = Uri(
       host: _host,
-      scheme: 'http',
-      port: _port,
+      scheme: 'https',
+      // port: _port,
       queryParameters: parameters,
       path: path,
     );
@@ -112,8 +112,8 @@ class HttpMod {
   ) async {
     final url = Uri(
       host: _host,
-      scheme: 'http',
-      port: _port,
+      scheme: 'https',
+      // port: _port,
       path: path,
     );
     final response = await http.put(
@@ -130,8 +130,8 @@ class HttpMod {
   ) async {
     final url = Uri(
       host: _host,
-      scheme: 'http',
-      port: _port,
+      scheme: 'https',
+      // port: _port,
       path: path,
     );
     final response = await http.put(

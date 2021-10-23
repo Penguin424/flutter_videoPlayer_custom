@@ -1,3 +1,4 @@
+import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:localstorage/localstorage.dart';
@@ -8,9 +9,14 @@ import 'package:reproductor/src/utils/Http.dart';
 
 class CursoDetallePage extends HookWidget {
   // const ClasesPage({Key key}) : super(key: key);
+
+  final controller = PageController(
+    initialPage: 0,
+  );
   @override
   Widget build(BuildContext context) {
     final _titleAppBar = useState<String>('CURSO');
+  
     final _pages = useState<List<Widget>>([
       ClasesPage(
         titleAppBar: _titleAppBar,
@@ -19,6 +25,7 @@ class CursoDetallePage extends HookWidget {
         titleAppBar: _titleAppBar,
       ),
     ]);
+    final _selector = useState<int>(0);
     final _curso = useState<Map<String, dynamic>>(
       ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>,
     );
@@ -57,9 +64,34 @@ class CursoDetallePage extends HookWidget {
         centerTitle: true,
         backgroundColor: Color(0xFF4CAAB1),
       ),
+       bottomNavigationBar: FancyBottomNavigation(
+          tabs: [
+            TabData(iconData: Icons.play_circle_filled, title: "Clases"),
+            TabData(iconData: Icons.home_work, title: "Tareas"),
+            TabData(iconData: Icons.list_alt_rounded, title: "Asistencias"),
+            
+          ],
+          onTabChangedListener: (position) {
+            print(position);
+            _selector.value = position;
+            controller.animateToPage(
+              position,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.linear,
+            );
+          },
+          circleColor: Color(0xFF4CAAB1),
+          inactiveIconColor: Color(0xFF4CAAB1),
+          initialSelection: _selector.value,
+        ),
       body: Container(
         child: PageView(
+          physics: NeverScrollableScrollPhysics(),
+          controller: controller,          
           children: _pages.value,
+             onPageChanged: (page) {
+            _selector.value = page;
+          },
         ),
       ),
     );
