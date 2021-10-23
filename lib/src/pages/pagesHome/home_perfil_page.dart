@@ -165,6 +165,7 @@ class HomePerfil extends HookWidget {
                                 name: 'COLEGIATURA',
                                 total: _.alumno.alumnoMensualidad! * 1,
                                 canitdadAlamacen: 2,
+                                descripcion: 'Mensualidad',
                               ),
                               context,
                             );

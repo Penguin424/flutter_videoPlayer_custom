@@ -122,6 +122,7 @@ class LoginPage extends StatelessWidget {
                   name: 'COLEGIATURA',
                   total: controller.alumno.alumnoMensualidad! * 1,
                   canitdadAlamacen: 2,
+                  descripcion: 'Mensualidad',
                 ),
                 context,
               );

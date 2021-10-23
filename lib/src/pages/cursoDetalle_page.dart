@@ -16,7 +16,7 @@ class CursoDetallePage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final _titleAppBar = useState<String>('CURSO');
-  
+
     final _pages = useState<List<Widget>>([
       ClasesPage(
         titleAppBar: _titleAppBar,
@@ -24,6 +24,11 @@ class CursoDetallePage extends HookWidget {
       TareasPage(
         titleAppBar: _titleAppBar,
       ),
+    ]);
+    final _pagesBottomBar = useState<List<TabData>>([
+      TabData(iconData: Icons.play_circle_filled, title: "Clases"),
+      TabData(iconData: Icons.home_work, title: "Tareas"),
+      
     ]);
     final _selector = useState<int>(0);
     final _curso = useState<Map<String, dynamic>>(
@@ -37,6 +42,9 @@ class CursoDetallePage extends HookWidget {
         _pages.value.add(AsistenciasTomaPage(
           titleAppBar: _titleAppBar,
         ));
+        _pagesBottomBar.value.add(
+          TabData(iconData: Icons.list_alt_rounded, title: "Asistencias"),
+        );
       }
     }, []);
 
@@ -64,32 +72,27 @@ class CursoDetallePage extends HookWidget {
         centerTitle: true,
         backgroundColor: Color(0xFF4CAAB1),
       ),
-       bottomNavigationBar: FancyBottomNavigation(
-          tabs: [
-            TabData(iconData: Icons.play_circle_filled, title: "Clases"),
-            TabData(iconData: Icons.home_work, title: "Tareas"),
-            TabData(iconData: Icons.list_alt_rounded, title: "Asistencias"),
-            
-          ],
-          onTabChangedListener: (position) {
-            print(position);
-            _selector.value = position;
-            controller.animateToPage(
-              position,
-              duration: Duration(milliseconds: 300),
-              curve: Curves.linear,
-            );
-          },
-          circleColor: Color(0xFF4CAAB1),
-          inactiveIconColor: Color(0xFF4CAAB1),
-          initialSelection: _selector.value,
-        ),
+      bottomNavigationBar: FancyBottomNavigation(
+        tabs: _pagesBottomBar.value,
+        onTabChangedListener: (position) {
+          print(position);
+          _selector.value = position;
+          controller.animateToPage(
+            position,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.linear,
+          );
+        },
+        circleColor: Color(0xFF4CAAB1),
+        inactiveIconColor: Color(0xFF4CAAB1),
+        initialSelection: _selector.value,
+      ),
       body: Container(
         child: PageView(
           physics: NeverScrollableScrollPhysics(),
-          controller: controller,          
+          controller: controller,
           children: _pages.value,
-             onPageChanged: (page) {
+          onPageChanged: (page) {
             _selector.value = page;
           },
         ),

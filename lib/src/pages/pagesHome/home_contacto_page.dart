@@ -86,6 +86,7 @@ class ContactoHome extends HookWidget {
                       price: double.parse(
                           element.data()['precioVenta'].toString()),
                       cantidad: int.parse(element.data()['general'].toString()),
+                      descripcion: element.data()['descripcion'],
                     ),
                   )
                   .toList();

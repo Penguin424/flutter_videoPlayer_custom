@@ -21,7 +21,8 @@ class TareasPage extends HookWidget {
     );
 
     void handleGetTask() async {
-      final res = await HttpMod.get('/tareas', {
+      try {
+        final res = await HttpMod.get('/tareas', {
         '_where[0][TareaCurso.id]': _curso.value['curso'],
         // '_where[0][TareaDetalles.TareaDetAlumno_ne]':
         //     HttpMod.localStorage.getItem('idUser').toString(),
@@ -59,6 +60,12 @@ class TareasPage extends HookWidget {
 
         _tareas.value = data;
       }
+        
+      } catch (e) {
+
+        
+      }
+      
     }
 
     useEffect(() {

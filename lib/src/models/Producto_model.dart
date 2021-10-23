@@ -14,18 +14,21 @@ class Producto {
     required this.image,
     required this.price,
     required this.cantidad,
+    required this.descripcion,
   });
 
   String name;
   String image;
   double price;
   int cantidad;
+  String descripcion;
 
   factory Producto.fromJson(Map<String, dynamic> json) => Producto(
         name: json["name"],
         image: json["image"],
         price: json["price"],
         cantidad: json["cantidad"],
+        descripcion: json["descripcion"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,6 +36,7 @@ class Producto {
         "image": image,
         "price": price,
         "cantidad": cantidad,
+        "descripcion": descripcion
       };
 }
 
@@ -45,6 +49,7 @@ class ProductoShoppingCart {
     required this.canitdad,
     required this.total,
     required this.canitdadAlamacen,
+    required this.descripcion,
   });
 
   int id;
@@ -54,6 +59,7 @@ class ProductoShoppingCart {
   int canitdad;
   int canitdadAlamacen;
   double total;
+  String descripcion;
 
   factory ProductoShoppingCart.fromJson(Map<String, dynamic> json) =>
       ProductoShoppingCart(
@@ -64,6 +70,7 @@ class ProductoShoppingCart {
         canitdad: json['cantidad'],
         total: json['total'],
         canitdadAlamacen: json['canitdadAlamacen'],
+        descripcion: json['descripcion'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -74,5 +81,6 @@ class ProductoShoppingCart {
         "cantidad": canitdad,
         "total": total,
         "canitdadAlamacen": canitdadAlamacen,
+        "descripcion": descripcion,
       };
 }
