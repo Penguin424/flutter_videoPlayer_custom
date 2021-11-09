@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reproductor/src/models/Asistencia_model.dart';
@@ -132,13 +133,13 @@ class AsistenciasTomaPage extends HookWidget {
           Text(
             e.id.toString(),
             style: TextStyle(
-              fontSize: 22,
+              fontSize: kIsWeb ? 22 : 12,
             ),
           ),
           Text(
             e.username,
             style: TextStyle(
-              fontSize: 22,
+              fontSize: kIsWeb ? 22 : 12,
             ),
           ),
           Checkbox(

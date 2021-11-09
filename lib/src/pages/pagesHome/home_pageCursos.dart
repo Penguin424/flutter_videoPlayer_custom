@@ -24,13 +24,18 @@ class PageHome extends HookWidget {
           },
         );
 
+        print('/cursos/_where[0][CursoAlumnos.id]=${id.toString()}');
+        print(res);
+
         if (res.statusCode == 200) {
           List<Curso> data = jsonDecode(res.body).map<Curso>((a) {
             return Curso.fromJson(a);
           }).toList();
 
           _cursosAlumnos.value = data;
-        } else {}
+
+          print('Cursos: ${_cursosAlumnos.value}');
+        }
       } catch (e) {
         print(e);
       }
@@ -45,17 +50,16 @@ class PageHome extends HookWidget {
         body: ListView(
           padding: EdgeInsets.all(5),
           children: _cursosAlumnos.value.length > 0
-              ? _cursosAlumnos.value
-                  .map(
-                    (e) => card(
-                      context,
-                      e.cursoTitulo,
-                      e.id,
-                      e.cursoClases[e.cursoClases.length - 1],
-                      e.cursoClases.length,
-                    ),
-                  )
-                  .toList()
+              ? _cursosAlumnos.value.map((e) {
+                  print('curos => ${e.cursoClases}');
+                  return card(
+                    context,
+                    e.cursoTitulo,
+                    e.id,
+                    e.cursoClases.last,
+                    e.cursoClases.length,
+                  );
+                }).toList()
               : [
                   Center(
                     child: CircularProgressIndicator(),

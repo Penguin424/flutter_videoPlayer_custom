@@ -26,8 +26,8 @@ class CursoDetallePage extends HookWidget {
       ),
     ]);
     final _pagesBottomBar = useState<List<TabData>>([
-      TabData(iconData: Icons.play_circle_filled, title: "Clases"),
       TabData(iconData: Icons.home_work, title: "Tareas"),
+      TabData(iconData: Icons.play_circle_filled, title: "Clases"),
       
     ]);
     final _selector = useState<int>(0);

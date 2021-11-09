@@ -91,6 +91,8 @@ class AlumnoTareaPage extends HookWidget {
                     height: MediaQuery.of(context).size.height / 4.5,
                   ),
                   _updloadAndSendTask(
+                    _modalCal,
+                    _isLoading,
                     _archivos,
                     _comentario,
                     _params,
@@ -139,6 +141,8 @@ class AlumnoTareaPage extends HookWidget {
   }
 
   ElevatedButton _updloadAndSendTask(
+    ValueNotifier<bool> _modalCal,
+    ValueNotifier<bool> _isLoading,
     ValueNotifier<List<MultipartFile>> _archivos,
     ValueNotifier<String> _comentario,
     ValueNotifier<Map<String, dynamic>> _params,
@@ -151,6 +155,8 @@ class AlumnoTareaPage extends HookWidget {
       child: Text('ENTREGAR TAREA'),
       onPressed: () async {
         try {
+          _modalCal.value = false;
+          _isLoading.value = true;
           List<String> archs = [];
 
           for (MultipartFile file in _archivos.value) {
@@ -181,7 +187,8 @@ class AlumnoTareaPage extends HookWidget {
             ),
           );
 
-          Navigator.pop(context);
+          _isLoading.value = false;
+          Navigator.pushNamed(context, '/home');
         } catch (e) {
           print(e);
         }

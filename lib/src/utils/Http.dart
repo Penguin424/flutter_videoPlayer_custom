@@ -134,7 +134,7 @@ class HttpMod {
       // port: _port,
       path: path,
     );
-    final response = await http.put(
+    final response = await http.delete(
       url,
       headers: _headersAuth,
     );

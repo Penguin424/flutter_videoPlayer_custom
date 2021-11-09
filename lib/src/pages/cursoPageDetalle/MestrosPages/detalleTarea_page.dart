@@ -161,7 +161,7 @@ class DetalleTareaPage extends HookWidget {
               '/detalletareas/$id',
             );
             _isLoading.value = false;
-            Navigator.pop(context);
+            Navigator.pushNamed(context, '/home');
           },
           child: Text('REGRESAR'),
           style: ElevatedButton.styleFrom(

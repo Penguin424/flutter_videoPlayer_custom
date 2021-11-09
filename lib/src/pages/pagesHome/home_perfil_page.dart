@@ -40,6 +40,8 @@ class HomePerfil extends HookWidget {
           }).toList();
 
           _cursosAlumnos.value = data;
+
+          print(_cursosAlumnos.value);
         } else {}
       } catch (e) {
         print(e);
