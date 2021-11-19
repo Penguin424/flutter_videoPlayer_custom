@@ -12,8 +12,10 @@ import 'package:reproductor/src/pages/clase_page.dart';
 import 'package:reproductor/src/pages/cursoDetalle_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/AlumnosPages/alumnoTarea_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/detalleTarea_page.dart';
+import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/resumenTareasAlumno_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/revicionTareas_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/tareaCrear_page.dart';
+import 'package:reproductor/src/pages/cursoPageDetalle/resumenTareasAlumnosDetalle_page.dart';
 import 'package:reproductor/src/pages/pagesHome/ProductoDetalle_page.dart';
 import 'package:reproductor/src/pages/pagesHome/ShoppingCar_page.dart';
 import 'package:reproductor/src/pages/pagesHome/home.dart';
@@ -63,6 +65,10 @@ class MyApp extends HookWidget {
         '/shoppingCar': (BuildContext context) => ShoppingCar(),
         '/detalleVentaMandar': (BuildContext context) => VentaSendVendedor(),
         '/detalleChat': (BuildContext context) => ChatDetalle(),
+        "/resumenTareasAlumno": (BuildContext context) =>
+            ResumenTareasAlumnos(),
+        "/resumenTareasAlumno/detalle": (BuildContext context) =>
+            ResumenTareasAlumnosDetalle(),
       },
     );
   }
