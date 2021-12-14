@@ -80,6 +80,7 @@ class _ResumenTareasAlumnosDetalleState
       final tareasDB = await HttpMod.get("/detalletareas", {
         '_where[0][TareaDetAlumno.id]': alumnoPass.id.toString(),
         '_where[0][TareaDetTarea.TareaCurso]': idCurso.toString(),
+        '_limit': '100000',
       });
 
       print(tareasDB.body);

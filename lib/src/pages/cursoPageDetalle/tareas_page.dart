@@ -23,49 +23,45 @@ class TareasPage extends HookWidget {
     void handleGetTask() async {
       try {
         final res = await HttpMod.get('/tareas', {
-        '_where[0][TareaCurso.id]': _curso.value['curso'],
-        // '_where[0][TareaDetalles.TareaDetAlumno_ne]':
-        //     HttpMod.localStorage.getItem('idUser').toString(),
-        // '_where[0][TareaDetalles.TareaDetEntregada]': 'false',
-      });
-
-      if (res.statusCode == 200) {
-        List<Tarea> data = jsonDecode(res.body).map<Tarea>((a) {
-          return Tarea.fromJson(a);
-        }).toList();
-
-        List<TareaDetalle> detTareas = [];
-
-        data.forEach((element) {
-          final data = element.tareaDetalles
-              .where(
-                (e) =>
-                    e.tareaDetAlumno == HttpMod.localStorage.getItem('idUser'),
-              )
-              .toList();
-
-          if (data.length > 0) {
-            detTareas.add(data[0]);
-          }
+          '_where[0][TareaCurso.id]': _curso.value['curso'],
+          // '_where[0][TareaDetalles.TareaDetAlumno_ne]':
+          //     HttpMod.localStorage.getItem('idUser').toString(),
+          // '_where[0][TareaDetalles.TareaDetEntregada]': 'false',
         });
 
-        this.titleAppBar.value = detTareas.length > 0
-            ? 'PUNTOS DE TAREAS: ' +
-                detTareas
-                    .map((e) => e.tareaDetCalificacion)
-                    .reduce((value, element) => value + element)
-                    .toInt()
-                    .toString()
-            : 'TAREAS DEL CURSO';
+        if (res.statusCode == 200) {
+          List<Tarea> data = jsonDecode(res.body).map<Tarea>((a) {
+            return Tarea.fromJson(a);
+          }).toList();
 
-        _tareas.value = data;
-      }
-        
-      } catch (e) {
+          List<TareaDetalle> detTareas = [];
 
-        
-      }
-      
+          data.forEach((element) {
+            final data = element.tareaDetalles
+                .where(
+                  (e) =>
+                      e.tareaDetAlumno ==
+                      HttpMod.localStorage.getItem('idUser'),
+                )
+                .toList();
+
+            if (data.length > 0) {
+              detTareas.add(data[0]);
+            }
+          });
+
+          this.titleAppBar.value = detTareas.length > 0
+              ? 'PUNTOS DE TAREAS: ' +
+                  detTareas
+                      .map((e) => e.tareaDetCalificacion)
+                      .reduce((value, element) => value + element)
+                      .toInt()
+                      .toString()
+              : 'TAREAS DEL CURSO';
+
+          _tareas.value = data;
+        }
+      } catch (e) {}
     }
 
     useEffect(() {
@@ -85,9 +81,10 @@ class TareasPage extends HookWidget {
                 title: tarea.tareaNombre,
                 descripcion: tarea.tareaDescripcion,
                 clase: tarea.tareaClase.claseTitulo,
-                id: tarea.id,
+                id: !tarea.tareaActiva ? tarea.id : tarea.tareaCurso.id,
                 entr: det.length > 0 ? det[0].tareaDetEntregada : false,
                 calificacion: det.length > 0 ? det[0].tareaDetCalificacion : 0,
+                examen: tarea.tareaActiva,
               );
             }).toList()
           : [

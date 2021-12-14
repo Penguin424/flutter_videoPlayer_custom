@@ -11,6 +11,7 @@ class CardTarea extends HookWidget {
     required this.id,
     required this.entr,
     required this.calificacion,
+    required this.examen,
   }) : super(key: key);
 
   final String title;
@@ -19,6 +20,7 @@ class CardTarea extends HookWidget {
   final int id;
   final bool entr;
   final int calificacion;
+  final bool examen;
 
   @override
   Widget build(BuildContext context) {

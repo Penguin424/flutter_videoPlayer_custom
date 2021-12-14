@@ -27,34 +27,40 @@ class AsistenciasTomaPage extends HookWidget {
     final _isLoading = useState<bool>(true);
 
     void handleGetInitData() async {
-      final res = await HttpMod.get('/clases', {
-        '_where[0][ClaseCurso.id]': _curso.value['curso'],
-      });
+      try {
+        final res = await HttpMod.get('/clases', {
+          '_where[0][ClaseCurso.id]': _curso.value['curso'],
+        });
 
-      final resAlumnos = await HttpMod.get(
-        '/cursos/${_curso.value['curso']}',
-        {},
-      );
+        final resAlumnos = await HttpMod.get(
+          '/cursos/${_curso.value['curso']}',
+          {},
+        );
 
-      if (resAlumnos.statusCode == 200) {
-        List<CursoAlumno> data =
-            Curso.fromJson(jsonDecode(resAlumnos.body)).cursoAlumnos;
+        if (resAlumnos.statusCode == 200) {
+          List<CursoAlumno> data =
+              Curso.fromJson(jsonDecode(resAlumnos.body)).cursoAlumnos;
+          data.sort(
+            (a, b) {
+              return a.username.compareTo(b.username);
+            },
+          );
+          _alumnos.value = data;
+        } else {}
 
-        _alumnos.value = data;
-      } else {}
+        if (res.statusCode == 200) {
+          List<Clase> data = jsonDecode(res.body).map<Clase>((a) {
+            return Clase.fromJson(a);
+          }).toList();
 
-      if (res.statusCode == 200) {
-        List<Clase> data = jsonDecode(res.body).map<Clase>((a) {
-          return Clase.fromJson(a);
-        }).toList();
+          this.titleAppBar.value = 'ASISTENCIAS';
+          _clases.value = data;
+          _claseSelect.value = data[0].id;
 
-        this.titleAppBar.value = 'ASISTENCIAS';
-        _clases.value = data;
-        _claseSelect.value = data[0].id;
-
-        await _hanldeGetAsistencias(
-            data[0].id.toString(), _asistencias, _isLoading);
-      }
+          await _hanldeGetAsistencias(
+              data[0].id.toString(), _asistencias, _isLoading);
+        }
+      } catch (e) {}
     }
 
     useEffect(() {

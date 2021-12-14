@@ -2,6 +2,7 @@ import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:reproductor/src/pages/cursoPageDetalle/Examenes_Page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/asistenciasToma_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/clases_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/tareas_page.dart';
@@ -27,8 +28,8 @@ class CursoDetallePage extends HookWidget {
       ),
     ]);
     final _pagesBottomBar = useState<List<TabData>>([
-      TabData(iconData: Icons.home_work, title: "Tareas"),
       TabData(iconData: Icons.play_circle_filled, title: "Clases"),
+      TabData(iconData: Icons.home_work, title: "Tareas"),
     ]);
     final _selector = useState<int>(0);
     final _curso = useState<Map<String, dynamic>>(
@@ -46,6 +47,14 @@ class CursoDetallePage extends HookWidget {
           TabData(iconData: Icons.list_alt_rounded, title: "Asistencias"),
         );
       }
+      // if (localStorage.getItem('role') == 'ALUMNO') {
+      _pages.value.add(ExamenesCurso(
+        idCurso: int.parse(_curso.value['curso']),
+      ));
+      _pagesBottomBar.value.add(
+        TabData(iconData: Icons.quiz, title: "Examenes"),
+      );
+      // }
     }, []);
 
     return Scaffold(
@@ -55,6 +64,7 @@ class CursoDetallePage extends HookWidget {
               _curso,
             )
           : Container(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: AppBar(
         title: Text(_titleAppBar.value),
         centerTitle: true,
@@ -138,7 +148,10 @@ class CursoDetallePage extends HookWidget {
           },
           label: 'Resumen Tareas Alumnos',
           labelStyle: TextStyle(
-              fontWeight: FontWeight.w500, color: Colors.white, fontSize: 16.0),
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+            fontSize: 10.0,
+          ),
           labelBackgroundColor: Color(0xFF4CAAB1),
         )
       ],

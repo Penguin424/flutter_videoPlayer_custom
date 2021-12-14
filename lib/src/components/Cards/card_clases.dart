@@ -55,14 +55,17 @@ class CardClase extends HookWidget {
                     color: Color(0xFFBFE3ED),
                   ),
                 ),
-                onPressed: () {
-                  Get.find<GlobalController>().onAddClaseId(this.id, this.chat);
-                  Navigator.pushNamed(context, '/clase', arguments: {
-                    'video': this.url,
-                    'titulo': this.title,
-                    'id': this.id,
-                  });
-                },
+                onPressed: !chat
+                    ? null
+                    : () {
+                        Get.find<GlobalController>()
+                            .onAddClaseId(this.id, this.chat);
+                        Navigator.pushNamed(context, '/clase', arguments: {
+                          'video': this.url,
+                          'titulo': this.title,
+                          'id': this.id,
+                        });
+                      },
               ),
               const SizedBox(width: 8),
             ],
