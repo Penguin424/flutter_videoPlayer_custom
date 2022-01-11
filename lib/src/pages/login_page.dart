@@ -33,7 +33,7 @@ class LoginPage extends StatelessWidget {
               'colegiaturas',
               {
                 '_where[0][ColegiaturaAlumno.id]': user.user.id.toString(),
-                '_sort': 'ColegiaturaFecha:ASC'
+                '_sort': 'ColegiaturaFecha:DESC'
               },
             );
             final moment = new Moment.now().locale(new LocaleDe());

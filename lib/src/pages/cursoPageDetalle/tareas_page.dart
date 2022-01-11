@@ -81,7 +81,7 @@ class TareasPage extends HookWidget {
                 title: tarea.tareaNombre,
                 descripcion: tarea.tareaDescripcion,
                 clase: tarea.tareaClase.claseTitulo,
-                id: !tarea.tareaActiva ? tarea.id : tarea.tareaCurso.id,
+                id: tarea.id,
                 entr: det.length > 0 ? det[0].tareaDetEntregada : false,
                 calificacion: det.length > 0 ? det[0].tareaDetCalificacion : 0,
                 examen: tarea.tareaActiva,
