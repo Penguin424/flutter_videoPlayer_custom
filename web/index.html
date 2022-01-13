@@ -1,8 +1,22 @@
-  <picture id="splash">
-    <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x" media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)">
-    <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x" media="(prefers-color-scheme: dark)">
-    <img class="center" src="splash/img/light-1x.png" />
-  </picture>
+<picture id="splash">
+  <source
+    srcset="
+      splash/img/light-1x.png 1x,
+      splash/img/light-2x.png 2x,
+      splash/img/light-3x.png 3x
+    "
+    media="(prefers-color-scheme: light) or (prefers-color-scheme: no-preference)"
+  />
+  <source
+    srcset="
+      splash/img/dark-1x.png 1x,
+      splash/img/dark-2x.png 2x,
+      splash/img/dark-3x.png 3x
+    "
+    media="(prefers-color-scheme: dark)"
+  />
+  <img class="center" src="splash/img/light-1x.png" />
+</picture>
 <!DOCTYPE html>
 <html>
   <head>
@@ -28,11 +42,11 @@
     <meta name="apple-mobile-web-app-title" content="reproductor" />
     <link rel="apple-touch-icon" href="icons/Icon-192.png" />
 
-    <title>reproductor</title>
+    <title>Escuela Cosbiome</title>
     <link rel="manifest" href="manifest.json" />
     <script src="https://js.stripe.com/v3/"></script>
-  <link rel="stylesheet" type="text/css" href="splash/style.css">
-</head>
+    <link rel="stylesheet" type="text/css" href="splash/style.css" />
+  </head>
   <body>
     <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:

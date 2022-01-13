@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:conditional_questions/conditional_questions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tex/flutter_tex.dart';
 import 'package:reproductor/src/models/Examenes_Model.dart';
 import 'package:reproductor/src/utils/Http.dart';
 import 'package:timer_count_down/timer_controller.dart';
@@ -34,10 +34,7 @@ class QuizOption {
 class ExamenPage extends StatefulWidget {
   ExamenPage({
     Key? key,
-    this.renderingEngine = const TeXViewRenderingEngine.katex(),
   }) : super(key: key);
-
-  final TeXViewRenderingEngine renderingEngine;
 
   @override
   _ExamenPageState createState() => _ExamenPageState();
@@ -54,6 +51,7 @@ class _ExamenPageState extends State<ExamenPage> {
   int indexPage = 0;
   bool isCorrectOPtion = false;
   List<bool> isCorrect = [];
+  final _key = GlobalKey<QuestionFormState>();
 
   @override
   void initState() {
@@ -66,16 +64,20 @@ class _ExamenPageState extends State<ExamenPage> {
       final agurments =
           ModalRoute.of(context)!.settings.arguments as ExamenesDb;
 
-      final quizesInit = agurments.examenpreguntas.map<Quiz>((pregunta) {
-        return Quiz(
-          id: pregunta.id,
-          statement: "<h3>${pregunta.pregunta}</h3>",
-          options: pregunta.respuestas.map<QuizOption>((e) {
-            return QuizOption(e.id, "<h2>${e.option}</h2>");
-          }).toList(),
-          correctOptionId: pregunta.respuesta,
-        );
-      }).toList();
+      final quizesInit = agurments.examenpreguntas.map<Quiz>(
+        (pregunta) {
+          return Quiz(
+            id: pregunta.id,
+            statement: pregunta.pregunta,
+            options: pregunta.respuestas.map<QuizOption>(
+              (e) {
+                return QuizOption(e.id, e.option.replaceAll(" ", "\n") + "\n");
+              },
+            ).toList(),
+            correctOptionId: pregunta.respuesta,
+          );
+        },
+      ).toList();
       setState(() {
         quizes = quizesInit;
         examen = agurments;
@@ -91,6 +93,7 @@ class _ExamenPageState extends State<ExamenPage> {
     return isQuizesLoaded
         ? Scaffold(
             appBar: AppBar(
+              backgroundColor: Color.fromRGBO(76, 170, 177, 1.0),
               title: Text(
                 examen.examenTitulo,
                 style: TextStyle(
@@ -102,136 +105,88 @@ class _ExamenPageState extends State<ExamenPage> {
             ),
             body: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Expanded(
-                child: ListView(
-                  children: [
-                    Countdown(
-                      controller: controller,
-                      seconds: examen.tiempo * 60,
-                      build: (_, double time) => Text(
-                        Duration(seconds: time.toInt())
-                            .toString()
-                            .substring(0, 7),
-                        style: TextStyle(
-                          fontSize: 22,
-                        ),
-                        textAlign: TextAlign.center,
+              child: ListView(
+                children: [
+                  Countdown(
+                    controller: controller,
+                    seconds: examen.tiempo * 60,
+                    build: (_, double time) => Text(
+                      Duration(seconds: time.toInt())
+                          .toString()
+                          .substring(0, 7),
+                      style: TextStyle(
+                        fontSize: 22,
                       ),
-                      interval: Duration(seconds: 1),
-                      onFinished: () {
-                        onSubmitExamen();
-                      },
+                      textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 30),
-                    SizedBox(
-                      height: size.height * 0.6,
-                      child: PageView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        controller: pageController,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (_, index) {
-                          final quiz = quizes[index];
-
-                          return TeXView(
-                            renderingEngine: widget.renderingEngine,
-                            child: TeXViewColumn(
-                              children: [
-                                TeXViewDocument(
-                                  quiz.statement,
-                                  style: TeXViewStyle(
-                                    textAlign: TeXViewTextAlign.Center,
-                                  ),
-                                ),
-                                TeXViewGroup(
-                                  children: quiz.options.map(
-                                    (QuizOption option) {
-                                      return TeXViewGroupItem(
-                                        rippleEffect: false,
-                                        id: option.id.index.toString(),
-                                        child: TeXViewDocument(
-                                          option.option,
-                                          style: TeXViewStyle(
-                                            padding: TeXViewPadding.all(10),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ).toList(),
-                                  selectedItemStyle: TeXViewStyle(
-                                    borderRadius: TeXViewBorderRadius.all(10),
-                                    border: TeXViewBorder.all(
-                                      TeXViewBorderDecoration(
-                                        borderWidth: 3,
-                                        borderColor: Colors.cyan[300],
-                                      ),
-                                    ),
-                                    margin: TeXViewMargin.all(10),
-                                  ),
-                                  normalItemStyle: TeXViewStyle(
-                                    margin: TeXViewMargin.all(10),
-                                  ),
-                                  onTap: (id) {
-                                    print(id);
-                                    print(quiz.correctOptionId.index);
-                                    if (id ==
-                                        quiz.correctOptionId.index.toString()) {
-                                      setState(() {
-                                        isCorrectOPtion = true;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        isCorrectOPtion = false;
-                                      });
-                                    }
-                                  },
+                    interval: Duration(seconds: 1),
+                    onFinished: () {
+                      onSubmitExamen();
+                    },
+                  ),
+                  SizedBox(height: 30),
+                  SizedBox(
+                    height: size.height * 0.6,
+                    child: ConditionalQuestions(
+                      key: _key,
+                      children: quizes.map(
+                        (quiz) {
+                          return PolarQuestion(
+                            question: quiz.statement,
+                            answers: quiz.options
+                                .map(
+                                  (e) => e.option,
                                 )
-                              ],
-                            ),
-                            style: TeXViewStyle(
-                              margin: TeXViewMargin.all(5),
-                              padding: TeXViewPadding.all(10),
-                              borderRadius: TeXViewBorderRadius.all(10),
-                              border: TeXViewBorder.all(
-                                TeXViewBorderDecoration(
-                                  borderColor: Colors.blue,
-                                  borderStyle: TeXViewBorderStyle.Solid,
-                                  borderWidth: 5,
-                                ),
-                              ),
-                              backgroundColor: Colors.white,
-                            ),
+                                .toList(),
+                            isMandatory: true,
                           );
                         },
-                        itemCount: quizes.length,
-                      ),
-                    ),
-                    !(isCorrect.length == examen.examenpreguntas.length)
-                        ? ElevatedButton(
-                            onPressed: () {
-                              if (isCorrectOPtion) {
-                                setState(() {
-                                  isCorrect.add(true);
-                                });
-                              } else {
-                                setState(() {
-                                  isCorrect.add(false);
-                                });
-                              }
-
-                              setState(() {
-                                indexPage++;
-                                isCorrectOPtion = false;
-                                _changePageOnPageView(indexPage);
-                              });
-                            },
-                            child: Text('Guardar Respuesta'),
-                          )
-                        : ElevatedButton(
-                            onPressed: onSubmitExamen,
-                            child: Text('Terminar Examen'),
+                      ).toList(),
+                      trailing: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Color.fromRGBO(76, 170, 177, 1.0),
+                            // shape: RoundedRectangleBorder(
+                            //   borderRadius: BorderRadius.circular(20.0),
+                            // ),
                           ),
-                  ],
-                ),
+                          onPressed: () async {
+                            if (_key.currentState!.validate()) {
+                              final respuestas = _key.currentState!.toMap();
+
+                              respuestas.forEach((key, value) {
+                                final index = quizes.indexWhere(
+                                  (e) => e.statement == key,
+                                );
+
+                                final idRespuesta = quizes[index]
+                                    .options
+                                    .firstWhere(
+                                      (option) => option.option == value,
+                                    )
+                                    .id;
+
+                                if (quizes[index].correctOptionId ==
+                                    idRespuesta) {
+                                  setState(() {
+                                    isCorrect.add(true);
+                                  });
+                                } else {
+                                  setState(() {
+                                    isCorrect.add(false);
+                                  });
+                                }
+                              });
+
+                              onSubmitExamen();
+                            }
+                          },
+                          child: Text("TERMINAR EXAMEN"),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           )

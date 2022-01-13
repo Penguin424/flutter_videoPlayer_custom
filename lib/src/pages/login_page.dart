@@ -22,8 +22,6 @@ class LoginPage extends StatelessWidget {
         onRecoverPassword: (pass) async {
           return '';
         },
-        hideSignUpButton: true,
-        hideForgotPasswordButton: true,
         loginAfterSignUp: false,
         onLogin: (value) async {
           final res = await HttpMod.login(value);

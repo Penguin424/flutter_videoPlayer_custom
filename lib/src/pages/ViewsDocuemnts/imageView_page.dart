@@ -17,8 +17,8 @@ class ImgViewer extends HookWidget {
       ),
       body: Center(
         child: PinchZoom(
-          image: Image.network(_params.value),
-          zoomedBackgroundColor: Colors.black.withOpacity(0.5),
+          child: Image.network(_params.value),
+          // zoomedBackgroundColor: Colors.black.withOpacity(0.5),
           resetDuration: const Duration(milliseconds: 100),
           maxScale: 2.5,
           onZoomStart: () {
