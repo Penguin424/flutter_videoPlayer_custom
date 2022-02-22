@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get/get.dart';
@@ -54,9 +55,18 @@ class LoginPage extends StatelessWidget {
 
             final controller = Get.find<GlobalController>();
 
+            final coolsArr = data
+                .map(
+                  (e) => Timestamp.fromDate(
+                    DateFormat('MM/dd/yyyy').parse(e.colegiaturaFecha),
+                  ).millisecondsSinceEpoch,
+                )
+                .toList();
+
+            final fechaMasGrande = coolsArr.reduce((a, b) => a > b ? a : b);
+
             final limite = DateTime(moment.year, moment.month, 10);
-            final pago =
-                DateFormat('MM/dd/yyyy').parse(data.last.colegiaturaFecha);
+            final pago = DateTime.fromMillisecondsSinceEpoch(fechaMasGrande);
 
             final hoy = DateTime.now();
 
