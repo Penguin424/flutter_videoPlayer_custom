@@ -8,6 +8,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:reproductor/src/models/Tarea.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:path_provider/path_provider.dart';
 import 'package:reproductor/src/utils/Http.dart';
@@ -180,7 +181,8 @@ class AlumnoTareaPage extends HookWidget {
                 'tareaDetArchivo': archs.join(','),
                 'tareaDetEntrega': DateTime.now().toString(),
                 'tareaDetCalificacion': 0.0,
-                'tareaDetAlumno': HttpMod.localStorage.getItem('idUser'),
+                'tareaDetAlumno':
+                    int.parse(PreferenceUtils.getString('idUser')),
                 'tareaDetTarea': _params.value['idTarea'] as int,
                 'tareaDetEntregada': 1,
               },

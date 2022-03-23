@@ -4,6 +4,7 @@ import 'package:conditional_questions/conditional_questions.dart';
 import 'package:flutter/material.dart';
 import 'package:reproductor/src/models/Examenes_Model.dart';
 import 'package:reproductor/src/utils/Http.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 
@@ -202,7 +203,7 @@ class _ExamenPageState extends State<ExamenPage> {
     double puntosPorPreguntas = 100 / quizes.length;
     double calificacion =
         isCorrect.where((element) => element).length * puntosPorPreguntas;
-    int alumno = HttpMod.localStorage.getItem('idUser');
+    int alumno = int.parse(PreferenceUtils.getString('idUser'));
 
     final examenDetalle = await HttpMod.post(
       "detalleexamenes",

@@ -9,6 +9,7 @@ import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/UsuarioChat_model.dart';
 import 'package:reproductor/src/pages/chat/ChatDetalle_page.dart';
 import 'package:reproductor/src/utils/Http.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 // class ChatHome extends HookWidget {
@@ -68,7 +69,7 @@ class _ChatHomeState extends State<ChatHome> {
       for (var usuario in usuarios) {
         UsuarioChat usuarioChat = UsuarioChat.fromJson(usuario);
 
-        if (HttpMod.localStorage.getItem('role') != 'MAESTRO') {
+        if (PreferenceUtils.getString('role') != 'MAESTRO') {
           for (var item in nombres) {
             if (item == usuarioChat.nombre) usuariosChat.add(usuarioChat);
           }
@@ -79,7 +80,7 @@ class _ChatHomeState extends State<ChatHome> {
       setState(() {
         _usuarioschat = usuariosChat
             .where((element) =>
-                element.nombre != HttpMod.localStorage.getItem('userName'))
+                element.nombre != PreferenceUtils.getString('userName'))
             .toList();
       });
     }
@@ -92,7 +93,7 @@ class _ChatHomeState extends State<ChatHome> {
         for (var usuario in usuarios) {
           UsuarioChat usuarioChat = UsuarioChat.fromJson(usuario);
 
-          if (HttpMod.localStorage.getItem('role') != 'MAESTRO') {
+          if (PreferenceUtils.getString('role') != 'MAESTRO') {
             for (var item in nombres) {
               if (item == usuarioChat.nombre) usuariosChat.add(usuarioChat);
             }
@@ -105,7 +106,7 @@ class _ChatHomeState extends State<ChatHome> {
           setState(() {
             _usuarioschat = usuariosChat
                 .where((element) =>
-                    element.nombre != HttpMod.localStorage.getItem('userName'))
+                    element.nombre != PreferenceUtils.getString('userName'))
                 .toList();
           });
         }

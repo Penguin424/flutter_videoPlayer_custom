@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:reproductor/src/models/Alumno_model.dart';
 import 'package:reproductor/src/models/Producto_model.dart';
 import 'package:reproductor/src/models/UsuarioChat_model.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class GlobalController extends GetxController {
@@ -36,10 +37,10 @@ class GlobalController extends GetxController {
   bool get fullScreen => _fullScreen;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
 
-    print('Hola, Mundo');
+    await PreferenceUtils.init();
   }
 
   setFullScreen(bool value) {

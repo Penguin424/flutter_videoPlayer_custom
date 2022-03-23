@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:reproductor/src/models/Examenes_Model.dart';
 import 'package:reproductor/src/utils/Http.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
 class ExamenesCurso extends StatefulWidget {
   const ExamenesCurso({Key? key, required this.idCurso}) : super(key: key);
@@ -46,7 +47,8 @@ class _ExamenesCursoState extends State<ExamenesCurso> {
             final examen = examenes[index];
             final intento = examen.detalleexamenes.where(
               (detalle) =>
-                  detalle.alumno == HttpMod.localStorage.getItem('idUser'),
+                  detalle.alumno ==
+                  int.parse(PreferenceUtils.getString('idUser')),
             );
             return intento.length > 0
                 ? ListTile(
@@ -55,6 +57,15 @@ class _ExamenesCursoState extends State<ExamenesCurso> {
                     subtitle: Text(
                       'Calificación: ${intento.first.calificacion.toStringAsFixed(2)}',
                     ),
+                    onTap: () {
+                      if (PreferenceUtils.getString('role') == 'MAESTRO') {
+                        Navigator.pushNamed(
+                          context,
+                          '/examen/detalle',
+                          arguments: examen.id,
+                        );
+                      }
+                    },
                   )
                 : ListTile(
                     title: Text(examen.examenTitulo),
@@ -64,11 +75,19 @@ class _ExamenesCursoState extends State<ExamenesCurso> {
                       'Examen disponible',
                     ),
                     onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/examen',
-                        arguments: examenes[index],
-                      );
+                      if (PreferenceUtils.getString('role') == 'MAESTRO') {
+                        Navigator.pushNamed(
+                          context,
+                          '/examen/detalle',
+                          arguments: examen.id,
+                        );
+                      } else {
+                        Navigator.pushNamed(
+                          context,
+                          '/examen',
+                          arguments: examenes[index],
+                        );
+                      }
                     },
                   );
           },

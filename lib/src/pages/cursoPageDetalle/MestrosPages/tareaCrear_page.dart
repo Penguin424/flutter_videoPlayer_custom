@@ -7,6 +7,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
 import 'package:reproductor/src/models/Clase_model.dart';
 import 'package:reproductor/src/utils/Http.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
 class TareaCrear extends HookWidget {
   // const AlumnoTareaPage({Key key}) : super(key: key);
@@ -237,7 +238,8 @@ class TareaCrear extends HookWidget {
                   'tareaNombre': _tareaNombre.value,
                   'tareaEntrega': DateTime.now().toString(),
                   'tareaPuntos': _puntos.value,
-                  'tareaMaestro': HttpMod.localStorage.getItem('idUser'),
+                  'tareaMaestro':
+                      int.parse(PreferenceUtils.getString('idUser')),
                   'tareaCurso': int.parse(_params.value['idCurso']),
                   'tareaClase': _claseSelect.value,
                   'tareaActiva': 1,

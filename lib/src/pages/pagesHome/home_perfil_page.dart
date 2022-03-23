@@ -8,6 +8,7 @@ import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/Curso.dart';
 import 'package:reproductor/src/models/Producto_model.dart';
 import 'package:reproductor/src/utils/Http.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
 class HomePerfil extends HookWidget {
   const HomePerfil({Key? key}) : super(key: key);
@@ -16,16 +17,18 @@ class HomePerfil extends HookWidget {
   Widget build(BuildContext context) {
     final medidas = MediaQuery.of(context).size;
     final _nombreList = useState<List<String>>(
-      HttpMod.localStorage.getItem('userName').toString().split(' ').toList(),
+      PreferenceUtils.getString('userName').toString().split(' ').toList(),
     );
     final _cursosAlumnos = useState<List<Curso>>([]);
-    final _fotoPerfil = useState<String>(
-        HttpMod.localStorage.getItem('imagenPerfil').toString());
+    final _fotoPerfil =
+        useState<String>(PreferenceUtils.getString('imagenPerfil').toString());
 
     void initGetDate() async {
       try {
         LocalStorage localStorage = LocalStorage('localStorage.json');
-        final id = localStorage.getItem('idUser');
+        final id = PreferenceUtils.getString('idUser');
+
+        await PreferenceUtils.init();
 
         final res = await HttpMod.get(
           '/cursos',
@@ -83,7 +86,7 @@ class HomePerfil extends HookWidget {
                           height: 20.0,
                         ),
                         Text(
-                          HttpMod.localStorage.getItem('userName').toString(),
+                          PreferenceUtils.getString('userName').toString(),
                           style: TextStyle(
                             fontSize: 22,
                           ),
@@ -145,6 +148,33 @@ class HomePerfil extends HookWidget {
                         );
                       },
                     ).toList(),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Color.fromRGBO(76, 170, 177, 1.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100.0),
+                      ),
+                    ),
+                    onPressed: () async {
+                      await PreferenceUtils.init();
+
+                      PreferenceUtils.putString('token', '');
+                      PreferenceUtils.putString('idUser', '');
+                      PreferenceUtils.putString('userName', '');
+                      PreferenceUtils.putString('role', '');
+                      PreferenceUtils.putString('imagenPerfil', '');
+                      PreferenceUtils.putBool('isLogged', false);
+                      PreferenceUtils.putString('email', '');
+                      PreferenceUtils.putString('password', '');
+
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/login',
+                        ModalRoute.withName('/'),
+                      );
+                    },
+                    child: Text('Cerrar Sesión'),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(

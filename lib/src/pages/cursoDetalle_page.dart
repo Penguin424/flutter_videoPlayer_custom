@@ -8,6 +8,7 @@ import 'package:reproductor/src/pages/cursoPageDetalle/clases_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/tareas_page.dart';
 import 'package:reproductor/src/utils/Http.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
 class CursoDetallePage extends HookWidget {
   // const ClasesPage({Key key}) : super(key: key);
@@ -39,7 +40,7 @@ class CursoDetallePage extends HookWidget {
     useEffect(() {
       LocalStorage localStorage = new LocalStorage('localStorage.json');
 
-      if (localStorage.getItem('role') == 'MAESTRO') {
+      if (PreferenceUtils.getString('role') == 'MAESTRO') {
         _pages.value.add(AsistenciasTomaPage(
           titleAppBar: _titleAppBar,
         ));
@@ -47,7 +48,7 @@ class CursoDetallePage extends HookWidget {
           TabData(iconData: Icons.list_alt_rounded, title: "Asistencias"),
         );
       }
-      // if (localStorage.getItem('role') == 'ALUMNO') {
+      // if (PreferenceUtils.getString('role') == 'ALUMNO') {
       _pages.value.add(ExamenesCurso(
         idCurso: int.parse(_curso.value['curso']),
       ));
@@ -58,7 +59,7 @@ class CursoDetallePage extends HookWidget {
     }, []);
 
     return Scaffold(
-      floatingActionButton: HttpMod.localStorage.getItem('role') == 'MAESTRO'
+      floatingActionButton: PreferenceUtils.getString('role') == 'MAESTRO'
           ? _getFAB(
               context,
               _curso,

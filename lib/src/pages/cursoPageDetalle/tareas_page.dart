@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reproductor/src/components/Cards/card_tareas.dart';
 import 'package:reproductor/src/models/Tarea.dart';
 import 'package:reproductor/src/utils/Http.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
 class TareasPage extends HookWidget {
   const TareasPage({
@@ -25,7 +26,7 @@ class TareasPage extends HookWidget {
         final res = await HttpMod.get('/tareas', {
           '_where[0][TareaCurso.id]': _curso.value['curso'],
           // '_where[0][TareaDetalles.TareaDetAlumno_ne]':
-          //     HttpMod.localStorage.getItem('idUser').toString(),
+          //     int.parse(PreferenceUtils.getString('idUser')) ?? 0.toString(),
           // '_where[0][TareaDetalles.TareaDetEntregada]': 'false',
         });
 
@@ -41,7 +42,7 @@ class TareasPage extends HookWidget {
                 .where(
                   (e) =>
                       e.tareaDetAlumno ==
-                      HttpMod.localStorage.getItem('idUser'),
+                      int.parse(PreferenceUtils.getString('idUser')),
                 )
                 .toList();
 
@@ -74,7 +75,7 @@ class TareasPage extends HookWidget {
           ? _tareas.value.map((tarea) {
               final det = tarea.tareaDetalles.where((element) {
                 return element.tareaDetAlumno ==
-                    HttpMod.localStorage.getItem('idUser');
+                    int.parse(PreferenceUtils.getString('idUser'));
               }).toList();
               // return Text('data');
               return CardTarea(

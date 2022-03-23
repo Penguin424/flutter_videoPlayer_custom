@@ -8,6 +8,8 @@ import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/User.dart';
 import 'dart:async';
 
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
+
 class HttpMod {
   static final HttpMod _httpMod = HttpMod._internal();
   factory HttpMod() => _httpMod;
@@ -22,7 +24,7 @@ class HttpMod {
   static Map<String, String> _headersAuth = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': 'Bearer ${localStorage.getItem('token')}',
+    'Authorization': 'Bearer ${PreferenceUtils.getString('token')}',
   };
   static String _host = 'escuela.cosbiome.online';
   // static int _port = 3001;
@@ -54,11 +56,23 @@ class HttpMod {
       if (localCard) {
         controller.onAddAlumno(response.body);
 
+        await PreferenceUtils.init();
+
         await _localStorage.setItem('token', user.jwt);
         await _localStorage.setItem('idUser', user.user.id);
         await _localStorage.setItem('userName', user.user.username);
         await _localStorage.setItem('role', user.user.role.name);
         await _localStorage.setItem('imagenPerfil', user.user.usuarioFoto);
+        await _localStorage.setItem('isLogged', true);
+
+        PreferenceUtils.putString('token', user.jwt);
+        PreferenceUtils.putString('idUser', user.user.id.toString());
+        PreferenceUtils.putString('userName', user.user.username);
+        PreferenceUtils.putString('role', user.user.role.name);
+        PreferenceUtils.putString('imagenPerfil', user.user.usuarioFoto);
+        PreferenceUtils.putBool('isLogged', true);
+        PreferenceUtils.putString('email', user.user.email);
+        PreferenceUtils.putString('password', loginData.password);
       }
 
       return response;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:reproductor/src/utils/Http.dart';
+import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
 class CardTarea extends HookWidget {
   const CardTarea({
@@ -61,7 +62,7 @@ class CardTarea extends HookWidget {
                 onPressed: this.entr
                     ? null
                     : () {
-                        if (HttpMod.localStorage.getItem('role') == 'MAESTRO') {
+                        if (PreferenceUtils.getString('role') == 'MAESTRO') {
                           Navigator.pushNamed(
                             context,
                             '/tareas',
