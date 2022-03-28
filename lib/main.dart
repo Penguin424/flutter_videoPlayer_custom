@@ -7,6 +7,7 @@ import 'package:reproductor/src/pages/Ventas/DetalleFinalVenta_page.dart';
 import 'package:reproductor/src/pages/ViewsDocuemnts/imageView_page.dart';
 import 'package:reproductor/src/pages/ViewsDocuemnts/pdfView_page.dart';
 import 'package:reproductor/src/pages/chat/ChatDetalle_page.dart';
+import 'package:reproductor/src/pages/chat/chat_alumnos_page.dart';
 import 'package:reproductor/src/pages/clase_page.dart';
 import 'package:reproductor/src/pages/cursoDetalle_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/AlumnosPages/alumnoTarea_page.dart';
@@ -52,6 +53,22 @@ class MyApp extends HookWidget {
       debugShowCheckedModeBanner: false,
       title: 'Escuela Cosbiome',
       initialRoute: "/loading",
+      theme: ThemeData(
+        // primaryColor: Colors.red,
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: Color(0XFF4CAAB1),
+          onPrimary: Colors.white,
+          background: Color(0XFFF5BB62),
+          onBackground: Colors.black,
+          secondary: Color(0XFFBFE3ED), //Color(0xFF92f56f)
+          onSecondary: Colors.white,
+          error: Colors.black,
+          onError: Colors.white,
+          surface: Color(0XFF36787D),
+          onSurface: Colors.black,
+          brightness: Brightness.light,
+        ),
+      ),
       routes: {
         "/loading": (context) => LoadingPage(),
         "/login": (BuildContext context) => LoginPage(),
@@ -75,6 +92,7 @@ class MyApp extends HookWidget {
         "/examen": (BuildContext context) => ExamenPage(),
         "/examen/detalle": (BuildContext context) =>
             ExamenesCalificacionesPage(),
+        "/chat": (BuildContext context) => ChatAlumnoPage(),
       },
     );
   }

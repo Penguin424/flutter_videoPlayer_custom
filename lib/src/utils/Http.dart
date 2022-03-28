@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/User.dart';
@@ -154,5 +156,32 @@ class HttpMod {
     );
 
     return response;
+  }
+
+  static Future<String> loadImage(Uint8List bytes, XFile result) async {
+    final url = 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
+    http.MultipartRequest request = http.MultipartRequest(
+      'POST',
+      Uri.parse(url),
+    );
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'file',
+        bytes,
+        filename: result.name,
+      ),
+    );
+
+    request.fields.addAll({
+      'key': 'mensajes/${PreferenceUtils.getString('userName')}/${result.name}',
+    });
+
+    http.StreamedResponse resa = await request.send();
+
+    final urlFinalArcvivo =
+        '${resa.request!.url.origin}/mensajes/${PreferenceUtils.getString('userName')}/${result.name}';
+
+    return urlFinalArcvivo;
   }
 }

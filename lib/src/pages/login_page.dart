@@ -84,24 +84,10 @@ class _LoginPageState extends State<LoginPage> {
           (hoy.day <= limite.day && pago.month == limite.month - 1)) {
         controller.onAddUltimoPago(pago);
 
-        final resChat = await post(
-          Uri.parse('https://chat.cosbiome.online/api/login'),
-          body: jsonEncode(
-            {
-              'email': email,
-              'password': password,
-            },
-          ),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        );
-        print(resChat.body);
         controller.onAddTokenChat(
-          jsonDecode(resChat.body)['token'],
-          jsonDecode(resChat.body)['usuario']['uid'],
-          int.parse(idUser),
+          PreferenceUtils.getString('token'),
+          PreferenceUtils.getString('idUser'),
+          int.parse(PreferenceUtils.getString('idUser')),
         );
 
         Navigator.pushNamed(context, '/home');
@@ -123,9 +109,9 @@ class _LoginPageState extends State<LoginPage> {
         );
         print(resChat.body);
         controller.onAddTokenChat(
-          jsonDecode(resChat.body)['token'],
-          jsonDecode(resChat.body)['usuario']['uid'],
-          int.parse(idUser),
+          PreferenceUtils.getString('token'),
+          PreferenceUtils.getString('idUser'),
+          int.parse(PreferenceUtils.getString('idUser')),
         );
 
         Navigator.pushNamed(context, '/home');
@@ -225,8 +211,8 @@ class _LoginPageState extends State<LoginPage> {
               );
               print(resChat.body);
               controller.onAddTokenChat(
-                jsonDecode(resChat.body)['token'],
-                jsonDecode(resChat.body)['usuario']['uid'],
+                user.jwt,
+                user.user.id.toString(),
                 user.user.usuarioCursos.first.id,
               );
 
@@ -234,23 +220,9 @@ class _LoginPageState extends State<LoginPage> {
             } else if (user.user.role.name == 'MAESTRO') {
               controller.onAddUltimoPago(DateTime.now());
 
-              final resChat = await post(
-                Uri.parse('https://chat.cosbiome.online/api/login'),
-                body: jsonEncode(
-                  {
-                    'email': value.name,
-                    'password': value.password,
-                  },
-                ),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                },
-              );
-              print(resChat.body);
               controller.onAddTokenChat(
-                jsonDecode(resChat.body)['token'],
-                jsonDecode(resChat.body)['usuario']['uid'],
+                user.jwt,
+                user.user.id.toString(),
                 user.user.usuarioCursos.first.id,
               );
 

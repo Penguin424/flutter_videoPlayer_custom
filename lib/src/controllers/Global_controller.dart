@@ -10,6 +10,12 @@ import 'package:reproductor/src/models/UsuarioChat_model.dart';
 import 'package:reproductor/src/utils/PrefsSIngle.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
+enum ServerStatus {
+  online,
+  offline,
+  connecting,
+}
+
 class GlobalController extends GetxController {
   List<ProductoShoppingCart> _productos = [];
   double _total = 0.0;
@@ -18,6 +24,7 @@ class GlobalController extends GetxController {
   late AlumnoDatos _alumno;
   AlumnoDatos get alumno => _alumno;
   DateTime _ultimoPago = DateTime.now();
+  Rx<ServerStatus> serverStatus = ServerStatus.connecting.obs;
   DateTime get ultimoPago => _ultimoPago;
   String _token = "";
   String get token => _token;
@@ -61,22 +68,22 @@ class GlobalController extends GetxController {
     _idChat = id;
     _idCurso = idCursoF;
     _socket = IO.io(
-      'https://chat.cosbiome.online/',
-      IO.OptionBuilder()
-          .setTransports(['websocket'])
-          .setQuery(
-            {
-              'x-token': token,
-            },
-          )
-          .enableAutoConnect()
-          .enableForceNew()
-          .build(),
+      'https://escuela.cosbiome.online/',
+      {
+        "transports": ["websocket"],
+        "autoConnect": true,
+      },
     );
+
+    _socket.emit('subscribe', 'mensajes');
+
+    _initConfigSockets();
+
+    print(_socket.connected ? 'Conectado' : 'No conectado');
 
     if (!kIsWeb) {
       _socket.on(
-        'mensaje-personal',
+        'create',
         (data) async {
           if (_idChat != data['de']) {
             if (data['mensaje'].startsWith('https')) {
@@ -103,6 +110,15 @@ class GlobalController extends GetxController {
         },
       );
     }
+  }
+
+  void _initConfigSockets() {
+    _socket.on('connect', (_) {
+      serverStatus.value = ServerStatus.online;
+    });
+    _socket.on('disconnect', (_) {
+      serverStatus.value = ServerStatus.offline;
+    });
   }
 
   onAddUltimoPago(DateTime fecha) {

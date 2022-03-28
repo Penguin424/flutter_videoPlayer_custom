@@ -34,8 +34,6 @@ class _LoadingPageState extends State<LoadingPage> {
     if (logged) {
       final idUser = PreferenceUtils.getString('idUser');
       final role = PreferenceUtils.getString('role');
-      final email = PreferenceUtils.getString('email');
-      final password = PreferenceUtils.getString('password');
 
       final resCol = await HttpMod.get(
         'colegiaturas',
@@ -82,48 +80,20 @@ class _LoadingPageState extends State<LoadingPage> {
           (hoy.day <= limite.day && pago.month == limite.month - 1)) {
         controller.onAddUltimoPago(pago);
 
-        final resChat = await post(
-          Uri.parse('https://chat.cosbiome.online/api/login'),
-          body: jsonEncode(
-            {
-              'email': email,
-              'password': password,
-            },
-          ),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        );
-        print(resChat.body);
         controller.onAddTokenChat(
-          jsonDecode(resChat.body)['token'],
-          jsonDecode(resChat.body)['usuario']['uid'],
-          int.parse(idUser),
+          PreferenceUtils.getString('token'),
+          PreferenceUtils.getString('idUser'),
+          int.parse(PreferenceUtils.getString('idUser')),
         );
 
         Navigator.pushNamed(context, '/home');
       } else if (role == 'MAESTRO') {
         controller.onAddUltimoPago(DateTime.now());
 
-        final resChat = await post(
-          Uri.parse('https://chat.cosbiome.online/api/login'),
-          body: jsonEncode(
-            {
-              'email': email,
-              'password': password,
-            },
-          ),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        );
-        print(resChat.body);
         controller.onAddTokenChat(
-          jsonDecode(resChat.body)['token'],
-          jsonDecode(resChat.body)['usuario']['uid'],
-          int.parse(idUser),
+          PreferenceUtils.getString('token'),
+          PreferenceUtils.getString('idUser'),
+          int.parse(PreferenceUtils.getString('idUser')),
         );
 
         Navigator.pushNamed(context, '/home');
