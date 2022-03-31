@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/Colegiatura_model.dart';
 import 'package:reproductor/src/models/Producto_model.dart';
 import 'package:reproductor/src/utils/Http.dart';
 import 'package:intl/intl.dart';
 import 'package:reproductor/src/utils/PrefsSIngle.dart';
+import 'package:reproductor/src/utils/verify_tokenpush_util.dart';
 import 'package:simple_moment/simple_moment.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -86,6 +86,7 @@ class _LoadingPageState extends State<LoadingPage> {
           int.parse(PreferenceUtils.getString('idUser')),
         );
 
+        await VerifyTokenPushUtil.handleVerifyTokenPus();
         Navigator.pushNamed(context, '/home');
       } else if (role == 'MAESTRO') {
         controller.onAddUltimoPago(DateTime.now());
@@ -95,6 +96,8 @@ class _LoadingPageState extends State<LoadingPage> {
           PreferenceUtils.getString('idUser'),
           int.parse(PreferenceUtils.getString('idUser')),
         );
+
+        await VerifyTokenPushUtil.handleVerifyTokenPus();
 
         Navigator.pushNamed(context, '/home');
       } else {

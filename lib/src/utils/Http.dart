@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/User.dart';
+import 'package:reproductor/src/models/notificacion_data_model.dart';
 import 'dart:async';
 
 import 'package:reproductor/src/utils/PrefsSIngle.dart';
@@ -75,6 +76,10 @@ class HttpMod {
         PreferenceUtils.putBool('isLogged', true);
         PreferenceUtils.putString('email', user.user.email);
         PreferenceUtils.putString('password', loginData.password);
+        PreferenceUtils.putString(
+          'tokenPush',
+          user.user.tokenpush == null ? '' : user.user.tokenpush!,
+        );
       }
 
       return response;
@@ -183,5 +188,30 @@ class HttpMod {
         '${resa.request!.url.origin}/mensajes/${PreferenceUtils.getString('userName')}/${result.name}';
 
     return urlFinalArcvivo;
+  }
+
+  static Future<http.Response> sendNotify(
+    String token,
+    NotificacionData notificacionData,
+    Map<String, dynamic> data,
+  ) async {
+    final url = "https://push.cosbiome.online/notificaciones";
+
+    final response = await http.post(
+      Uri.parse(url),
+      body: jsonEncode(
+        {
+          "token": token,
+          "data": data,
+          "notification": notificacionData.toJson(),
+        },
+      ),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    return response;
   }
 }

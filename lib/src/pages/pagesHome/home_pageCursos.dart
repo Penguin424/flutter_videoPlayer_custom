@@ -51,7 +51,6 @@ class PageHome extends HookWidget {
           padding: EdgeInsets.all(5),
           children: _cursosAlumnos.value.length > 0
               ? _cursosAlumnos.value.map((e) {
-                  print('curos => ${e.cursoClases}');
                   return card(
                     context,
                     e.cursoTitulo,

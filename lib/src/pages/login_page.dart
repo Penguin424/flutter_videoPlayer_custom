@@ -4,14 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
+import 'package:reproductor/src/controllers/notificaciones_controller.dart';
 import 'package:reproductor/src/models/Colegiatura_model.dart';
 import 'package:reproductor/src/models/Producto_model.dart';
 import 'package:reproductor/src/models/User.dart';
 import 'package:reproductor/src/utils/Http.dart';
 import 'package:intl/intl.dart';
 import 'package:reproductor/src/utils/PrefsSIngle.dart';
+import 'package:reproductor/src/utils/verify_tokenpush_util.dart';
 import 'package:simple_moment/simple_moment.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,6 +22,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   // const LoginPage({Key key}) : super(key: key);
+
+  final notiContoller = Get.find<NotificacionesContoller>();
 
   @override
   void initState() {
@@ -36,8 +39,6 @@ class _LoginPageState extends State<LoginPage> {
     if (logged) {
       final idUser = PreferenceUtils.getString('idUser');
       final role = PreferenceUtils.getString('role');
-      final email = PreferenceUtils.getString('email');
-      final password = PreferenceUtils.getString('password');
 
       final resCol = await HttpMod.get(
         'colegiaturas',
@@ -90,29 +91,19 @@ class _LoginPageState extends State<LoginPage> {
           int.parse(PreferenceUtils.getString('idUser')),
         );
 
+        await VerifyTokenPushUtil.handleVerifyTokenPus();
+
         Navigator.pushNamed(context, '/home');
       } else if (role == 'MAESTRO') {
         controller.onAddUltimoPago(DateTime.now());
 
-        final resChat = await post(
-          Uri.parse('https://chat.cosbiome.online/api/login'),
-          body: jsonEncode(
-            {
-              'email': email,
-              'password': password,
-            },
-          ),
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-        );
-        print(resChat.body);
         controller.onAddTokenChat(
           PreferenceUtils.getString('token'),
           PreferenceUtils.getString('idUser'),
           int.parse(PreferenceUtils.getString('idUser')),
         );
+
+        await VerifyTokenPushUtil.handleVerifyTokenPus();
 
         Navigator.pushNamed(context, '/home');
       } else {
@@ -196,25 +187,13 @@ class _LoginPageState extends State<LoginPage> {
                 (hoy.day <= limite.day && pago.month == limite.month - 1)) {
               controller.onAddUltimoPago(pago);
 
-              final resChat = await post(
-                Uri.parse('https://chat.cosbiome.online/api/login'),
-                body: jsonEncode(
-                  {
-                    'email': value.name,
-                    'password': value.password,
-                  },
-                ),
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                },
-              );
-              print(resChat.body);
               controller.onAddTokenChat(
                 user.jwt,
                 user.user.id.toString(),
                 user.user.usuarioCursos.first.id,
               );
+              await VerifyTokenPushUtil.handleVerifyTokenPus();
+              await notiContoller.handleGetCurrentUser();
 
               Navigator.pushNamed(context, '/home');
             } else if (user.user.role.name == 'MAESTRO') {
@@ -225,6 +204,9 @@ class _LoginPageState extends State<LoginPage> {
                 user.user.id.toString(),
                 user.user.usuarioCursos.first.id,
               );
+
+              await VerifyTokenPushUtil.handleVerifyTokenPus();
+              await notiContoller.handleGetCurrentUser();
 
               Navigator.pushNamed(context, '/home');
             } else {

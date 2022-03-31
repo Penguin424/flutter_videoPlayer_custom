@@ -3,12 +3,15 @@ import 'dart:math';
 
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/foundation.dart' as web;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
+import 'package:reproductor/src/controllers/notificaciones_controller.dart';
 import 'package:reproductor/src/models/mensajes_model.dart';
+import 'package:reproductor/src/models/notificacion_data_model.dart';
 import 'package:reproductor/src/models/user_chat_model.dart';
 import 'package:reproductor/src/utils/Http.dart';
 import 'package:reproductor/src/utils/PrefsSIngle.dart';
@@ -34,6 +37,7 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
   ScrollController scrollController = ScrollController();
   bool needScroll = false;
   bool isLoading = false;
+  final userChatCurrent = Get.find<NotificacionesContoller>().userChat.value;
 
   @override
   void initState() {
@@ -158,7 +162,7 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
       );
   }
 
-  Future<void> getImageFilePicker(int para) async {
+  Future<void> getImageFilePicker(int para, UserChatModel userMen) async {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
 
@@ -175,6 +179,20 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
       );
 
       if (mensajeDB.statusCode == 200) {
+        if (!web.kIsWeb) {
+          await HttpMod.sendNotify(
+            userMen.tokenpush == null ? '' : userMen.tokenpush!,
+            NotificacionData(
+              title:
+                  'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
+              body: mensaje,
+            ),
+            {
+              "usserMessage": jsonEncode(userChatCurrent.toJson()),
+            },
+          );
+        }
+
         setState(() {
           mensaje = "";
           mensajeCOntroller.text = "";
@@ -185,7 +203,7 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
     }
   }
 
-  Future handleSendMessage(int para) async {
+  Future handleSendMessage(int para, UserChatModel userMen) async {
     final idUsuarioActual = PreferenceUtils.getString("idUser");
 
     final mensajeDB = await HttpMod.post(
@@ -200,6 +218,21 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
     );
 
     if (mensajeDB.statusCode == 200) {
+      if (!web.kIsWeb) {
+        await HttpMod.sendNotify(
+          userMen.tokenpush == null
+              ? 'dMO2jF9VTgWVvVldU1Ne0A:APA91bEucHDEQ2nxNHmqNU6U6EKqLrsJhEy29GVRQvFzYjytACAYQM-qCpxLHAX_3FtF9HKjf-38FuJdEDuOw_ZT6Ue6Uj1H_43ABlYvAFkdMLOa33ZaNXCMKmQ0CA-QvU-iR3lxnX7u'
+              : userMen.tokenpush!,
+          NotificacionData(
+            title: 'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
+            body: mensaje,
+          ),
+          {
+            "usserMessage": jsonEncode(userChatCurrent.toJson()),
+          },
+        );
+      }
+
       setState(() {
         mensaje = "";
         mensajeCOntroller.text = "";
@@ -209,7 +242,8 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
     }
   }
 
-  Future<void> getImadeForImagePIckerSourceCamera(int para) async {
+  Future<void> getImadeForImagePIckerSourceCamera(
+      int para, UserChatModel userMen) async {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.camera);
 
@@ -231,6 +265,22 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
       );
 
       if (mensajeDB.statusCode == 200) {
+        if (!web.kIsWeb) {
+          await HttpMod.sendNotify(
+            userMen.tokenpush == null
+                ? 'dMO2jF9VTgWVvVldU1Ne0A:APA91bEucHDEQ2nxNHmqNU6U6EKqLrsJhEy29GVRQvFzYjytACAYQM-qCpxLHAX_3FtF9HKjf-38FuJdEDuOw_ZT6Ue6Uj1H_43ABlYvAFkdMLOa33ZaNXCMKmQ0CA-QvU-iR3lxnX7u'
+                : userMen.tokenpush!,
+            NotificacionData(
+              title:
+                  'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
+              body: urlImage,
+            ),
+            {
+              "usserMessage": jsonEncode(userChatCurrent.toJson()),
+            },
+          );
+        }
+
         setState(() {
           mensaje = "";
           mensajeCOntroller.text = "";
@@ -408,6 +458,7 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
                                 onPressed: () =>
                                     getImadeForImagePIckerSourceCamera(
                                   argumanets.id!,
+                                  argumanets,
                                 ),
                                 icon: const Icon(Icons.camera_alt),
                               ),
@@ -424,7 +475,8 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
                         ),
                         child: IconButton(
                           onPressed: mensaje.isNotEmpty
-                              ? () => handleSendMessage(argumanets.id!)
+                              ? () =>
+                                  handleSendMessage(argumanets.id!, argumanets)
                               : null,
                           icon: mensaje.isNotEmpty
                               ? const Icon(

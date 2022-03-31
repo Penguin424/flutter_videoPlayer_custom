@@ -93,7 +93,7 @@ class UserChatModel {
   String? provider;
   bool? confirmed;
   bool? blocked;
-  UserChatModelRole? role;
+
   String? createdAt;
   String? updatedAt;
   String? UsuarioFoto;
@@ -125,6 +125,7 @@ class UserChatModel {
   String? AlumnoPagoStripe;
   bool? AlumnoEgresado;
   String? AlumnoStatus;
+  String? tokenpush;
 
   UserChatModel({
     this.id,
@@ -133,7 +134,6 @@ class UserChatModel {
     this.provider,
     this.confirmed,
     this.blocked,
-    this.role,
     this.createdAt,
     this.updatedAt,
     this.UsuarioFoto,
@@ -165,6 +165,7 @@ class UserChatModel {
     this.AlumnoPagoStripe,
     this.AlumnoEgresado,
     this.AlumnoStatus,
+    this.tokenpush,
   });
   UserChatModel.fromJson(Map<String, dynamic> json) {
     id = json['id']?.toInt();
@@ -173,9 +174,7 @@ class UserChatModel {
     provider = json['provider']?.toString();
     confirmed = json['confirmed'];
     blocked = json['blocked'];
-    role = (json['role'] != null)
-        ? UserChatModelRole.fromJson(json['role'])
-        : null;
+
     createdAt = json['created_at']?.toString();
     updatedAt = json['updated_at']?.toString();
     UsuarioFoto = json['UsuarioFoto']?.toString();
@@ -208,6 +207,7 @@ class UserChatModel {
     AlumnoPagoStripe = json['AlumnoPagoStripe']?.toString();
     AlumnoEgresado = json['AlumnoEgresado'];
     AlumnoStatus = json['AlumnoStatus']?.toString();
+    tokenpush = json['tokenpush']?.toString();
   }
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
@@ -217,9 +217,6 @@ class UserChatModel {
     data['provider'] = provider;
     data['confirmed'] = confirmed;
     data['blocked'] = blocked;
-    if (role != null) {
-      data['role'] = role!.toJson();
-    }
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['UsuarioFoto'] = UsuarioFoto;
@@ -251,6 +248,7 @@ class UserChatModel {
     data['AlumnoPagoStripe'] = AlumnoPagoStripe;
     data['AlumnoEgresado'] = AlumnoEgresado;
     data['AlumnoStatus'] = AlumnoStatus;
+    data['tokenpush'] = tokenpush;
     return data;
   }
 }

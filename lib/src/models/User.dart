@@ -40,6 +40,7 @@ class UserClass {
     required this.createdAt,
     required this.updatedAt,
     required this.usuarioCursos,
+    this.tokenpush,
   });
 
   int id;
@@ -53,6 +54,7 @@ class UserClass {
   DateTime createdAt;
   DateTime updatedAt;
   List<UsuarioCurso> usuarioCursos;
+  String? tokenpush;
 
   factory UserClass.fromJson(Map<String, dynamic> json) => UserClass(
         id: json["id"],
@@ -67,6 +69,7 @@ class UserClass {
         updatedAt: DateTime.parse(json["updated_at"]),
         usuarioCursos: List<UsuarioCurso>.from(
             json["UsuarioCursos"].map((x) => UsuarioCurso.fromJson(x))),
+        tokenpush: json["tokenpush"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -82,6 +85,7 @@ class UserClass {
         "updated_at": updatedAt.toIso8601String(),
         "UsuarioCursos":
             List<dynamic>.from(usuarioCursos.map((x) => x.toJson())),
+        "tokenpush": tokenpush,
       };
 }
 
