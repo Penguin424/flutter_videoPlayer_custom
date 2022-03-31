@@ -179,19 +179,16 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
       );
 
       if (mensajeDB.statusCode == 200) {
-        if (!web.kIsWeb) {
-          await HttpMod.sendNotify(
-            userMen.tokenpush == null ? '' : userMen.tokenpush!,
-            NotificacionData(
-              title:
-                  'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
-              body: mensaje,
-            ),
-            {
-              "usserMessage": jsonEncode(userChatCurrent.toJson()),
-            },
-          );
-        }
+        await HttpMod.sendNotify(
+          userMen.tokenpush == null ? '' : userMen.tokenpush!,
+          NotificacionData(
+            title: 'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
+            body: mensaje,
+          ),
+          {
+            "usserMessage": jsonEncode(userChatCurrent.toJson()),
+          },
+        );
 
         setState(() {
           mensaje = "";
@@ -218,20 +215,18 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
     );
 
     if (mensajeDB.statusCode == 200) {
-      if (!web.kIsWeb) {
-        await HttpMod.sendNotify(
-          userMen.tokenpush == null
-              ? 'dMO2jF9VTgWVvVldU1Ne0A:APA91bEucHDEQ2nxNHmqNU6U6EKqLrsJhEy29GVRQvFzYjytACAYQM-qCpxLHAX_3FtF9HKjf-38FuJdEDuOw_ZT6Ue6Uj1H_43ABlYvAFkdMLOa33ZaNXCMKmQ0CA-QvU-iR3lxnX7u'
-              : userMen.tokenpush!,
-          NotificacionData(
-            title: 'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
-            body: mensaje,
-          ),
-          {
-            "usserMessage": jsonEncode(userChatCurrent.toJson()),
-          },
-        );
-      }
+      await HttpMod.sendNotify(
+        userMen.tokenpush == null
+            ? 'dMO2jF9VTgWVvVldU1Ne0A:APA91bEucHDEQ2nxNHmqNU6U6EKqLrsJhEy29GVRQvFzYjytACAYQM-qCpxLHAX_3FtF9HKjf-38FuJdEDuOw_ZT6Ue6Uj1H_43ABlYvAFkdMLOa33ZaNXCMKmQ0CA-QvU-iR3lxnX7u'
+            : userMen.tokenpush!,
+        NotificacionData(
+          title: 'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
+          body: mensaje,
+        ),
+        {
+          "usserMessage": jsonEncode(userChatCurrent.toJson()),
+        },
+      );
 
       setState(() {
         mensaje = "";
@@ -265,21 +260,18 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
       );
 
       if (mensajeDB.statusCode == 200) {
-        if (!web.kIsWeb) {
-          await HttpMod.sendNotify(
-            userMen.tokenpush == null
-                ? 'dMO2jF9VTgWVvVldU1Ne0A:APA91bEucHDEQ2nxNHmqNU6U6EKqLrsJhEy29GVRQvFzYjytACAYQM-qCpxLHAX_3FtF9HKjf-38FuJdEDuOw_ZT6Ue6Uj1H_43ABlYvAFkdMLOa33ZaNXCMKmQ0CA-QvU-iR3lxnX7u'
-                : userMen.tokenpush!,
-            NotificacionData(
-              title:
-                  'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
-              body: urlImage,
-            ),
-            {
-              "usserMessage": jsonEncode(userChatCurrent.toJson()),
-            },
-          );
-        }
+        await HttpMod.sendNotify(
+          userMen.tokenpush == null
+              ? 'dMO2jF9VTgWVvVldU1Ne0A:APA91bEucHDEQ2nxNHmqNU6U6EKqLrsJhEy29GVRQvFzYjytACAYQM-qCpxLHAX_3FtF9HKjf-38FuJdEDuOw_ZT6Ue6Uj1H_43ABlYvAFkdMLOa33ZaNXCMKmQ0CA-QvU-iR3lxnX7u'
+              : userMen.tokenpush!,
+          NotificacionData(
+            title: 'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
+            body: urlImage,
+          ),
+          {
+            "usserMessage": jsonEncode(userChatCurrent.toJson()),
+          },
+        );
 
         setState(() {
           mensaje = "";

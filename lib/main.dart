@@ -8,6 +8,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/controllers/notificaciones_controller.dart';
+import 'package:reproductor/src/models/user_chat_model.dart';
 import 'package:reproductor/src/pages/Ventas/DetalleFinalVenta_page.dart';
 import 'package:reproductor/src/pages/ViewsDocuemnts/imageView_page.dart';
 import 'package:reproductor/src/pages/ViewsDocuemnts/pdfView_page.dart';
@@ -32,7 +33,47 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (!kIsWeb) {
-    if (message.notification!.body!.startsWith('https://')) {
+    AwesomeNotifications().actionStream.listen(
+      (action) {
+        final userMap = jsonDecode(
+          jsonDecode(action.payload!['data'] as String)['usserMessage'],
+        );
+
+        final userNoti = UserChatModel.fromJson(
+          userMap,
+        );
+
+        Navigator.pushNamed(Get.context!, '/chat', arguments: userNoti);
+      },
+    );
+
+    if (message.notification!.android!.imageUrl != null ||
+        message.notification!.android!.imageUrl != '' ||
+        message.notification!.apple!.imageUrl != null ||
+        message.notification!.apple!.imageUrl != '') {
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 1,
+          channelKey: 'key1',
+          title: message.notification!.title,
+          body: message.notification!.body,
+          color: Theme.of(Get.context!).colorScheme.primary,
+          bigPicture: message.notification!.android!.imageUrl ??
+              message.notification!.apple!.imageUrl,
+          notificationLayout: NotificationLayout.BigPicture,
+          payload: {
+            "data": jsonEncode(message.data),
+          },
+        ),
+        actionButtons: [
+          NotificationActionButton(
+            key: 'asdasdas',
+            label: 'Aceptar',
+            buttonType: ActionButtonType.KeepOnTop,
+          ),
+        ],
+      );
+    } else if (message.notification!.body!.startsWith('https://')) {
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: 1,

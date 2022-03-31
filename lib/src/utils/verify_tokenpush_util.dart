@@ -6,6 +6,7 @@ import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
 class VerifyTokenPushUtil {
   static handleVerifyTokenPus() async {
+    print('¿dasdasdasd');
     await PreferenceUtils.init();
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
@@ -15,7 +16,10 @@ class VerifyTokenPushUtil {
 
     print('verificacionTo: ${token != tokenStorage && token != null}');
 
-    if (token != tokenStorage && token != null) {
+    print('token: $token');
+    print('tokenStorage: $tokenStorage');
+
+    if (token != null) {
       PreferenceUtils.putString('tokenPush', token);
 
       await HttpMod.update(

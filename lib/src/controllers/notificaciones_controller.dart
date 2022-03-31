@@ -19,7 +19,7 @@ class NotificacionesContoller extends GetxController {
 
     handleGetCurrentUser();
 
-    NotificationSettings settings = await messaging.value.requestPermission(
+    await messaging.value.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -28,8 +28,6 @@ class NotificacionesContoller extends GetxController {
       provisional: false,
       sound: true,
     );
-
-    print('User granted permission: ${settings.authorizationStatus}');
 
     AwesomeNotifications().actionStream.listen(
       (action) {
@@ -48,7 +46,33 @@ class NotificacionesContoller extends GetxController {
     FirebaseMessaging.onMessage.listen(
       (RemoteMessage message) async {
         if (message.notification != null && !kIsWeb) {
-          if (message.notification!.body!.startsWith('https://')) {
+          if (message.notification!.android!.imageUrl != null ||
+              message.notification!.android!.imageUrl != '' ||
+              message.notification!.apple!.imageUrl != null ||
+              message.notification!.apple!.imageUrl != '') {
+            await AwesomeNotifications().createNotification(
+              content: NotificationContent(
+                id: 1,
+                channelKey: 'key1',
+                title: message.notification!.title,
+                body: message.notification!.body,
+                color: Theme.of(Get.context!).colorScheme.primary,
+                bigPicture: message.notification!.android!.imageUrl ??
+                    message.notification!.apple!.imageUrl,
+                notificationLayout: NotificationLayout.BigPicture,
+                payload: {
+                  "data": jsonEncode(message.data),
+                },
+              ),
+              actionButtons: [
+                NotificationActionButton(
+                  key: 'asdasdas',
+                  label: 'Aceptar',
+                  buttonType: ActionButtonType.KeepOnTop,
+                ),
+              ],
+            );
+          } else if (message.notification!.body!.startsWith('https://')) {
             await AwesomeNotifications().createNotification(
               content: NotificationContent(
                 id: 1,
