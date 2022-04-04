@@ -3,15 +3,16 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/pages/Ventas/DetalleFinalVenta_page.dart';
+import 'package:reproductor/src/utils/Http.dart';
 
 class ShoppingCar extends HookWidget {
-  const ShoppingCar({Key? key}) : super(key: key);
+  ShoppingCar({Key? key}) : super(key: key);
+  final controller = Get.find<GlobalController>();
 
   @override
   Widget build(BuildContext context) {
     useEffect(() {
       return () {
-        final controller = Get.find<GlobalController>();
         final valid = controller.productos[0].name
             .toLowerCase()
             .startsWith('colegiatura');
@@ -99,19 +100,14 @@ class ShoppingCar extends HookWidget {
                     child: Text(
                       'MANDAR PEDIDO',
                     ),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        PageRouteBuilder(
-                          transitionDuration: Duration(milliseconds: 650),
-                          pageBuilder: (context, animation, _) {
-                            return FadeTransition(
-                              opacity: animation,
-                              child: VentaSendVendedor(),
-                            );
-                          },
-                        ),
-                      );
-                      Navigator.pushNamed(context, '/detalleVentaMandar');
+                    onPressed: () async {
+                      final userMe = await HttpMod.get('users/me', {});
+
+                      if (userMe.statusCode == 200) {
+                        print('userMe: ${userMe.body}');
+                        controller.onAddAlumnoShop(userMe.body);
+                        Navigator.pushNamed(context, '/detalleVentaMandar');
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       primary: Color.fromRGBO(76, 170, 177, 1.0),

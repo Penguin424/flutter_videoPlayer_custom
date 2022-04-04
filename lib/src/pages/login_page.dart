@@ -256,7 +256,7 @@ class _LoginPageState extends State<LoginPage> {
             TextButton(
               child: Text('Aceptar'),
               onPressed: () {
-                Navigator.pushNamed(context, '/');
+                Navigator.pushNamed(context, '/home');
                 HttpMod.localStorage.clear();
               },
             ),

@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 import 'package:http/http.dart';
 import 'package:reproductor/src/components/VideoPlayFull.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +13,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/src/multipart_file.dart' as mt;
+import 'dart:io' as opsdDart;
 
 String randomString() {
   final random = Random.secure();
@@ -231,34 +232,40 @@ class _ClasePageState extends State<ClasePage> {
       //   systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
       // ),
       body: GetBuilder<GlobalController>(builder: (_) {
-        return SingleChildScrollView(
-          physics:
-              _.fullScreen ? NeverScrollableScrollPhysics() : ScrollPhysics(),
-          child: Column(
-            children: [
-              VideoPlayerFull(
-                url: params['video'],
-                title: params['titulo'],
+        return Container(
+          color: opsdDart.Platform.isIOS ? Colors.black : Colors.white,
+          child: SafeArea(
+            child: SingleChildScrollView(
+              physics: _.fullScreen
+                  ? NeverScrollableScrollPhysics()
+                  : ScrollPhysics(),
+              child: Column(
+                children: [
+                  VideoPlayerFull(
+                    url: params['video'],
+                    title: params['titulo'],
+                  ),
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 1.5,
+                    child: _controller.chastAc
+                        ? Chat(
+                            messages: _messages,
+                            onSendPressed: _handleSendPressed,
+                            user: _user,
+                            showUserNames: true,
+                            disableImageGallery: false,
+                            onAttachmentPressed: _handleImageSelection,
+                          )
+                        : Center(
+                            child: Text('DISFRUTA TU CLASE'),
+                          ),
+                  ),
+                ],
               ),
-              // SizedBox(
-              //   height: 20,
-              // ),
-              Container(
-                height: MediaQuery.of(context).size.height / 1.5,
-                child: _controller.chastAc
-                    ? Chat(
-                        messages: _messages,
-                        onSendPressed: _handleSendPressed,
-                        user: _user,
-                        showUserNames: true,
-                        disableImageGallery: false,
-                        onAttachmentPressed: _handleImageSelection,
-                      )
-                    : Center(
-                        child: Text('DISFRUTA TU CLASE'),
-                      ),
-              ),
-            ],
+            ),
           ),
         );
       }),

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>270342511775-u6qhjdohuf4ouooc1r9akkqktoifqj2p.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.270342511775-u6qhjdohuf4ouooc1r9akkqktoifqj2p</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDwv0OgmQw51xSoD1r6iqtXV23NFmOtPI0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>270342511775</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.cosbiome.escuela</string>
+	<key>PROJECT_ID</key>
+	<string>cosbiome-bcdf4</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cosbiome-bcdf4.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:270342511775:ios:f4833da6216ac914c5d6aa</string>
+	<key>DATABASE_URL</key>
+	<string>https://cosbiome-bcdf4.firebaseio.com</string>
+</dict>
+</plist>

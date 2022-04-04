@@ -6,8 +6,13 @@ import 'package:reproductor/src/utils/Http.dart';
 import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
 class ExamenesCurso extends StatefulWidget {
-  const ExamenesCurso({Key? key, required this.idCurso}) : super(key: key);
+  ExamenesCurso({
+    Key? key,
+    required this.idCurso,
+    required this.titleAppBar,
+  }) : super(key: key);
 
+  final ValueNotifier<String> titleAppBar;
   final int idCurso;
   @override
   _ExamenesCursoState createState() => _ExamenesCursoState();
@@ -34,6 +39,7 @@ class _ExamenesCursoState extends State<ExamenesCurso> {
               (json) => ExamenesDb.fromJson(json),
             )
             .toList();
+        widget.titleAppBar.value = 'Examenes';
       },
     );
   }

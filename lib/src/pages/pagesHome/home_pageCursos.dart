@@ -60,8 +60,11 @@ class PageHome extends HookWidget {
                   );
                 }).toList()
               : [
-                  Center(
-                    child: CircularProgressIndicator(),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   )
                 ],
         ),

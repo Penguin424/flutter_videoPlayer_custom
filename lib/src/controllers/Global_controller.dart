@@ -125,6 +125,10 @@ class GlobalController extends GetxController {
     _ultimoPago = fecha;
   }
 
+  onAddAlumnoShop(String data) {
+    _alumno = AlumnoDatos.fromJson(jsonDecode(data));
+  }
+
   onAddAlumno(String data) {
     final datos = jsonDecode(data)['user'];
     final datosString = jsonEncode(datos);

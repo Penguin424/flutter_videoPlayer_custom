@@ -35,7 +35,7 @@ class ProductoDetalle extends HookWidget {
                     ? Color.fromRGBO(76, 170, 177, 1.0)
                     : Colors.grey,
               ),
-              onPressed: true ? null : _.productos.length > 0
+              onPressed: _.productos.length > 0
                   ? () {
                       Navigator.pushNamed(context, '/shoppingCar');
                     }

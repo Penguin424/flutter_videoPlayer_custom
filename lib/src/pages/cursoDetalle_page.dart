@@ -6,7 +6,6 @@ import 'package:reproductor/src/pages/cursoPageDetalle/Examenes_Page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/asistenciasToma_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/clases_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/tareas_page.dart';
-import 'package:reproductor/src/utils/Http.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
@@ -38,8 +37,6 @@ class CursoDetallePage extends HookWidget {
     );
 
     useEffect(() {
-      LocalStorage localStorage = new LocalStorage('localStorage.json');
-
       if (PreferenceUtils.getString('role') == 'MAESTRO') {
         _pages.value.add(AsistenciasTomaPage(
           titleAppBar: _titleAppBar,
@@ -49,9 +46,12 @@ class CursoDetallePage extends HookWidget {
         );
       }
       // if (PreferenceUtils.getString('role') == 'ALUMNO') {
-      _pages.value.add(ExamenesCurso(
-        idCurso: int.parse(_curso.value['curso']),
-      ));
+      _pages.value.add(
+        ExamenesCurso(
+          idCurso: int.parse(_curso.value['curso']),
+          titleAppBar: _titleAppBar,
+        ),
+      );
       _pagesBottomBar.value.add(
         TabData(iconData: Icons.quiz, title: "Examenes"),
       );

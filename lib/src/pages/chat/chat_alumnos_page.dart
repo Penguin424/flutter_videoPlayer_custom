@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:circular_reveal_animation/circular_reveal_animation.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter/foundation.dart' as web;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -562,7 +561,7 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
         if (mensaje.mensaje!.startsWith('https://')) {
           return Row(
             mainAxisAlignment:
-                isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
+                !isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
             children: [
               Container(
                 margin: const EdgeInsets.symmetric(
@@ -610,7 +609,7 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
         } else {
           return Row(
             mainAxisAlignment:
-                isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
+                !isMe ? MainAxisAlignment.start : MainAxisAlignment.end,
             children: [
               Container(
                 margin: const EdgeInsets.symmetric(
@@ -628,7 +627,7 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
                 ),
                 child: Column(
                   crossAxisAlignment:
-                      isMe ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+                      !isMe ? CrossAxisAlignment.start : CrossAxisAlignment.end,
                   children: [
                     Text(
                       mensaje.mensaje!,

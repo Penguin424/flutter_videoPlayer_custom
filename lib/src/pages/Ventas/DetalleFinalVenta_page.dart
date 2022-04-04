@@ -2,25 +2,34 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:reproductor/src/components/StripeButton_component.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
+import 'package:reproductor/src/models/Alumno_model.dart';
 import 'package:reproductor/src/models/Venta_model.dart';
 import 'package:simple_moment/simple_moment.dart';
-import 'package:universal_html/js.dart';
 
-class VentaSendVendedor extends HookWidget {
+class VentaSendVendedor extends StatefulWidget {
+  @override
+  State<VentaSendVendedor> createState() => _VentaSendVendedorState();
+}
+
+class _VentaSendVendedorState extends State<VentaSendVendedor> {
   // const VentaSendVendedor({Key? key}) : super(key: key);
+  bool _isLoading = false;
+  final _g = Get.find<GlobalController>();
+  final moment = new Moment.now().locale(new LocaleDe());
+  AlumnoDatos? alumno;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _g = Get.find<GlobalController>();
-    final moment = new Moment.now().locale(new LocaleDe());
-    final _isLoading = useState<bool>(false);
-
     final _direccion = Direccion(
       ciudad: _g.alumno.alumnoMunicipio,
       codigoPostal: _g.alumno.alumnoCodiPostal,
@@ -73,7 +82,7 @@ class VentaSendVendedor extends HookWidget {
 
     return GetBuilder<GlobalController>(
       builder: (_) => LoadingOverlay(
-        isLoading: _isLoading.value,
+        isLoading: _isLoading,
         color: Color(0xFF4CAAB1),
         opacity: 0.2,
         child: Scaffold(
@@ -150,7 +159,7 @@ class VentaSendVendedor extends HookWidget {
     GlobalController _,
     Venta _venta,
     BuildContext context,
-    ValueNotifier<bool> _isLoading,
+    bool _isLoading,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -186,29 +195,34 @@ class VentaSendVendedor extends HookWidget {
         ),
         SizedBox(height: 20),
         ElevatedButton(
-          onPressed: _.productos[0].name.toLowerCase().startsWith('colegiatura')
-              ? null
-              : () async {
-                  _isLoading.value = true;
-                  final url = Uri(
-                    host: 'cosbiome.online',
-                    path: '/cosbiomepedidos',
-                    scheme: "https",
-                  );
-                  final response = await post(
-                    url,
-                    body: jsonEncode(_venta.toJson()),
-                    headers: {
-                      HttpHeaders.contentTypeHeader: "application/json"
-                    },
-                  );
+          // onPressed: true
+          //     ? null
+          //     : () async {
+          //         setState(() {
+          //           _isLoading = true;
+          //         });
+          //         final url = Uri(
+          //           host: 'cosbiome.online',
+          //           path: '/cosbiomepedidos',
+          //           scheme: "https",
+          //         );
+          //         final response = await post(
+          //           url,
+          //           body: jsonEncode(_venta.toJson()),
+          //           headers: {
+          //             HttpHeaders.contentTypeHeader: "application/json"
+          //           },
+          //         );
 
-                  if (response.statusCode == 200) {
-                    _isLoading.value = false;
+          //         if (response.statusCode == 200) {
+          //           setState(() {
+          //             _isLoading = false;
+          //           });
 
-                    await _showDialog(context, _);
-                  }
-                },
+          //           await _showDialog(context, _);
+          //         }
+          //       },
+          onPressed: null,
           child: Text('CREAR PEDIDO'),
           style: ElevatedButton.styleFrom(
             primary: Color.fromRGBO(76, 170, 177, 1.0),
@@ -218,7 +232,7 @@ class VentaSendVendedor extends HookWidget {
           ),
         ),
         SizedBox(height: 20),
-        StripePayButton(),
+        // StripePayButton(),
       ],
     );
   }

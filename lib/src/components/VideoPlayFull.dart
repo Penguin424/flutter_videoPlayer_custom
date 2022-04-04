@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:video_player/video_player.dart';
+import 'dart:io' show Platform;
 
 class VideoPlayerFull extends StatefulWidget {
   VideoPlayerFull({
@@ -40,14 +41,14 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
       _playerController.play();
       _playerController.setLooping(true);
 
-      print(
-          'test => ${_playerController.value.duration.inMilliseconds.toDouble()}');
       _isPlaying = true;
     });
     _playerController.addListener(() {
       setState(() {
-        _buffer =
-            _playerController.value.buffered.last.end.inMilliseconds.toDouble();
+        _buffer = _playerController.value.buffered.length == 0
+            ? 0.0
+            : _playerController.value.buffered.last.end.inMilliseconds
+                .toDouble();
         _position = _playerController.value.position.inMilliseconds.toDouble();
       });
     });
@@ -75,6 +76,7 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
 
     return Container(
       height: media.height / _fullScreen,
+      width: media.width,
       color: Colors.black,
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -156,8 +158,9 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
 
   Positioned _bottomButtons(Size media, Orientation orientation) {
     return Positioned(
-      bottom: _fullScreen == 1 ? 0 : 0,
-      width: media.width,
+      bottom: _fullScreen == 1 && Platform.isIOS ? 20 : 0,
+      width:
+          _fullScreen == 1 && Platform.isIOS ? media.width * 0.85 : media.width,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -193,9 +196,11 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
 
   Positioned _timeBarVideo(Size media) {
     return Positioned(
-      bottom: _fullScreen == 1 ? 30 : 30,
+      bottom: _fullScreen == 1 && Platform.isIOS ? 60 : 30,
       child: Container(
-        width: media.width,
+        width: _fullScreen == 1 && Platform.isIOS
+            ? media.width * 0.89
+            : media.width,
         padding: EdgeInsets.only(left: 20, right: 20),
         child: ProgressBar(
           progress: Duration(milliseconds: _position.toInt()),

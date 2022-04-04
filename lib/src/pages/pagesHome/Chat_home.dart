@@ -27,54 +27,56 @@ class _ChatHomeState extends State<ChatHome> {
   }
 
   handleGetUsers() async {
-    http.Response usersDB;
+    try {
+      http.Response usersDB;
 
-    final userMe = await HttpMod.get(
-      'users/${PreferenceUtils.getString(("idUser"))}',
-      {},
-    );
+      final userMe = await HttpMod.get(
+        'users/${PreferenceUtils.getString(("idUser"))}',
+        {},
+      );
 
-    final bodyMeCursos =
-        jsonDecode(userMe.body)['UsuarioCursos'] as List<dynamic>;
+      final bodyMeCursos =
+          jsonDecode(userMe.body)['UsuarioCursos'] as List<dynamic>;
 
-    List<int> cursosId = bodyMeCursos.map<int>((e) => e['id']).toList();
+      List<int> cursosId = bodyMeCursos.map<int>((e) => e['id']).toList();
 
-    if (PreferenceUtils.getString('role') == 'MAESTRO') {
-      usersDB = await HttpMod.get('users', {
-        '_limit': '1000000',
-        "_sort": "username:ASC",
-        "_where[0][AlumnoStatus]": "ACTIVO",
-        "_where[1][role.name]": "ALUMNO",
-        "_where[2][alumnoEstatusEstudio]": "CARRERA",
-      });
-    } else if (PreferenceUtils.getString('role') == 'ALUMNO') {
-      usersDB = await HttpMod.get('users', {
-        '_limit': '1000000',
-        "_sort": "username:ASC",
-        "_where[0][AlumnoStatus]": "ACTIVO",
-        "_where[1][role.name]": "MAESTRO",
-      });
-    } else {
-      usersDB = await HttpMod.get('users', {
-        '_limit': '1000000',
-        "_sort": "username:ASC",
-        "_where[0][AlumnoStatus]": "ACTIVO",
-        "_where[1][role.name]": "ALUMNO",
-        "_where[2][alumnoEstatusEstudio]": "CARRERA",
-      });
-    }
+      if (PreferenceUtils.getString('role') == 'MAESTRO') {
+        usersDB = await HttpMod.get('users', {
+          '_limit': '1000000',
+          "_sort": "username:ASC",
+          "_where[0][AlumnoStatus]": "ACTIVO",
+          "_where[1][role.name]": "ALUMNO",
+          "_where[2][alumnoEstatusEstudio]": "CARRERA",
+        });
+      } else if (PreferenceUtils.getString('role') == 'ALUMNO') {
+        usersDB = await HttpMod.get('users', {
+          '_limit': '1000000',
+          "_sort": "username:ASC",
+          "_where[0][AlumnoStatus]": "ACTIVO",
+          "_where[1][role.name]": "MAESTRO",
+        });
+      } else {
+        usersDB = await HttpMod.get('users', {
+          '_limit': '1000000',
+          "_sort": "username:ASC",
+          "_where[0][AlumnoStatus]": "ACTIVO",
+          "_where[1][role.name]": "ALUMNO",
+          "_where[2][alumnoEstatusEstudio]": "CARRERA",
+        });
+      }
 
-    if (usersDB.statusCode == 200) {
-      // List<UserChatModel> usuarios = [];
-      List<UserChatModel> usersChatModelArray =
-          jsonDecode(usersDB.body).map<UserChatModel>((user) {
-        return UserChatModel.fromJson(user);
-      }).toList();
+      if (usersDB.statusCode == 200) {
+        // List<UserChatModel> usuarios = [];
+        List<UserChatModel> usersChatModelArray =
+            jsonDecode(usersDB.body).map<UserChatModel>((user) {
+          return UserChatModel.fromJson(user);
+        }).toList();
 
-      setState(() {
-        users = usersChatModelArray;
-      });
-    }
+        setState(() {
+          users = usersChatModelArray;
+        });
+      }
+    } catch (e) {}
   }
 
   @override
@@ -99,39 +101,43 @@ class _ChatHomeState extends State<ChatHome> {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-          itemCount: users.length,
-          itemBuilder: (context, index) {
-            final user = users[index];
+      body: users.isEmpty
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  final user = users[index];
 
-            return Container(
-              margin: EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondary,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Color(0xFF4CAAB1),
-                  child: Text(
-                    user.username!.substring(0, 2),
-                    style: TextStyle(
-                      color: Colors.white,
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                  ),
-                ),
-                title: Text(user.username!),
-                subtitle: Text(user.email!),
-                onTap: () {
-                  Navigator.pushNamed(context, '/chat', arguments: user);
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Color(0xFF4CAAB1),
+                        child: Text(
+                          user.username!.substring(0, 2),
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      title: Text(user.username!),
+                      subtitle: Text(user.email!),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/chat', arguments: user);
+                      },
+                    ),
+                  );
                 },
               ),
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 }

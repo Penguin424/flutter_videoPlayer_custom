@@ -15,7 +15,6 @@ class HomePerfil extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final medidas = MediaQuery.of(context).size;
     final _nombreList = useState<List<String>>(
       PreferenceUtils.getString('userName').toString().split(' ').toList(),
     );
@@ -25,7 +24,6 @@ class HomePerfil extends HookWidget {
 
     void initGetDate() async {
       try {
-        LocalStorage localStorage = LocalStorage('localStorage.json');
         final id = PreferenceUtils.getString('idUser');
 
         await PreferenceUtils.init();
