@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/controllers/notificaciones_controller.dart';
 import 'package:reproductor/src/models/mensajes_model.dart';
@@ -162,40 +163,58 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
   }
 
   Future<void> getImageFilePicker(int para, UserChatModel userMen) async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
+    final permiso = await Permission.photos.request();
 
-    if (image != null) {
-      final mensajeDB = await HttpMod.post(
-        'mensajes',
-        jsonEncode(
-          {
-            "mensaje": "",
-            "de": PreferenceUtils.getString("idUser"),
-            "para": para,
-          },
-        ),
-      );
+    if (permiso.isGranted) {
+      final picker = ImagePicker();
+      final image = await picker.pickImage(source: ImageSource.gallery);
 
-      if (mensajeDB.statusCode == 200) {
-        await HttpMod.sendNotify(
-          userMen.tokenpush == null ? '' : userMen.tokenpush!,
-          NotificacionData(
-            title: 'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
-            body: mensaje,
-          ),
-          {
-            "usserMessage": jsonEncode(userChatCurrent.toJson()),
-          },
+      if (image != null) {
+        final urlImage = await HttpMod.loadImage(
+          await image.readAsBytes(),
+          image,
         );
 
-        setState(() {
-          mensaje = "";
-          mensajeCOntroller.text = "";
-          FocusScope.of(context).requestFocus(FocusNode());
-          emojiShowing = false;
-        });
+        final mensajeDB = await HttpMod.post(
+          'mensajes',
+          jsonEncode(
+            {
+              "mensaje": urlImage,
+              "de": PreferenceUtils.getString("idUser"),
+              "para": para,
+            },
+          ),
+        );
+
+        if (mensajeDB.statusCode == 200) {
+          await HttpMod.sendNotify(
+            userMen.tokenpush == null
+                ? 'dMO2jF9VTgWVvVldU1Ne0A:APA91bEucHDEQ2nxNHmqNU6U6EKqLrsJhEy29GVRQvFzYjytACAYQM-qCpxLHAX_3FtF9HKjf-38FuJdEDuOw_ZT6Ue6Uj1H_43ABlYvAFkdMLOa33ZaNXCMKmQ0CA-QvU-iR3lxnX7u'
+                : userMen.tokenpush!,
+            NotificacionData(
+              title:
+                  'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
+              body: urlImage,
+            ),
+            {
+              "usserMessage": jsonEncode(userChatCurrent.toJson()),
+            },
+          );
+
+          setState(() {
+            mensaje = "";
+            mensajeCOntroller.text = "";
+            FocusScope.of(context).requestFocus(FocusNode());
+            emojiShowing = false;
+          });
+        }
       }
+    } else {
+      _createWindowPermissionHnadler(
+        context,
+        'PERMISO DE CAMARA',
+        'El acceso a la camara es para que puedas tomar fotos de tus tareas  si es que quieres enviarlas por medio de una foto a tus maestros, enviar una foto por mensaje o poner una foto de perfil',
+      );
     }
   }
 
@@ -237,48 +256,61 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
   }
 
   Future<void> getImadeForImagePIckerSourceCamera(
-      int para, UserChatModel userMen) async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.camera);
+    int para,
+    UserChatModel userMen,
+  ) async {
+    final permiso = await Permission.camera.request();
 
-    if (image != null) {
-      final urlImage = await HttpMod.loadImage(
-        await image.readAsBytes(),
-        image,
-      );
+    if (permiso.isGranted) {
+      final picker = ImagePicker();
+      final image = await picker.pickImage(source: ImageSource.camera);
 
-      final mensajeDB = await HttpMod.post(
-        'mensajes',
-        jsonEncode(
-          {
-            "mensaje": urlImage,
-            "de": PreferenceUtils.getString("idUser"),
-            "para": para,
-          },
-        ),
-      );
-
-      if (mensajeDB.statusCode == 200) {
-        await HttpMod.sendNotify(
-          userMen.tokenpush == null
-              ? 'dMO2jF9VTgWVvVldU1Ne0A:APA91bEucHDEQ2nxNHmqNU6U6EKqLrsJhEy29GVRQvFzYjytACAYQM-qCpxLHAX_3FtF9HKjf-38FuJdEDuOw_ZT6Ue6Uj1H_43ABlYvAFkdMLOa33ZaNXCMKmQ0CA-QvU-iR3lxnX7u'
-              : userMen.tokenpush!,
-          NotificacionData(
-            title: 'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
-            body: urlImage,
-          ),
-          {
-            "usserMessage": jsonEncode(userChatCurrent.toJson()),
-          },
+      if (image != null) {
+        final urlImage = await HttpMod.loadImage(
+          await image.readAsBytes(),
+          image,
         );
 
-        setState(() {
-          mensaje = "";
-          mensajeCOntroller.text = "";
-          FocusScope.of(context).requestFocus(FocusNode());
-          emojiShowing = false;
-        });
+        final mensajeDB = await HttpMod.post(
+          'mensajes',
+          jsonEncode(
+            {
+              "mensaje": urlImage,
+              "de": PreferenceUtils.getString("idUser"),
+              "para": para,
+            },
+          ),
+        );
+
+        if (mensajeDB.statusCode == 200) {
+          await HttpMod.sendNotify(
+            userMen.tokenpush == null
+                ? 'dMO2jF9VTgWVvVldU1Ne0A:APA91bEucHDEQ2nxNHmqNU6U6EKqLrsJhEy29GVRQvFzYjytACAYQM-qCpxLHAX_3FtF9HKjf-38FuJdEDuOw_ZT6Ue6Uj1H_43ABlYvAFkdMLOa33ZaNXCMKmQ0CA-QvU-iR3lxnX7u'
+                : userMen.tokenpush!,
+            NotificacionData(
+              title:
+                  'Nuevo mensaje de ${PreferenceUtils.getString("userName")}',
+              body: urlImage,
+            ),
+            {
+              "usserMessage": jsonEncode(userChatCurrent.toJson()),
+            },
+          );
+
+          setState(() {
+            mensaje = "";
+            mensajeCOntroller.text = "";
+            FocusScope.of(context).requestFocus(FocusNode());
+            emojiShowing = false;
+          });
+        }
       }
+    } else {
+      _createWindowPermissionHnadler(
+        context,
+        'PERMISO DE CAMARA',
+        'El acceso a la camara es para que puedas tomar fotos de tus tareas  si es que quieres enviarlas por medio de una foto a tus maestros, enviar una foto por mensaje o poner una foto de perfil',
+      );
     }
   }
 
@@ -319,12 +351,20 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
                 ),
                 Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(
-                        "https://avatars1.githubusercontent.com/u/17098981?s=460&v=4",
-                      ),
-                    ),
+                    (argumanets.UsuarioFoto != 'no' &&
+                            argumanets.UsuarioFoto != '')
+                        ? CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(
+                              argumanets.UsuarioFoto!,
+                            ),
+                          )
+                        : const CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(
+                              "https://avatars1.githubusercontent.com/u/17098981?s=460&v=4",
+                            ),
+                          ),
                     const SizedBox(
                       width: 8,
                     ),
@@ -491,9 +531,40 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     height: 250,
                     width: size.width * 0.95,
+                    padding: const EdgeInsets.all(24.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: size.width * 0.15,
+                              height: size.width * 0.15,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: IconButton(
+                                onPressed: () => getImageFilePicker(
+                                  argumanets.id!,
+                                  argumanets,
+                                ),
+                                icon: Icon(
+                                  Icons.photo_sharp,
+                                  size: 32,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      ],
                     ),
                   ),
                   animation: animation,
@@ -654,6 +725,42 @@ class _ChatAlumnoPageState extends State<ChatAlumnoPage>
           );
         }
       },
+    );
+  }
+
+  _createWindowPermissionHnadler(
+    BuildContext context,
+    String title,
+    String content,
+  ) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: 20,
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          content,
+          style: TextStyle(fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Denegar'),
+          ),
+          ElevatedButton(
+            onPressed: () => openAppSettings(),
+            child: Text('Permitir desde configutacion'),
+          ),
+        ],
+      ),
     );
   }
 }

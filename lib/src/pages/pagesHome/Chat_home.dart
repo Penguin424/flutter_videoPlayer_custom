@@ -119,15 +119,23 @@ class _ChatHomeState extends State<ChatHome> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Color(0xFF4CAAB1),
-                        child: Text(
-                          user.username!.substring(0, 2),
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
+                      leading:
+                          (user.UsuarioFoto != 'no' && user.UsuarioFoto != '')
+                              ? CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage: NetworkImage(
+                                    user.UsuarioFoto!,
+                                  ),
+                                )
+                              : CircleAvatar(
+                                  backgroundColor: Color(0xFF4CAAB1),
+                                  child: Text(
+                                    user.username!.substring(0, 2),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                       title: Text(user.username!),
                       subtitle: Text(user.email!),
                       onTap: () {

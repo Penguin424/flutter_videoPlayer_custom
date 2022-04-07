@@ -407,10 +407,6 @@ class TareaCrear extends HookWidget {
           allowedExtensions: [
             'jpg',
             'pdf',
-            'doc',
-            'docx',
-            'xls',
-            'xlsx',
             'mp4',
           ],
         );

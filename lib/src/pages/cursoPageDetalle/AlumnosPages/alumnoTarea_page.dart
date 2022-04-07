@@ -12,6 +12,7 @@ import 'package:reproductor/src/utils/PrefsSIngle.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:path_provider/path_provider.dart';
 import 'package:reproductor/src/utils/Http.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 class AlumnoTareaPage extends HookWidget {
   // const AlumnoTareaPage({Key key}) : super(key: key);
@@ -379,7 +380,9 @@ class AlumnoTareaPage extends HookWidget {
           ],
         ),
         ..._generadorProductoLinks(
-          _archivosTarea.value.split(',').toList(),
+          _archivosTarea.value.isEmpty
+              ? []
+              : _archivosTarea.value.split(',').toList(),
           _totalArchivo,
           _porcentajeTotal,
           _isLoading,
@@ -468,19 +471,20 @@ class AlumnoTareaPage extends HookWidget {
                     Navigator.pop(context);
                   },
                 ),
-                TextButton(
-                  child: Text('DESCARGAR'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    handleGetArchive(
-                      context,
-                      _totalArchivo,
-                      _porcentajeTotal,
-                      _isLoading,
-                      url,
-                    );
-                  },
-                ),
+                if (!UniversalPlatform.isIOS)
+                  TextButton(
+                    child: Text('DESCARGAR'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      handleGetArchive(
+                        context,
+                        _totalArchivo,
+                        _porcentajeTotal,
+                        _isLoading,
+                        url,
+                      );
+                    },
+                  ),
                 TextButton(
                   child: Text('VER'),
                   onPressed: () {
@@ -510,7 +514,9 @@ class AlumnoTareaPage extends HookWidget {
                           '/readers/pdf',
                           arguments: url,
                         );
-                      } else if (ext == 'jpg' || ext == 'png') {
+                      } else if (ext == 'jpg' ||
+                          ext == 'png' ||
+                          ext == 'jpeg') {
                         Navigator.pop(context);
                         Navigator.pushNamed(
                           context,
@@ -578,10 +584,6 @@ class AlumnoTareaPage extends HookWidget {
           allowedExtensions: [
             'jpg',
             'pdf',
-            'doc',
-            'docx',
-            'xls',
-            'xlsx',
             'mp4',
           ],
         );

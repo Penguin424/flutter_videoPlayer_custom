@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:reproductor/src/models/DetalleTareas_model.dart';
+import 'package:universal_platform/universal_platform.dart';
 
 class DetalleTareaPage extends HookWidget {
   // const DetalleTareaPage({Key key}) : super(key: key);
@@ -362,19 +363,20 @@ class DetalleTareaPage extends HookWidget {
                     Navigator.pop(context);
                   },
                 ),
-                TextButton(
-                  child: Text('DESCARGAR'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    handleGetArchive(
-                      context,
-                      _totalArchivo,
-                      _porcentajeTotal,
-                      _isLoading,
-                      url,
-                    );
-                  },
-                ),
+                if (!UniversalPlatform.isIOS)
+                  TextButton(
+                    child: Text('DESCARGAR'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      handleGetArchive(
+                        context,
+                        _totalArchivo,
+                        _porcentajeTotal,
+                        _isLoading,
+                        url,
+                      );
+                    },
+                  ),
                 TextButton(
                   child: Text('VER'),
                   onPressed: () {
@@ -404,7 +406,9 @@ class DetalleTareaPage extends HookWidget {
                           '/readers/pdf',
                           arguments: url,
                         );
-                      } else if (ext == 'jpg' || ext == 'png') {
+                      } else if (ext == 'jpg' ||
+                          ext == 'png' ||
+                          ext == 'jpeg') {
                         Navigator.pop(context);
                         Navigator.pushNamed(
                           context,

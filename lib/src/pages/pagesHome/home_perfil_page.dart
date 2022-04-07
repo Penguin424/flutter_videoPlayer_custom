@@ -283,8 +283,7 @@ class HomePerfil extends HookWidget {
                   onPressed: () async {
                     final permiso = await Permission.camera.request();
 
-                    print(permiso);
-                    if (await Permission.camera.request().isGranted) {
+                    if (permiso.isGranted) {
                       final picker = ImagePicker();
                       final image = await picker.pickImage(
                         source: ImageSource.camera,
@@ -313,10 +312,9 @@ class HomePerfil extends HookWidget {
                 ),
                 ElevatedButton.icon(
                   onPressed: () async {
-                    final permiso = await Permission.camera.request();
+                    final permiso = await Permission.photos.request();
 
-                    print(permiso);
-                    if (await Permission.camera.request().isGranted) {
+                    if (permiso.isGranted) {
                       final picker = ImagePicker();
                       final image = await picker.pickImage(
                         source: ImageSource.gallery,

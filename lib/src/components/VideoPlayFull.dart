@@ -142,11 +142,15 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
                 Navigator.pop(context);
               },
             ),
-            Text(
-              widget.title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
+            SizedBox(
+              width: media.width * 0.5,
+              child: Text(
+                widget.title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
             Container(),

@@ -360,10 +360,6 @@ class _LoginNewPageState extends State<LoginNewPage> {
                               const SizedBox(height: 16),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * 0.3,
-                                    vertical: size.height * 0.015,
-                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(36.0),
                                   ),
