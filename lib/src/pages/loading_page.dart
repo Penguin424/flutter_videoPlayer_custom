@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
@@ -34,6 +35,19 @@ class _LoadingPageState extends State<LoadingPage> {
     if (logged) {
       final idUser = PreferenceUtils.getString('idUser');
       final role = PreferenceUtils.getString('role');
+      final controller = Get.find<GlobalController>();
+
+      if (role == 'PRUEBA') {
+        controller.onAddTokenChat(
+          PreferenceUtils.getString('token'),
+          PreferenceUtils.getString('idUser'),
+          int.parse(PreferenceUtils.getString('idUser')),
+        );
+
+        Navigator.pushReplacementNamed(context, '/home');
+
+        return;
+      }
 
       final resCol = await HttpMod.get(
         'colegiaturas',
@@ -58,8 +72,6 @@ class _LoadingPageState extends State<LoadingPage> {
                 updatedAt: DateTime.now(),
               ),
             ];
-
-      final controller = Get.find<GlobalController>();
 
       final coolsArr = data
           .map(
@@ -86,7 +98,10 @@ class _LoadingPageState extends State<LoadingPage> {
           int.parse(PreferenceUtils.getString('idUser')),
         );
 
-        await VerifyTokenPushUtil.handleVerifyTokenPus();
+        if (!kIsWeb) {
+          await VerifyTokenPushUtil.handleVerifyTokenPus();
+        }
+
         Navigator.pushNamed(context, '/home');
       } else if (role == 'MAESTRO') {
         controller.onAddUltimoPago(DateTime.now());
@@ -97,7 +112,9 @@ class _LoadingPageState extends State<LoadingPage> {
           int.parse(PreferenceUtils.getString('idUser')),
         );
 
-        await VerifyTokenPushUtil.handleVerifyTokenPus();
+        if (!kIsWeb) {
+          await VerifyTokenPushUtil.handleVerifyTokenPus();
+        }
 
         Navigator.pushNamed(context, '/home');
       } else {

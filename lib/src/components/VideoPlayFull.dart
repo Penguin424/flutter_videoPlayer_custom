@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
+import 'package:universal_platform/universal_platform.dart';
 import 'package:video_player/video_player.dart';
-import 'dart:io' show Platform;
 
 class VideoPlayerFull extends StatefulWidget {
   VideoPlayerFull({
@@ -158,9 +158,10 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
 
   Positioned _bottomButtons(Size media, Orientation orientation) {
     return Positioned(
-      bottom: _fullScreen == 1 && Platform.isIOS ? 20 : 0,
-      width:
-          _fullScreen == 1 && Platform.isIOS ? media.width * 0.85 : media.width,
+      bottom: _fullScreen == 1 && UniversalPlatform.isIOS && !kIsWeb ? 20 : 0,
+      width: _fullScreen == 1 && UniversalPlatform.isIOS && !kIsWeb
+          ? media.width * 0.85
+          : media.width,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -196,9 +197,9 @@ class _VideoPlayerFullState extends State<VideoPlayerFull> {
 
   Positioned _timeBarVideo(Size media) {
     return Positioned(
-      bottom: _fullScreen == 1 && Platform.isIOS ? 60 : 30,
+      bottom: _fullScreen == 1 && UniversalPlatform.isIOS ? 60 : 30,
       child: Container(
-        width: _fullScreen == 1 && Platform.isIOS
+        width: _fullScreen == 1 && UniversalPlatform.isIOS && !kIsWeb
             ? media.width * 0.89
             : media.width,
         padding: EdgeInsets.only(left: 20, right: 20),

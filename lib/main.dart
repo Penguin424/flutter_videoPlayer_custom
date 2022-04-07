@@ -25,11 +25,13 @@ import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/revicionTare
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/tareaCrear_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/resumenTareasAlumnosDetalle_page.dart';
 import 'package:reproductor/src/pages/loading_page.dart';
+import 'package:reproductor/src/pages/login_new_page.dart';
 import 'package:reproductor/src/pages/pagesHome/ProductoDetalle_page.dart';
 import 'package:reproductor/src/pages/pagesHome/ShoppingCar_page.dart';
 import 'package:reproductor/src/pages/pagesHome/home.dart';
 import 'package:reproductor/src/pages/login_page.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:reproductor/src/pages/registro/registro_prueba_page.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (!kIsWeb) {
@@ -167,7 +169,7 @@ class MyApp extends HookWidget {
       ),
       routes: {
         "/loading": (BuildContext context) => LoadingPage(),
-        "/login": (BuildContext context) => LoginPage(),
+        "/login": (BuildContext context) => LoginNewPage(),
         "/home": (BuildContext context) => HomeApp(),
         "/clases": (BuildContext context) => CursoDetallePage(),
         "/clase": (BuildContext context) => ClasePage(),
@@ -189,6 +191,7 @@ class MyApp extends HookWidget {
         "/examen/detalle": (BuildContext context) =>
             ExamenesCalificacionesPage(),
         "/chat": (BuildContext context) => ChatAlumnoPage(),
+        "/registro/prueba": (BuildContext context) => RegistroPruebaPage(),
       },
     );
   }

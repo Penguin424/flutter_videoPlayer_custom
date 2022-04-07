@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get/get.dart';
@@ -91,7 +92,9 @@ class _LoginPageState extends State<LoginPage> {
           int.parse(PreferenceUtils.getString('idUser')),
         );
 
-        await VerifyTokenPushUtil.handleVerifyTokenPus();
+        if (!kIsWeb) {
+          await VerifyTokenPushUtil.handleVerifyTokenPus();
+        }
 
         Navigator.pushNamed(context, '/home');
       } else if (role == 'MAESTRO') {
@@ -103,7 +106,9 @@ class _LoginPageState extends State<LoginPage> {
           int.parse(PreferenceUtils.getString('idUser')),
         );
 
-        await VerifyTokenPushUtil.handleVerifyTokenPus();
+        if (!kIsWeb) {
+          await VerifyTokenPushUtil.handleVerifyTokenPus();
+        }
 
         Navigator.pushNamed(context, '/home');
       } else {
@@ -192,7 +197,9 @@ class _LoginPageState extends State<LoginPage> {
                 user.user.id.toString(),
                 user.user.usuarioCursos.first.id,
               );
-              await VerifyTokenPushUtil.handleVerifyTokenPus();
+              if (!kIsWeb) {
+                await VerifyTokenPushUtil.handleVerifyTokenPus();
+              }
               await notiContoller.handleGetCurrentUser();
 
               Navigator.pushNamed(context, '/home');
@@ -205,7 +212,9 @@ class _LoginPageState extends State<LoginPage> {
                 user.user.usuarioCursos.first.id,
               );
 
-              await VerifyTokenPushUtil.handleVerifyTokenPus();
+              if (!kIsWeb) {
+                await VerifyTokenPushUtil.handleVerifyTokenPus();
+              }
               await notiContoller.handleGetCurrentUser();
 
               Navigator.pushNamed(context, '/home');

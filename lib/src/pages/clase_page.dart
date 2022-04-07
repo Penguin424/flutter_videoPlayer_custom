@@ -13,7 +13,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/src/multipart_file.dart' as mt;
-import 'dart:io' as opsdDart;
+import 'package:universal_platform/universal_platform.dart';
 
 String randomString() {
   final random = Random.secure();
@@ -224,16 +224,9 @@ class _ClasePageState extends State<ClasePage> {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0.0,
-      //   toolbarHeight: 0.1,
-      //   backwardsCompatibility: false,
-      //   systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: Colors.black),
-      // ),
       body: GetBuilder<GlobalController>(builder: (_) {
         return Container(
-          color: opsdDart.Platform.isIOS ? Colors.black : Colors.white,
+          color: UniversalPlatform.isIOS ? Colors.black : Colors.white,
           child: SafeArea(
             child: SingleChildScrollView(
               physics: _.fullScreen

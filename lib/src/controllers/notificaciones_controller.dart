@@ -19,7 +19,7 @@ class NotificacionesContoller extends GetxController {
 
     handleGetCurrentUser();
 
-    await messaging.value.requestPermission(
+    final settings = await messaging.value.requestPermission(
       alert: true,
       announcement: false,
       badge: true,
@@ -29,94 +29,98 @@ class NotificacionesContoller extends GetxController {
       sound: true,
     );
 
-    AwesomeNotifications().actionStream.listen(
-      (action) {
-        final userMap = jsonDecode(
-          jsonDecode(action.payload!['data'] as String)['usserMessage'],
-        );
+    print('User granted permission: ${settings.authorizationStatus}');
 
-        final userNoti = UserChatModel.fromJson(
-          userMap,
-        );
+    if (AuthorizationStatus.authorized == settings.authorizationStatus) {
+      AwesomeNotifications().actionStream.listen(
+        (action) {
+          final userMap = jsonDecode(
+            jsonDecode(action.payload!['data'] as String)['usserMessage'],
+          );
 
-        Navigator.pushNamed(Get.context!, '/chat', arguments: userNoti);
-      },
-    );
+          final userNoti = UserChatModel.fromJson(
+            userMap,
+          );
 
-    FirebaseMessaging.onMessage.listen(
-      (RemoteMessage message) async {
-        if (message.notification != null && !kIsWeb) {
-          if (message.notification!.android!.imageUrl != null ||
-              message.notification!.android!.imageUrl != '' ||
-              message.notification!.apple!.imageUrl != null ||
-              message.notification!.apple!.imageUrl != '') {
-            await AwesomeNotifications().createNotification(
-              content: NotificationContent(
-                id: 1,
-                channelKey: 'key1',
-                title: message.notification!.title,
-                body: message.notification!.body,
-                color: Theme.of(Get.context!).colorScheme.primary,
-                bigPicture: message.notification!.android!.imageUrl ??
-                    message.notification!.apple!.imageUrl,
-                notificationLayout: NotificationLayout.BigPicture,
-                payload: {
-                  "data": jsonEncode(message.data),
-                },
-              ),
-              actionButtons: [
-                NotificationActionButton(
-                  key: 'asdasdas',
-                  label: 'Aceptar',
-                  buttonType: ActionButtonType.KeepOnTop,
+          Navigator.pushNamed(Get.context!, '/chat', arguments: userNoti);
+        },
+      );
+
+      FirebaseMessaging.onMessage.listen(
+        (RemoteMessage message) async {
+          if (message.notification != null && !kIsWeb) {
+            if (message.notification!.android!.imageUrl != null ||
+                message.notification!.android!.imageUrl != '' ||
+                message.notification!.apple!.imageUrl != null ||
+                message.notification!.apple!.imageUrl != '') {
+              await AwesomeNotifications().createNotification(
+                content: NotificationContent(
+                  id: 1,
+                  channelKey: 'key1',
+                  title: message.notification!.title,
+                  body: message.notification!.body,
+                  color: Theme.of(Get.context!).colorScheme.primary,
+                  bigPicture: message.notification!.android!.imageUrl ??
+                      message.notification!.apple!.imageUrl,
+                  notificationLayout: NotificationLayout.BigPicture,
+                  payload: {
+                    "data": jsonEncode(message.data),
+                  },
                 ),
-              ],
-            );
-          } else if (message.notification!.body!.startsWith('https://')) {
-            await AwesomeNotifications().createNotification(
-              content: NotificationContent(
-                id: 1,
-                channelKey: 'key1',
-                title: message.notification!.title,
-                color: Theme.of(Get.context!).colorScheme.primary,
-                bigPicture: message.notification!.body,
-                notificationLayout: NotificationLayout.BigPicture,
-                payload: {
-                  "data": jsonEncode(message.data),
-                },
-              ),
-              actionButtons: [
-                NotificationActionButton(
-                  key: 'asdasdas',
-                  label: 'Aceptar',
-                  buttonType: ActionButtonType.KeepOnTop,
+                actionButtons: [
+                  NotificationActionButton(
+                    key: 'asdasdas',
+                    label: 'Aceptar',
+                    buttonType: ActionButtonType.KeepOnTop,
+                  ),
+                ],
+              );
+            } else if (message.notification!.body!.startsWith('https://')) {
+              await AwesomeNotifications().createNotification(
+                content: NotificationContent(
+                  id: 1,
+                  channelKey: 'key1',
+                  title: message.notification!.title,
+                  color: Theme.of(Get.context!).colorScheme.primary,
+                  bigPicture: message.notification!.body,
+                  notificationLayout: NotificationLayout.BigPicture,
+                  payload: {
+                    "data": jsonEncode(message.data),
+                  },
                 ),
-              ],
-            );
-          } else {
-            await AwesomeNotifications().createNotification(
-              content: NotificationContent(
-                id: 1,
-                channelKey: 'key1',
-                title: message.notification!.title,
-                body: message.notification!.body,
-                color: Theme.of(Get.context!).colorScheme.primary,
-                payload: {
-                  "data": jsonEncode(message.data),
-                },
-              ),
-              actionButtons: [
-                NotificationActionButton(
-                  key: 'asdasdas',
-                  label: 'Aceptar',
-                  buttonType: ActionButtonType.KeepOnTop,
+                actionButtons: [
+                  NotificationActionButton(
+                    key: 'asdasdas',
+                    label: 'Aceptar',
+                    buttonType: ActionButtonType.KeepOnTop,
+                  ),
+                ],
+              );
+            } else {
+              await AwesomeNotifications().createNotification(
+                content: NotificationContent(
+                  id: 1,
+                  channelKey: 'key1',
+                  title: message.notification!.title,
+                  body: message.notification!.body,
+                  color: Theme.of(Get.context!).colorScheme.primary,
+                  payload: {
+                    "data": jsonEncode(message.data),
+                  },
                 ),
-              ],
-            );
+                actionButtons: [
+                  NotificationActionButton(
+                    key: 'asdasdas',
+                    label: 'Aceptar',
+                    buttonType: ActionButtonType.KeepOnTop,
+                  ),
+                ],
+              );
+            }
           }
-        }
-      },
-    );
+        },
+      );
+    }
   }
 
   handleGetCurrentUser() async {

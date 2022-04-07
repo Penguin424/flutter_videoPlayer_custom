@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
-import 'package:localstorage/localstorage.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/models/Curso.dart';
 import 'package:reproductor/src/models/Producto_model.dart';
@@ -15,9 +13,6 @@ class HomePerfil extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _nombreList = useState<List<String>>(
-      PreferenceUtils.getString('userName').toString().split(' ').toList(),
-    );
     final _cursosAlumnos = useState<List<Curso>>([]);
     final _fotoPerfil =
         useState<String>(PreferenceUtils.getString('imagenPerfil').toString());
@@ -42,7 +37,7 @@ class HomePerfil extends HookWidget {
 
           _cursosAlumnos.value = data;
 
-          print(_cursosAlumnos.value);
+          print(_fotoPerfil.value);
         } else {}
       } catch (e) {
         print(e);
@@ -56,41 +51,44 @@ class HomePerfil extends HookWidget {
     return GetBuilder<GlobalController>(
       builder: (_) {
         return SingleChildScrollView(
-          child: Padding(
+          child: Container(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height * 0.95,
+            ),
             padding: const EdgeInsets.all(40.0),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    child: Column(
-                      children: [
-                        _fotoPerfil.value != 'no'
-                            ? CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(_fotoPerfil.value),
-                                backgroundColor: Color(0xFF4CAAB1),
-                                maxRadius: 120,
-                              )
-                            : CircleAvatar(
-                                backgroundColor: Color(0xFF4CAAB1),
-                                child: Text(
-                                  '${_nombreList.value.first[0]}${_nombreList.value.last[0]}',
-                                ),
-                                maxRadius: 120,
-                              ),
-                        SizedBox(
-                          height: 20.0,
+                  Column(
+                    children: [
+                      // _fotoPerfil.value != 'no' || _fotoPerfil.value != ''
+                      //     ? CircleAvatar(
+                      //         backgroundImage: NetworkImage(
+                      //           Uri.parse(_fotoPerfil.value).toString(),
+                      //         ),
+                      //         backgroundColor: Color(0xFF4CAAB1),
+                      //         maxRadius: 120,
+                      //       )
+                      //     : CircleAvatar(
+                      //         backgroundColor: Color(0xFF4CAAB1),
+                      //         child: Text(
+                      //           // '${_nombreList.value.first[0]}${_nombreList.value.last[0]}',
+                      //           'adsdas',
+                      //         ),
+                      //         maxRadius: 120,
+                      //       ),
+                      // SizedBox(
+                      //   height: 20.0,
+                      // ),
+                      Text(
+                        PreferenceUtils.getString('userName').toString(),
+                        style: TextStyle(
+                          fontSize: 22,
                         ),
-                        Text(
-                          PreferenceUtils.getString('userName').toString(),
-                          style: TextStyle(
-                            fontSize: 22,
-                          ),
-                        )
-                      ],
-                    ),
+                      )
+                    ],
                   ),
                   SizedBox(
                     height: 30.0,
@@ -165,6 +163,11 @@ class HomePerfil extends HookWidget {
                       PreferenceUtils.putBool('isLogged', false);
                       PreferenceUtils.putString('email', '');
                       PreferenceUtils.putString('password', '');
+                      PreferenceUtils.putBool('isTest', false);
+                      PreferenceUtils.putString(
+                        'limitTest',
+                        '',
+                      );
 
                       Navigator.pushNamedAndRemoveUntil(
                         context,
@@ -190,8 +193,9 @@ class HomePerfil extends HookWidget {
                                 price: _.alumno.alumnoMensualidad!,
                                 canitdad: 1,
                                 id: _.productos.length + 1,
-                                image:
-                                    'https://i.pinimg.com/originals/dc/30/85/dc3085dbbc9897fc374f804d4649b502.png',
+                                image: Uri.parse(
+                                        'https://i.pinimg.com/originals/dc/30/85/dc3085dbbc9897fc374f804d4649b502.png')
+                                    .toString(),
                                 name: 'COLEGIATURA',
                                 total: _.alumno.alumnoMensualidad! * 1,
                                 canitdadAlamacen: 2,

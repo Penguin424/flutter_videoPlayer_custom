@@ -6,28 +6,39 @@ import 'package:reproductor/src/utils/PrefsSIngle.dart';
 
 class VerifyTokenPushUtil {
   static handleVerifyTokenPus() async {
-    print('¿dasdasdasd');
     await PreferenceUtils.init();
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-    String? token = await messaging.getToken();
-    String tokenStorage = PreferenceUtils.getString('tokenPush');
-    String userId = PreferenceUtils.getString('idUser');
+    final settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
 
-    print('verificacionTo: ${token != tokenStorage && token != null}');
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      String? token = await messaging.getToken();
+      String tokenStorage = PreferenceUtils.getString('tokenPush');
+      String userId = PreferenceUtils.getString('idUser');
 
-    print('token: $token');
-    print('tokenStorage: $tokenStorage');
+      print('verificacionTo: ${token != tokenStorage && token != null}');
 
-    if (token != null) {
-      PreferenceUtils.putString('tokenPush', token);
+      print('token: $token');
+      print('tokenStorage: $tokenStorage');
 
-      await HttpMod.update(
-        'users/$userId',
-        jsonEncode({
-          "tokenpush": token,
-        }),
-      );
+      if (token != null) {
+        PreferenceUtils.putString('tokenPush', token);
+
+        await HttpMod.update(
+          'users/$userId',
+          jsonEncode({
+            "tokenpush": token,
+          }),
+        );
+      }
     }
   }
 }
