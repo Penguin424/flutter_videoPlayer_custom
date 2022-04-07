@@ -225,4 +225,8 @@ class GlobalController extends GetxController {
 
     update(['shopping_car']);
   }
+
+  onForceUpdate() {
+    update(['shopping_car']);
+  }
 }

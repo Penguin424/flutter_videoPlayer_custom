@@ -161,16 +161,18 @@ class AlumnoTareaPage extends HookWidget {
           List<String> archs = [];
 
           for (MultipartFile file in _archivos.value) {
-            String url = 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
-            MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
-            request.files.add(file);
+            // String url = 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
+            // MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
+            // request.files.add(file);
 
-            request.fields.addAll({
-              'key': file.filename!,
-            });
-            StreamedResponse resa = await request.send();
+            // request.fields.addAll({
+            //   'key': file.filename!,
+            // });
+            // StreamedResponse resa = await request.send();
 
-            archs.add('${resa.request!.url.origin}/${file.filename!}');
+            // archs.add('${resa.request!.url.origin}/${file.filename!}');
+            final urlFileAlumno = await HttpMod.loadFileAlumno(file);
+            archs.add(urlFileAlumno);
           }
 
           HttpMod.post(

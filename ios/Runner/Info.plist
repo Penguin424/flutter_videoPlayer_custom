@@ -27,11 +27,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>My description about why I need this capability</string>
+	<string>El acceso a la camara es para que puedas tomar fotos de tus tareas  si es que quieres enviarlas por medio de una foto a tus maestros, enviar una foto por mensaje o poner una foto de perfil</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>My description about why I need this capability</string>
+	<string>El acceso al microfono es por si quieres comunicarte con tus maestros por medio de auidios de voz en nuestro chat</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>My description about why I need this capability</string>
+	<string>El acceso a la galeria es por si quieres adjuntar una imagen o archivo desde tu galeria o gestor de archivos para poder usarla al entregar tu tarea al maestro, enviarle un mensaje con imagen o poner una foto de perfil</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

@@ -190,6 +190,28 @@ class HttpMod {
     return urlFinalArcvivo;
   }
 
+  static Future<String> loadFileAlumno(http.MultipartFile file) async {
+    final url = 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
+    http.MultipartRequest request = http.MultipartRequest(
+      'POST',
+      Uri.parse(url),
+    );
+
+    request.files.add(file);
+
+    request.fields.addAll({
+      'key':
+          'alumnosFiles/${PreferenceUtils.getString('userName')}/${file.filename}',
+    });
+
+    http.StreamedResponse resa = await request.send();
+
+    final urlFinalArcvivo =
+        '${resa.request!.url.origin}/alumnosFiles/${PreferenceUtils.getString('userName')}/${file.filename}';
+
+    return urlFinalArcvivo;
+  }
+
   static Future<http.Response> sendNotify(
     String token,
     NotificacionData notificacionData,
