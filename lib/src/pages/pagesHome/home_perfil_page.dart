@@ -63,25 +63,25 @@ class HomePerfil extends HookWidget {
                 children: [
                   Column(
                     children: [
-                      // _fotoPerfil.value != 'no' || _fotoPerfil.value != ''
-                      //     ? CircleAvatar(
-                      //         backgroundImage: NetworkImage(
-                      //           Uri.parse(_fotoPerfil.value).toString(),
-                      //         ),
-                      //         backgroundColor: Color(0xFF4CAAB1),
-                      //         maxRadius: 120,
-                      //       )
-                      //     : CircleAvatar(
-                      //         backgroundColor: Color(0xFF4CAAB1),
-                      //         child: Text(
-                      //           // '${_nombreList.value.first[0]}${_nombreList.value.last[0]}',
-                      //           'adsdas',
-                      //         ),
-                      //         maxRadius: 120,
-                      //       ),
-                      // SizedBox(
-                      //   height: 20.0,
-                      // ),
+                      _fotoPerfil.value != 'no' || _fotoPerfil.value != ''
+                          ? CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                Uri.parse(_fotoPerfil.value).toString(),
+                              ),
+                              backgroundColor: Color(0xFF4CAAB1),
+                              maxRadius: 120,
+                            )
+                          : CircleAvatar(
+                              backgroundColor: Color(0xFF4CAAB1),
+                              child: Text(
+                                // '${_nombreList.value.first[0]}${_nombreList.value.last[0]}',
+                                'adsdas',
+                              ),
+                              maxRadius: 120,
+                            ),
+                      SizedBox(
+                        height: 20.0,
+                      ),
                       Text(
                         PreferenceUtils.getString('userName').toString(),
                         style: TextStyle(
