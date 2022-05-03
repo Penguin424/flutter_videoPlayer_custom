@@ -209,19 +209,19 @@ class ContactoHome extends HookWidget {
             SizedBox(
               height: 2,
             ),
-            AnimatedSwitcher(
-              duration: _duration,
-              child: Text(
-                'DISPONIBLE: ${_productos[_textPage.value.toInt()].cantidad}',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w300,
-                ),
-                key: Key(
-                  _productos[_textPage.value.toInt()].name,
-                ),
-              ),
-            ),
+            // AnimatedSwitcher(
+            //   duration: _duration,
+            //   child: Text(
+            //     'DISPONIBLE: ${_productos[_textPage.value.toInt()].cantidad}',
+            //     style: TextStyle(
+            //       fontSize: 18,
+            //       fontWeight: FontWeight.w300,
+            //     ),
+            //     key: Key(
+            //       _productos[_textPage.value.toInt()].name,
+            //     ),
+            //   ),
+            // ),
             SizedBox(
               height: 12,
             ),
