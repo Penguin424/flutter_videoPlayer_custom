@@ -24,6 +24,7 @@ import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/resumenTarea
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/revicionTareas_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/tareaCrear_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/resumenTareasAlumnosDetalle_page.dart';
+import 'package:reproductor/src/pages/lives_streams_page.dart';
 import 'package:reproductor/src/pages/loading_page.dart';
 import 'package:reproductor/src/pages/login_new_page.dart';
 import 'package:reproductor/src/pages/pagesHome/ProductoDetalle_page.dart';
@@ -194,6 +195,7 @@ class MyApp extends HookWidget {
             ExamenesCalificacionesPage(),
         "/chat": (BuildContext context) => ChatAlumnoPage(),
         "/registro/prueba": (BuildContext context) => RegistroPruebaPage(),
+        "/livestreams": (BuildContext context) => LivesStreamsPage(),
       },
     );
   }

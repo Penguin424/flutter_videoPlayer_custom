@@ -16,6 +16,8 @@ class HomeApp extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     final _selector = useState<int>(1);
     final _pages = useState<List<Widget>>(
       [
@@ -48,15 +50,30 @@ class HomeApp extends HookWidget {
           inactiveIconColor: Color(0xFF4CAAB1),
           initialSelection: _selector.value,
         ),
-        body: PageView(
-          // allowImplicitScrolling: false,
-          // pageSnapping: false,
-          physics: NeverScrollableScrollPhysics(),
-          controller: controller,
-          children: _pages.value,
-          onPageChanged: (page) {
-            _selector.value = page;
-          },
+        body: Stack(
+          children: [
+            PageView(
+              physics: NeverScrollableScrollPhysics(),
+              controller: controller,
+              children: _pages.value,
+              onPageChanged: (page) {
+                _selector.value = page;
+              },
+            ),
+            Positioned(
+              top: size.height * 0.5,
+              right: 10,
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/livestreams');
+                },
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: Icon(
+                  Icons.live_tv_outlined,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

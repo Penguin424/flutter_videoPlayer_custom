@@ -408,6 +408,18 @@ class _LoginNewPageState extends State<LoginNewPage> {
                                       },
                                 child: Text('Prueba gratuita'),
                               ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(36.0),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/livestreams');
+                                },
+                                child: const Text('Sesiones en vivo'),
+                              ),
                             ],
                           ),
                         ),

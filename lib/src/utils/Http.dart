@@ -236,4 +236,26 @@ class HttpMod {
 
     return response;
   }
+
+  static Future<http.Response> getLive(
+    String path,
+    Map<String, String>? parameters,
+  ) async {
+    final url = Uri(
+      host: _host,
+      scheme: 'https',
+      // port: _port,
+      queryParameters: parameters,
+      path: path,
+    );
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+    );
+
+    return response;
+  }
 }
