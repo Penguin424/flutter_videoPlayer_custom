@@ -391,23 +391,23 @@ class _LoginNewPageState extends State<LoginNewPage> {
                                   color: Colors.grey,
                                 ),
                               ),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(36.0),
-                                  ),
-                                ),
-                                onPressed: kIsWeb
-                                    ? null
-                                    : () async {
-                                        Navigator.pushNamed(
-                                          context,
-                                          '/registro/prueba',
-                                        );
-                                      },
-                                child: Text('Prueba gratuita'),
-                              ),
+                              // const SizedBox(height: 16),
+                              // ElevatedButton(
+                              //   style: ElevatedButton.styleFrom(
+                              //     shape: RoundedRectangleBorder(
+                              //       borderRadius: BorderRadius.circular(36.0),
+                              //     ),
+                              //   ),
+                              //   onPressed: kIsWeb
+                              //       ? null
+                              //       : () async {
+                              //           Navigator.pushNamed(
+                              //             context,
+                              //             '/registro/prueba',
+                              //           );
+                              //         },
+                              //   child: Text('Prueba gratuita'),
+                              // ),
                               const SizedBox(height: 16),
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -418,7 +418,7 @@ class _LoginNewPageState extends State<LoginNewPage> {
                                 onPressed: () {
                                   Navigator.pushNamed(context, '/livestreams');
                                 },
-                                child: const Text('Sesiones en vivo'),
+                                child: const Text('Clase gratuita'),
                               ),
                             ],
                           ),

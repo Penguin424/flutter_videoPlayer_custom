@@ -154,7 +154,31 @@ class CursoDetallePage extends HookWidget {
             fontSize: 10.0,
           ),
           labelBackgroundColor: Color(0xFF4CAAB1),
-        )
+        ),
+        // FAB 3
+        SpeedDialChild(
+          child: Icon(
+            Icons.quiz_rounded,
+            color: Colors.white,
+          ),
+          backgroundColor: Color(0xFF4CAAB1),
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              '/examen/crear',
+              arguments: {
+                'idCurso': _curso.value['curso'],
+              },
+            );
+          },
+          label: 'Crear Examen',
+          labelStyle: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+            fontSize: 10.0,
+          ),
+          labelBackgroundColor: Color(0xFF4CAAB1),
+        ),
       ],
     );
   }

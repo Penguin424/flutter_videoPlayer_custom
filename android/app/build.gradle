@@ -45,8 +45,8 @@ android {
         applicationId "com.cosbiome.escuela"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 15
-        versionName '3.2.9'
+        versionCode 16
+        versionName '3.2.10'
         multiDexEnabled true
     }
 

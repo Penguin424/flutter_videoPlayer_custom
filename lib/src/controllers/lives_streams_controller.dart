@@ -8,11 +8,11 @@ import 'package:video_player/video_player.dart';
 
 class LivesStreamsController extends GetxController {
   RxBool isLoading = true.obs;
-  late Timer _timer;
+  // late Timer _timer;
 
   RxBool isOpenMenu = false.obs;
 
-  late Rx<VideoPlayerController> videoPlayerController;
+  // late Rx<VideoPlayerController> videoPlayerController;
 
   Rx<ClaseLiveModel> claseLive = ClaseLiveModel(
     ClaseActiva: false,
@@ -32,16 +32,16 @@ class LivesStreamsController extends GetxController {
         ),
       );
 
-      if (claseLive.value.ClaseActiva!) {
-        videoPlayerController = VideoPlayerController.network(
-          claseLive.value.ClaseVideo!,
-        ).obs;
+      // if (claseLive.value.ClaseActiva!) {
+      //   videoPlayerController = VideoPlayerController.network(
+      //     claseLive.value.ClaseVideo!,
+      //   ).obs;
 
-        handleGetViews();
+      //   handleGetViews();
 
-        await videoPlayerController.value.initialize();
-        videoPlayerController.value.play();
-      }
+      //   await videoPlayerController.value.initialize();
+      //   videoPlayerController.value.play();
+      // }
 
       isLoading.value = false;
       update();
@@ -53,45 +53,45 @@ class LivesStreamsController extends GetxController {
     super.onInit();
   }
 
-  @override
-  void onClose() {
-    videoPlayerController.value.dispose();
-    _timer.cancel();
+  // @override
+  // void onClose() {
+  //   videoPlayerController.value.dispose();
+  //   _timer.cancel();
 
-    super.onClose();
-  }
+  //   super.onClose();
+  // }
 
-  handleGetViews() async {
-    final dio = Dio();
+  // handleGetViews() async {
+  //   final dio = Dio();
 
-    _timer = Timer.periodic(
-      Duration(seconds: 5),
-      (timer) async {
-        try {
-          final response = await dio.get(
-            'https://stream.cosbiome.online/api/streams/live/cosbiomelive',
-          );
+  //   _timer = Timer.periodic(
+  //     Duration(seconds: 5),
+  //     (timer) async {
+  //       try {
+  //         final response = await dio.get(
+  //           'https://stream.cosbiome.online/api/streams/live/cosbiomelive',
+  //         );
 
-          final viewers = response.data['viewers'] as int;
+  //         final viewers = response.data['viewers'] as int;
 
-          views.value = viewers;
+  //         views.value = viewers;
 
-          update();
-        } catch (e) {
-          final error = e as DioError;
-          print('streams: ${error.response}');
-        }
-      },
-    );
-  }
+  //         update();
+  //       } catch (e) {
+  //         final error = e as DioError;
+  //         print('streams: ${error.response}');
+  //       }
+  //     },
+  //   );
+  // }
 
-  handleShowMenu() {
-    isOpenMenu.value = !isOpenMenu.value;
-    update();
-  }
+  // handleShowMenu() {
+  //   isOpenMenu.value = !isOpenMenu.value;
+  //   update();
+  // }
 
-  handleFullScreen() {
-    fullScreen.value = fullScreen.value == 3 ? 4 : 3;
-    update();
-  }
+  // handleFullScreen() {
+  //   fullScreen.value = fullScreen.value == 3 ? 4 : 3;
+  //   update();
+  // }
 }

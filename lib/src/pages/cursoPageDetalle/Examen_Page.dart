@@ -9,10 +9,10 @@ import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 
 class Quiz {
-  final String statement;
-  final List<QuizOption> options;
-  final RespuestaEnum correctOptionId;
-  final int id;
+  late String statement;
+  late List<QuizOption> options;
+  late RespuestaEnum correctOptionId;
+  late int id;
 
   Quiz({
     required this.id,
@@ -20,16 +20,32 @@ class Quiz {
     required this.options,
     required this.correctOptionId,
   });
+
+  toJson() {
+    return {
+      'id': id,
+      'statement': statement,
+      'options': options.map((option) => option.toJson()).toList(),
+      'correctOptionId': correctOptionId.index,
+    };
+  }
 }
 
 class QuizOption {
-  final RespuestaEnum id;
-  final String option;
+  late RespuestaEnum id;
+  late String option;
 
   QuizOption(
     this.id,
     this.option,
   );
+
+  toJson() {
+    return {
+      'id': id.name,
+      'option': option,
+    };
+  }
 }
 
 class ExamenPage extends StatefulWidget {

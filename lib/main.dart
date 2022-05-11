@@ -24,6 +24,7 @@ import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/resumenTarea
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/revicionTareas_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/tareaCrear_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/resumenTareasAlumnosDetalle_page.dart';
+import 'package:reproductor/src/pages/examen_crear_page.dart';
 import 'package:reproductor/src/pages/lives_streams_page.dart';
 import 'package:reproductor/src/pages/loading_page.dart';
 import 'package:reproductor/src/pages/login_new_page.dart';
@@ -191,6 +192,7 @@ class MyApp extends HookWidget {
         "/resumenTareasAlumno/detalle": (BuildContext context) =>
             ResumenTareasAlumnosDetalle(),
         "/examen": (BuildContext context) => ExamenPage(),
+        "/examen/crear": (BuildContext context) => ExamenCrearPage(),
         "/examen/detalle": (BuildContext context) =>
             ExamenesCalificacionesPage(),
         "/chat": (BuildContext context) => ChatAlumnoPage(),
