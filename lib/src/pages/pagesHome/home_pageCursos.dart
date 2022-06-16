@@ -36,9 +36,7 @@ class PageHome extends HookWidget {
 
           print('Cursos: ${_cursosAlumnos.value}');
         }
-      } catch (e) {
-        print(e);
-      }
+      } catch (e) {}
     }
 
     useEffect(() {
