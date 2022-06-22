@@ -75,7 +75,9 @@ class TareasPage extends HookWidget {
           ? _tareas.value.map((tarea) {
               final det = tarea.tareaDetalles.where((element) {
                 return element.tareaDetAlumno ==
-                    int.parse(PreferenceUtils.getString('idUser'));
+                    int.parse(
+                      PreferenceUtils.getString('idUser'),
+                    );
               }).toList();
               // return Text('data');
               return CardTarea(

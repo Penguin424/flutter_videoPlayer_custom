@@ -70,6 +70,7 @@ class CursoAlumno {
     required this.role,
     required this.createdAt,
     required this.updatedAt,
+    required this.alumnoStatus,
   });
 
   int id;
@@ -81,6 +82,7 @@ class CursoAlumno {
   int role;
   DateTime createdAt;
   DateTime updatedAt;
+  String alumnoStatus;
 
   factory CursoAlumno.fromJson(Map<String, dynamic> json) => CursoAlumno(
         id: json["id"],
@@ -92,6 +94,8 @@ class CursoAlumno {
         role: json["role"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
+        alumnoStatus:
+            json["AlumnoStatus"] == null ? 'BAJA' : json["AlumnoStatus"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -104,6 +108,7 @@ class CursoAlumno {
         "role": role,
         "created_at": createdAt.toIso8601String(),
         "updated_at": updatedAt.toIso8601String(),
+        "AlumnoStatus": alumnoStatus,
       };
 }
 

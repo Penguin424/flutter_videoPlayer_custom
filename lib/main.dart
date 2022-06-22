@@ -8,6 +8,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/get.dart';
 import 'package:reproductor/src/controllers/Global_controller.dart';
 import 'package:reproductor/src/controllers/notificaciones_controller.dart';
+import 'package:reproductor/src/controllers/practicas_controller.dart';
 import 'package:reproductor/src/models/user_chat_model.dart';
 import 'package:reproductor/src/pages/Ventas/DetalleFinalVenta_page.dart';
 import 'package:reproductor/src/pages/ViewsDocuemnts/imageView_page.dart';
@@ -33,6 +34,9 @@ import 'package:reproductor/src/pages/pagesHome/ShoppingCar_page.dart';
 import 'package:reproductor/src/pages/pagesHome/home.dart';
 import 'package:reproductor/src/pages/login_page.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:reproductor/src/pages/practicas/practica_crear_page.dart';
+import 'package:reproductor/src/pages/practicas/practica_detalle_page.dart';
+import 'package:reproductor/src/pages/practicas/practicas_page.dart';
 import 'package:reproductor/src/pages/registro/registro_prueba_page.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -150,6 +154,7 @@ class MyApp extends HookWidget {
   Widget build(BuildContext context) {
     Get.put(GlobalController());
     Get.put(NotificacionesContoller());
+    Get.put(PracticasController());
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
@@ -198,6 +203,9 @@ class MyApp extends HookWidget {
         "/chat": (BuildContext context) => ChatAlumnoPage(),
         "/registro/prueba": (BuildContext context) => RegistroPruebaPage(),
         "/livestreams": (BuildContext context) => LivesStreamsPage(),
+        "/practicas": (BuildContext context) => PracticasPage(),
+        "/practicas/crear": (BuildContext context) => PracticaCrearPage(),
+        "/practicas/detalle": (BuildContext context) => PracticaDetallePage(),
       },
     );
   }

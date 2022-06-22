@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:get/get.dart' as Get;
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -219,43 +220,75 @@ class AlumnoTareaPage extends HookWidget {
       child: Text('ENTREGAR TAREA'),
       onPressed: () async {
         try {
-          _modalCal.value = false;
-          _isLoading.value = true;
-          List<String> archs = [];
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Estas apunto de entregar tu tarea'),
+              content: const Text(
+                'Seguro que quieres entregar tu tarea si das en confirmar y no adjuntaste nada a tu tarea estas aceptando no adjuntar nada y una posible calificacion negativa por parte de tu profesor',
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Cancel'),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: _isLoading.value
+                      ? () {}
+                      : () async {
+                          _modalCal.value = false;
+                          _isLoading.value = true;
+                          List<String> archs = [];
 
-          for (MultipartFile file in _archivos.value) {
-            // String url = 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
-            // MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
-            // request.files.add(file);
+                          for (MultipartFile file in _archivos.value) {
+                            // String url = 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/';
+                            // MultipartRequest request = MultipartRequest('POST', Uri.parse(url));
+                            // request.files.add(file);
 
-            // request.fields.addAll({
-            //   'key': file.filename!,
-            // });
-            // StreamedResponse resa = await request.send();
+                            // request.fields.addAll({
+                            //   'key': file.filename!,
+                            // });
+                            // StreamedResponse resa = await request.send();
 
-            // archs.add('${resa.request!.url.origin}/${file.filename!}');
-            final urlFileAlumno = await HttpMod.loadFileAlumno(file);
-            archs.add(urlFileAlumno);
-          }
+                            // archs.add('${resa.request!.url.origin}/${file.filename!}');
+                            final urlFileAlumno =
+                                await HttpMod.loadFileAlumno(file);
+                            archs.add(urlFileAlumno);
+                          }
 
-          HttpMod.post(
-            'detalletareas',
-            jsonEncode(
-              {
-                'tareaDetDescripcion': _comentario.value,
-                'tareaDetArchivo': archs.join(','),
-                'tareaDetEntrega': DateTime.now().toString(),
-                'tareaDetCalificacion': 0.0,
-                'tareaDetAlumno':
-                    int.parse(PreferenceUtils.getString('idUser')),
-                'tareaDetTarea': _params.value['idTarea'] as int,
-                'tareaDetEntregada': 1,
-              },
+                          await HttpMod.post(
+                            'detalletareas',
+                            jsonEncode(
+                              {
+                                'tareaDetDescripcion': _comentario.value,
+                                'tareaDetArchivo': archs.join(','),
+                                'tareaDetEntrega': DateTime.now().toString(),
+                                'tareaDetCalificacion': 0.0,
+                                'tareaDetAlumno': int.parse(
+                                    PreferenceUtils.getString('idUser')),
+                                'tareaDetTarea':
+                                    _params.value['idTarea'] as int,
+                                'tareaDetEntregada': 1,
+                              },
+                            ),
+                          );
+
+                          Get.Get.snackbar(
+                            'Tarea entregada',
+                            'Tarea entregada con exito',
+                            icon: Icon(Icons.check),
+                            backgroundColor: Colors.green,
+                            colorText: Colors.white,
+                            duration: Duration(seconds: 2),
+                          );
+                          _isLoading.value = false;
+                          Navigator.pushNamed(context, '/home');
+                        },
+                  child: const Text('Confirmar'),
+                ),
+              ],
             ),
           );
-
-          _isLoading.value = false;
-          Navigator.pushNamed(context, '/home');
         } catch (e) {
           print(e);
         }

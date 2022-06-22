@@ -1,7 +1,9 @@
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:get/instance_manager.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:reproductor/src/controllers/practicas_controller.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/Examenes_Page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/asistenciasToma_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/clases_page.dart';
@@ -17,6 +19,7 @@ class CursoDetallePage extends HookWidget {
   );
   @override
   Widget build(BuildContext context) {
+    final practicas = Get.find<PracticasController>();
     final _titleAppBar = useState<String>('CURSO');
 
     final _pages = useState<List<Widget>>([
@@ -63,6 +66,7 @@ class CursoDetallePage extends HookWidget {
           ? _getFAB(
               context,
               _curso,
+              practicas,
             )
           : Container(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -100,9 +104,9 @@ class CursoDetallePage extends HookWidget {
   }
 
   Widget _getFAB(
-    BuildContext context,
-    ValueNotifier<Map<String, dynamic>> _curso,
-  ) {
+      BuildContext context,
+      ValueNotifier<Map<String, dynamic>> _curso,
+      PracticasController practicas) {
     return SpeedDial(
       animatedIcon: AnimatedIcons.menu_close,
       animatedIconTheme: IconThemeData(size: 22),
@@ -172,6 +176,34 @@ class CursoDetallePage extends HookWidget {
             );
           },
           label: 'Crear Examen',
+          labelStyle: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+            fontSize: 10.0,
+          ),
+          labelBackgroundColor: Color(0xFF4CAAB1),
+        ),
+        // FAB 4
+        SpeedDialChild(
+          child: Icon(
+            Icons.list_alt_rounded,
+            color: Colors.white,
+          ),
+          backgroundColor: Color(0xFF4CAAB1),
+          onTap: () {
+            // Navigator.pushNamed(
+            //   context,
+            //   '/practicas',
+            //   arguments: {
+            //     'idCurso': _curso.value['curso'],
+            //   },
+            // );
+            practicas.handleGetCursoAndPracticas(
+              context,
+              int.parse(_curso.value['curso'].toString()),
+            );
+          },
+          label: 'Practicas',
           labelStyle: TextStyle(
             fontWeight: FontWeight.w500,
             color: Colors.white,

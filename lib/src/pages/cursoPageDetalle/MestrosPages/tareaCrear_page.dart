@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart' as Get;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:reproductor/src/models/Clase_model.dart';
 import 'package:reproductor/src/utils/Http.dart';
@@ -253,7 +254,16 @@ class TareaCrear extends HookWidget {
               ),
             );
 
-            Navigator.pop(context);
+            Get.Get.snackbar(
+              'Tarea creada',
+              'Tarea creada con exito',
+              icon: Icon(Icons.check),
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+              duration: Duration(seconds: 2),
+            );
+
+            Navigator.pushNamed(context, '/home');
           }
         } catch (e) {
           print(e);

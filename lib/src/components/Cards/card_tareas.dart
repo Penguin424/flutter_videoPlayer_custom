@@ -37,7 +37,7 @@ class CardTarea extends HookWidget {
               color: Color(0xFFBFE3ED),
             ),
             title: Text(
-              '${this.clase} - ${this.title}  ${this.entr ? '\nPUNTOS: ${this.calificacion}' : ''} ',
+              '${this.clase} - ${this.title}  ${this.entr ? '\nPUNTOS: ${this.calificacion} ENTREGADA' : ''} ',
               style: TextStyle(
                 color: Colors.white,
               ),
