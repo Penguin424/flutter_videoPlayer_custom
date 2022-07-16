@@ -28,20 +28,24 @@ class _ExamenesCursoState extends State<ExamenesCurso> {
   }
 
   void handleGetExamenes() async {
-    final examenesDB = await HttpMod.get('/examenes', {
-      '_where[0][curso.id]': widget.idCurso.toString(),
-    });
+    try {
+      final examenesDB = await HttpMod.get('/examenes', {
+        '_where[0][curso.id]': widget.idCurso.toString(),
+      });
 
-    setState(
-      () {
-        examenes = jsonDecode(examenesDB.body)
-            .map<ExamenesDb>(
-              (json) => ExamenesDb.fromJson(json),
-            )
-            .toList();
-        widget.titleAppBar.value = 'Examenes';
-      },
-    );
+      setState(
+        () {
+          examenes = jsonDecode(examenesDB.body)
+              .map<ExamenesDb>(
+                (json) => ExamenesDb.fromJson(json),
+              )
+              .toList();
+          widget.titleAppBar.value = 'Examenes';
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override

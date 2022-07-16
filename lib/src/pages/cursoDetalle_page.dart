@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/instance_manager.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:reproductor/src/controllers/practicas_controller.dart';
+import 'package:reproductor/src/models/termario_model.dart';
+import 'package:reproductor/src/pages/cursoPageDetalle/AlumnosPages/progreso_alumnos_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/Examenes_Page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/MestrosPages/asistenciasToma_page.dart';
 import 'package:reproductor/src/pages/cursoPageDetalle/clases_page.dart';
@@ -48,6 +53,7 @@ class CursoDetallePage extends HookWidget {
           TabData(iconData: Icons.list_alt_rounded, title: "Asistencias"),
         );
       }
+
       // if (PreferenceUtils.getString('role') == 'ALUMNO') {
       _pages.value.add(
         ExamenesCurso(
@@ -58,6 +64,16 @@ class CursoDetallePage extends HookWidget {
       _pagesBottomBar.value.add(
         TabData(iconData: Icons.quiz, title: "Examenes"),
       );
+
+      if (PreferenceUtils.getString('role') == 'ALUMNO') {
+        _pages.value.add(ProgresoAlumnosPage(
+          idCurso: int.parse(_curso.value['curso']),
+          titleAppBar: _titleAppBar,
+        ));
+        _pagesBottomBar.value.add(
+          TabData(iconData: Icons.bar_chart_rounded, title: "Progreso"),
+        );
+      }
       // }
     }, []);
 
@@ -74,6 +90,84 @@ class CursoDetallePage extends HookWidget {
         title: Text(_titleAppBar.value),
         centerTitle: true,
         backgroundColor: Color(0xFF4CAAB1),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                late List<TermarioModel> temario;
+                String titulocurso = _curso.value['cursoTitulo'];
+
+                if (titulocurso.toLowerCase().contains('cosmetologia')) {
+                  String data =
+                      await rootBundle.loadString('assets/cosmetologia.json');
+
+                  temario = jsonDecode(data).map<TermarioModel>((e) {
+                    return TermarioModel.fromJson(e);
+                  }).toList();
+                }
+
+                if (titulocurso.toLowerCase().contains('cosmiatria')) {
+                  String data =
+                      await rootBundle.loadString('assets/cosmiatria.json');
+
+                  temario = jsonDecode(data).map<TermarioModel>((e) {
+                    return TermarioModel.fromJson(e);
+                  }).toList();
+                }
+
+                return showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                        'TEMARIO',
+                        textAlign: TextAlign.center,
+                      ),
+                      content: Container(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) => Divider(
+                            color: Colors.black,
+                          ),
+                          itemCount: temario.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                                title: Text(
+                                  temario[index].modulo!,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                subtitle: Column(
+                                  children: temario[index].clases!.map((e) {
+                                    return Container(
+                                      margin: EdgeInsets.only(
+                                        top: 10,
+                                      ),
+                                      child: ListTile(
+                                        title: Text(
+                                          e!,
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ));
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              icon: Icon(Icons.view_list)),
+        ],
       ),
       bottomNavigationBar: FancyBottomNavigation(
         tabs: _pagesBottomBar.value,
