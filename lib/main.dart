@@ -162,6 +162,7 @@ class MyApp extends HookWidget {
       initialRoute: "/loading",
       theme: ThemeData(
         // primaryColor: Colors.red,
+        // useMaterial3: true,
         colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: Color(0XFF4CAAB1),
           onPrimary: Colors.white,

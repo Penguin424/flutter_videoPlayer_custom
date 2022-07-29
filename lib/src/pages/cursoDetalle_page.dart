@@ -91,82 +91,82 @@ class CursoDetallePage extends HookWidget {
         centerTitle: true,
         backgroundColor: Color(0xFF4CAAB1),
         actions: [
-          IconButton(
-              onPressed: () async {
-                late List<TermarioModel> temario;
-                String titulocurso = _curso.value['cursoTitulo'];
+          // IconButton(
+          //     onPressed: () async {
+          //       late List<TermarioModel> temario;
+          //       String titulocurso = _curso.value['cursoTitulo'];
 
-                if (titulocurso.toLowerCase().contains('cosmetologia')) {
-                  String data =
-                      await rootBundle.loadString('assets/cosmetologia.json');
+          //       if (titulocurso.toLowerCase().contains('cosmetologia')) {
+          //         String data =
+          //             await rootBundle.loadString('assets/cosmetologia.json');
 
-                  temario = jsonDecode(data).map<TermarioModel>((e) {
-                    return TermarioModel.fromJson(e);
-                  }).toList();
-                }
+          //         temario = jsonDecode(data).map<TermarioModel>((e) {
+          //           return TermarioModel.fromJson(e);
+          //         }).toList();
+          //       }
 
-                if (titulocurso.toLowerCase().contains('cosmiatria')) {
-                  String data =
-                      await rootBundle.loadString('assets/cosmiatria.json');
+          //       if (titulocurso.toLowerCase().contains('cosmiatria')) {
+          //         String data =
+          //             await rootBundle.loadString('assets/cosmiatria.json');
 
-                  temario = jsonDecode(data).map<TermarioModel>((e) {
-                    return TermarioModel.fromJson(e);
-                  }).toList();
-                }
+          //         temario = jsonDecode(data).map<TermarioModel>((e) {
+          //           return TermarioModel.fromJson(e);
+          //         }).toList();
+          //       }
 
-                return showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(
-                        'TEMARIO',
-                        textAlign: TextAlign.center,
-                      ),
-                      content: Container(
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: ListView.separated(
-                          separatorBuilder: (context, index) => Divider(
-                            color: Colors.black,
-                          ),
-                          itemCount: temario.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                                title: Text(
-                                  temario[index].modulo!,
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                subtitle: Column(
-                                  children: temario[index].clases!.map((e) {
-                                    return Container(
-                                      margin: EdgeInsets.only(
-                                        top: 10,
-                                      ),
-                                      child: ListTile(
-                                        title: Text(
-                                          e!,
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ));
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              icon: Icon(Icons.view_list)),
+          //       return showDialog(
+          //         context: context,
+          //         builder: (context) {
+          //           return AlertDialog(
+          //             title: Text(
+          //               'TEMARIO',
+          //               textAlign: TextAlign.center,
+          //             ),
+          //             content: Container(
+          //               height: MediaQuery.of(context).size.height * 0.5,
+          //               width: MediaQuery.of(context).size.width * 0.8,
+          //               child: ListView.separated(
+          //                 separatorBuilder: (context, index) => Divider(
+          //                   color: Colors.black,
+          //                 ),
+          //                 itemCount: temario.length,
+          //                 itemBuilder: (context, index) {
+          //                   return ListTile(
+          //                       title: Text(
+          //                         temario[index].modulo!,
+          //                         style: TextStyle(
+          //                           fontSize: 20,
+          //                           fontWeight: FontWeight.bold,
+          //                         ),
+          //                         textAlign: TextAlign.center,
+          //                       ),
+          //                       subtitle: Column(
+          //                         children: temario[index].clases!.map((e) {
+          //                           return Container(
+          //                             margin: EdgeInsets.only(
+          //                               top: 10,
+          //                             ),
+          //                             child: ListTile(
+          //                               title: Text(
+          //                                 e!,
+          //                                 style: TextStyle(
+          //                                   fontSize: 15,
+          //                                   fontWeight: FontWeight.bold,
+          //                                 ),
+          //                                 textAlign: TextAlign.center,
+          //                               ),
+          //                             ),
+          //                           );
+          //                         }).toList(),
+          //                       ));
+          //                 },
+          //               ),
+          //             ),
+          //           );
+          //         },
+          //       );
+          //     },
+          //     icon: Icon(Icons.view_list)),
         ],
       ),
       bottomNavigationBar: FancyBottomNavigation(
@@ -298,6 +298,32 @@ class CursoDetallePage extends HookWidget {
             );
           },
           label: 'Practicas',
+          labelStyle: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+            fontSize: 10.0,
+          ),
+          labelBackgroundColor: Color(0xFF4CAAB1),
+        ),
+        // FAB 5
+        SpeedDialChild(
+          child: Icon(
+            Icons.assignment_turned_in_rounded,
+            color: Colors.white,
+          ),
+          backgroundColor: Color(0xFF4CAAB1),
+          onTap: () {
+            String titulocurso = _curso.value['cursoTitulo'];
+
+            Navigator.pushNamed(
+              context,
+              '/readers/pdf',
+              arguments: titulocurso.toLowerCase().contains('cosmiatria')
+                  ? 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/avancesprogramaticos/avance+programatico+cosmiatria.pdf'
+                  : 'https://cosbiomeescuela.s3.us-east-2.amazonaws.com/avancesprogramaticos/avance+programatico+cosmetologia.pdf',
+            );
+          },
+          label: 'Avance programatico',
           labelStyle: TextStyle(
             fontWeight: FontWeight.w500,
             color: Colors.white,
